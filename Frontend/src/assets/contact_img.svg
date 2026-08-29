@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700" width="700" height="700">
+  <defs>
+    <linearGradient id="contactbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff0f2"/>
+      <stop offset="100%" stop-color="#ffd9e1"/>
+    </linearGradient>
+  </defs>
+  <rect width="700" height="700" fill="url(#contactbg)"/>
+
+  <!-- desk shadow shapes -->
+  <rect x="40" y="40" width="620" height="620" rx="24" fill="#ffffff" opacity="0.35"/>
+
+  <!-- laptop -->
+  <g transform="translate(300,120)">
+    <rect x="0" y="0" width="300" height="200" rx="10" fill="#4b5563"/>
+    <rect x="10" y="10" width="280" height="180" rx="4" fill="#fdf2f4"/>
+    <rect x="30" y="35" width="140" height="10" rx="3" fill="#fb7185"/>
+    <rect x="30" y="55" width="180" height="8" rx="3" fill="#f4c6cf"/>
+    <rect x="30" y="72" width="150" height="8" rx="3" fill="#f4c6cf"/>
+    <path d="M-20 200 L320 200 L340 235 L-40 235 Z" fill="#6b7280"/>
+  </g>
+
+  <!-- coffee cup on coaster -->
+  <g transform="translate(120,150)">
+    <ellipse cx="70" cy="145" rx="80" ry="18" fill="#e7b98f"/>
+    <path d="M25 60 h90 v55 a45 45 0 0 1 -90 0 z" fill="#fefefe" stroke="#f1c6cf" stroke-width="3"/>
+    <ellipse cx="70" cy="60" rx="45" ry="12" fill="#7c2d12"/>
+    <path d="M115 75 q30 0 30 25 q0 25 -30 20" fill="none" stroke="#fefefe" stroke-width="7"/>
+  </g>
+
+  <!-- rose in small vase -->
+  <g transform="translate(90,330)">
+    <path d="M20 40 h50 l-8 90 h-34 z" fill="#fde8ec" stroke="#f1c6cf" stroke-width="2"/>
+    <path d="M45 40 C 35 -10, 55 -30, 70 -5" stroke="#166534" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="48" cy="10" rx="12" ry="7" fill="#4d7c0f" transform="rotate(-25 48 10)"/>
+    <g transform="translate(68,-8)">
+      <circle r="22" fill="#be123c"/>
+      <circle r="15" fill="#e11d48"/>
+      <circle r="7" fill="#fb7185"/>
+    </g>
+  </g>
+
+  <!-- phone -->
+  <g transform="translate(330,400)">
+    <rect x="0" y="0" width="90" height="170" rx="16" fill="#be123c"/>
+    <rect x="8" y="14" width="74" height="130" rx="4" fill="#ffe4e9"/>
+    <path d="M35 128 c0-8 -12-8 -12 0 c0 8 12 14 12 14 s12-6 12-14 c0-8 -12-8 -12 0 z" fill="#f43f5e"/>
+  </g>
+
+  <!-- gift tag with heart -->
+  <g transform="translate(470,420) rotate(10)">
+    <rect x="0" y="0" width="120" height="70" rx="8" fill="#ffffff" stroke="#f1c6cf" stroke-width="2"/>
+    <circle cx="15" cy="15" r="5" fill="none" stroke="#be123c" stroke-width="3"/>
+    <text x="65" y="32" font-family="Outfit, sans-serif" font-size="13" fill="#be123c" text-anchor="middle">With Love</text>
+    <text x="65" y="52" font-family="Outfit, sans-serif" font-size="18" fill="#f43f5e" text-anchor="middle">&#10084;</text>
+  </g>
+</svg>

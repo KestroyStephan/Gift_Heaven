@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 150" width="560" height="150">
+  <defs>
+    <style>
+      .word { font-family: 'Brush Script MT', 'Segoe Script', 'Lucida Handwriting', cursive; font-size: 86px; fill: #be123c; font-style: italic; }
+      .amp  { font-family: 'Brush Script MT', 'Segoe Script', cursive; font-size: 60px; fill: #fb7185; }
+      .sub  { font-family: 'Trebuchet MS', 'Outfit', sans-serif; font-size: 17px; letter-spacing: 6px; fill: #9f1239; }
+    </style>
+  </defs>
+  <text x="10" y="92" class="word">Amora</text>
+  <text x="330" y="92" class="amp">♥</text>
+  <text x="10" y="128" class="sub">GIFTS FOR LOVERS</text>
+</svg>

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 820" width="700" height="820">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe4e9"/>
+      <stop offset="100%" stop-color="#ffc9d4"/>
+    </linearGradient>
+    <linearGradient id="boxFront" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <linearGradient id="boxLid" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="100%" stop-color="#f43f5e"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="700" height="820" fill="url(#bg)"/>
+
+  <!-- soft decorative circles -->
+  <circle cx="90" cy="120" r="90" fill="#ffd4de" opacity="0.6"/>
+  <circle cx="620" cy="700" r="130" fill="#ffb9c8" opacity="0.5"/>
+
+  <!-- floating hearts -->
+  <g fill="#fb7185" opacity="0.85">
+    <path d="M120 210 c0-14 -20-14 -20 0 c0 14 20 26 20 26 s20-12 20-26 c0-14 -20-14 -20 0 z" />
+    <path d="M600 180 c0-10 -14-10 -14 0 c0 10 14 18 14 18 s14-8 14-18 c0-10 -14-10 -14 0 z" />
+    <path d="M560 460 c0-12 -17-12 -17 0 c0 12 17 22 17 22 s17-10 17-22 c0-12 -17-12 -17 0 z" opacity="0.6"/>
+    <path d="M80 560 c0-10 -14-10 -14 0 c0 10 14 18 14 18 s14-8 14-18 c0-10 -14-10 -14 0 z" opacity="0.7"/>
+  </g>
+
+  <!-- ribbon streamers behind box -->
+  <path d="M280 520 C 220 620, 240 700, 190 760" stroke="#f43f5e" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M420 520 C 480 620, 460 700, 510 760" stroke="#f43f5e" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- gift box -->
+  <g>
+    <rect x="220" y="470" width="260" height="200" rx="10" fill="url(#boxFront)"/>
+    <rect x="220" y="470" width="260" height="46" rx="8" fill="url(#boxLid)"/>
+    <rect x="335" y="470" width="30" height="200" fill="#ffe4e9"/>
+    <path d="M300 470 C 270 420, 300 390, 335 415 C 340 435, 335 470, 335 470 Z" fill="#ffe4e9"/>
+    <path d="M400 470 C 430 420, 400 390, 365 415 C 360 435, 365 470, 365 470 Z" fill="#ffe4e9"/>
+    <circle cx="350" cy="440" r="14" fill="#fff7f8"/>
+  </g>
+
+  <!-- rose bouquet -->
+  <g transform="translate(120,560)">
+    <path d="M40 260 C 20 190, 30 140, 55 120" stroke="#166534" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M75 260 C 65 180, 70 130, 85 100" stroke="#166534" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M105 260 C 105 190, 100 140, 90 105" stroke="#166534" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <ellipse cx="45" cy="150" rx="16" ry="10" fill="#4d7c0f" transform="rotate(-30 45 150)"/>
+    <ellipse cx="95" cy="180" rx="16" ry="10" fill="#4d7c0f" transform="rotate(20 95 180)"/>
+
+    <g transform="translate(55,110)">
+      <circle r="26" fill="#be123c"/>
+      <circle r="18" fill="#e11d48"/>
+      <circle r="10" fill="#fb7185"/>
+    </g>
+    <g transform="translate(85,90)">
+      <circle r="22" fill="#f43f5e"/>
+      <circle r="15" fill="#fb7185"/>
+      <circle r="8" fill="#ffe4e9"/>
+    </g>
+    <g transform="translate(90,95)"></g>
+    <g transform="translate(88,95) rotate(-15)">
+    </g>
+    <g transform="translate(90,100)">
+    </g>
+  </g>
+
+  <!-- roses second cluster -->
+  <g transform="translate(430,540)">
+    <path d="M30 200 C 20 150, 25 110, 45 90" stroke="#166534" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="35" cy="130" rx="14" ry="9" fill="#4d7c0f" transform="rotate(-20 35 130)"/>
+    <g transform="translate(48,85)">
+      <circle r="24" fill="#e11d48"/>
+      <circle r="16" fill="#f43f5e"/>
+      <circle r="8" fill="#ffe4e9"/>
+    </g>
+  </g>
+
+  <!-- small tag -->
+  <g transform="translate(300,500)">
+    <rect x="0" y="0" width="70" height="40" rx="6" fill="#fff7f8"/>
+    <text x="35" y="26" font-family="Outfit, sans-serif" font-size="14" fill="#be123c" text-anchor="middle">For You</text>
+  </g>
+</svg>
