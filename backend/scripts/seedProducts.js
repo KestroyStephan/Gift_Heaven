@@ -13,6 +13,8 @@ import productModel from '../models/productModel.js'
 import brandModel from '../models/brandModel.js'
 import { brands, brandFor } from './catalogBrands.js'
 import stockMoveModel from '../models/stockMoveModel.js'
+import { couponModel, offerModel } from '../models/promoModels.js'
+import { promoCoupons, promoOffers } from './catalogPromos.js'
 import { drawProduct } from './productArt.js'
 import { photosFor } from './productPhotos.js'
 import { extraProducts } from './catalogExtra.js'
@@ -240,6 +242,14 @@ for (const product of await productModel.find({ $or: [{ trackStock: { $exists: f
     stocked++
 }
 console.log(`${stocked} product(s) given inventory details`)
+
+// Starter coupons and offers (only the ones that don't exist yet)
+for (const coupon of promoCoupons()) {
+    if (!(await couponModel.exists({ code: coupon.code }))) { await couponModel.create(coupon); console.log('coupon added:', coupon.code) }
+}
+for (const offer of promoOffers()) {
+    if (!(await offerModel.exists({ name: offer.name }))) { await offerModel.create(offer); console.log('offer added:', offer.name) }
+}
 
 console.log(`Done - ${added} product(s) added`)
 await mongoose.disconnect()
