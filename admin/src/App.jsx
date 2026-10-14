@@ -47,6 +47,7 @@ export const categories = [
   { value: 'Footwear', label: 'Shoes' },
   { value: 'Eyewear', label: 'Sunglasses' },
   { value: 'Beauty', label: 'Makeup & Beauty' },
+  { value: 'Tech', label: 'Tech Accessories' },
 ]
 export const recipientOptions = [
   { value: 'her', label: 'Her' }, { value: 'him', label: 'Him' }, { value: 'couples', label: 'Couples' },

@@ -8,14 +8,14 @@ const ideas = [
   { title: 'Photo frame art & canvas', text: 'Weddings, family portraits, first trips — printed as gallery canvas or collage frames.' },
   { title: 'Mugs', text: 'A favourite photo and a few words on a mug they will use every morning.' },
   { title: 'T-shirts', text: 'Birthday crews, family trips, couple tees and team shirts — your photo or design.' },
-  { title: 'Cushions', text: 'A soft cushion with a photo and message, made to be hugged.' },
+  { title: 'Cushions & phone cases', text: 'A soft cushion or a slim phone case with a photo and message.' },
   { title: 'Something else?', text: 'Keychains, puzzles, calendars, return gifts for parties — ask us in chat.', chat: true },
 ]
 
 const CustomStudio = () => {
 
   const { products, currency, openChat } = useContext(ShopContext)
-  const printed = useMemo(() => products.filter(p => p.category === 'CustomPrint' || p.category === 'Personalised'), [products])
+  const printed = useMemo(() => products.filter(p => p.category === 'CustomPrint' || p.category === 'Personalised' || p.name === 'Custom Photo Phone Case'), [products])
 
   return (
     <div>

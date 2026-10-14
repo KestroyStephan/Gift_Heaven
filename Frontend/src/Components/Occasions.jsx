@@ -20,6 +20,7 @@ const categories = [
     { key: 'Footwear', tint: 'bg-cream' },
     { key: 'Eyewear', tint: 'bg-lilac' },
     { key: 'Beauty', tint: 'bg-blush' },
+    { key: 'Tech', tint: 'bg-sage' },
     { key: 'Toys', tint: 'bg-cream' },
     { key: 'Baby', tint: 'bg-blush' },
     { key: 'Teddy', tint: 'bg-cream' },
