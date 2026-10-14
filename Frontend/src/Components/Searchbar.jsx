@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../Context/ShopContext'
-import { assets } from '../assets/assets';
 import { useLocation } from 'react-router-dom';
+import Icon from './Icons';
 
 const Searchbar = () => {
 
@@ -10,22 +10,21 @@ const Searchbar = () => {
     const location = useLocation()
 
     useEffect(()=>{
-        if(location.pathname.includes('collection')){
-           setVisible(true)
-        }
-        else{
-            setVisible(false)
-        }
+        setVisible(location.pathname.includes('collection'))
     },[location])
 
   return showSearch && visible ? (
-    <div className='border-t border-b bg-rose-50 text-center'>
-        <div className='inline-flex items-center justify-center border border-rose-200 px-5 py-2 my-5 mx-3 rounded-full w-3/4 sm:w-1/2 '>
-            <input value={search} onChange={(e)=>setSearch(e.target.value)} className='flex-1 outline-none bg-inherit text-sm' type="text" placeholder='Search' />
-            <img className='w-4' src={assets.search_icon} alt="" />
-        </div>
-        <img onClick={()=>setShowSearch(false)} className='inline w-3 cursor-pointer' src={assets.cross_icon} alt="" />
-      
+    <div className='bg-rose-50 border-b border-line'>
+      <div className='shell py-5 flex items-center gap-3'>
+        <label className='flex-1 flex items-center gap-3 h-12 px-5 bg-white border border-rose-300 rounded-full'>
+            <Icon name='search' size={18} className='text-muted' />
+            <span className='sr-only'>Search gifts</span>
+            <input autoFocus value={search} onChange={(e)=>setSearch(e.target.value)} className='flex-1 outline-none bg-transparent text-sm' type="search" placeholder='Search chocolate buckets, bouquets, hampers…' />
+        </label>
+        <button aria-label='Close search' onClick={()=>{setShowSearch(false); setSearch('')}} className='w-11 h-11 rounded-full flex items-center justify-center hover:bg-white cursor-pointer'>
+            <Icon name='close' />
+        </button>
+      </div>
     </div>
   ) : null
 }
