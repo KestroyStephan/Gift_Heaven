@@ -1,10 +1,11 @@
 // Brands for the gift mall: the real brands our products are named after,
 // plus Surprise Heaven's own house labels for everything we make or source ourselves.
+// Real brands use their official logos from Wikimedia Commons; house labels show a coloured wordmark.
 export const brands = [
-    { slug: 'cadbury', name: 'Cadbury', colour: '#4B0F7A', featured: true, tagline: 'Dairy Milk chocolates, gift-wrapped by us', description: 'Cadbury Dairy Milk favourites arranged into buckets and bouquets by our gift team.' },
-    { slug: 'ferrero', name: 'Ferrero', colour: '#8A6A1F', featured: true, tagline: 'Golden pralines for golden moments', description: 'Ferrero Rocher pralines styled into elegant buckets for anniversaries and celebrations.' },
-    { slug: 'nestle', name: 'Nestlé', colour: '#C8102E', tagline: 'Kit Kat and more, made into gifts', description: 'Kit Kat chocolate bars packed into cheerful buckets with a satin bow and gift tag.' },
-    { slug: 'hot-wheels', name: 'Hot Wheels', colour: '#E35205', featured: true, tagline: 'Die-cast cars for little racers', description: 'Hot Wheels die-cast car packs, ready to gift with a ribbon and card.' },
+    { slug: 'cadbury', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Cadbury_logo_new.jpg', name: 'Cadbury', colour: '#4B0F7A', featured: true, tagline: 'Dairy Milk chocolates, gift-wrapped by us', description: 'Cadbury Dairy Milk favourites arranged into buckets and bouquets by our gift team.' },
+    { slug: 'ferrero', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/00/Ferrero_-_logo_brown_%28Italy%2C_1964-%29.svg', name: 'Ferrero', colour: '#8A6A1F', featured: true, tagline: 'Golden pralines for golden moments', description: 'Ferrero Rocher pralines styled into elegant buckets for anniversaries and celebrations.' },
+    { slug: 'nestle', logo: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Nestle_textlogo_blue.svg', name: 'Nestlé', colour: '#C8102E', tagline: 'Kit Kat and more, made into gifts', description: 'Kit Kat chocolate bars packed into cheerful buckets with a satin bow and gift tag.' },
+    { slug: 'hot-wheels', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Hot_wheels_textlogo.svg', name: 'Hot Wheels', colour: '#E35205', featured: true, tagline: 'Die-cast cars for little racers', description: 'Hot Wheels die-cast car packs, ready to gift with a ribbon and card.' },
 
     { slug: 'surprise-heaven-signature', name: 'Surprise Heaven Signature', colour: '#A3214F', featured: true, tagline: 'Our hand-packed hampers and love boxes', description: 'Hampers, gift packages, love boxes and festival collections designed and hand-packed in our Colombo studio.' },
     { slug: 'heaven-bakes', name: 'Heaven Bakes', colour: '#B5651D', featured: true, tagline: 'Fresh celebration cakes, baked to order', description: 'Birthday, wedding and photo cakes baked fresh for your date — eggless on request.' },

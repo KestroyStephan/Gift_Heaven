@@ -51,7 +51,8 @@ const Brands = () => {
                     {coverOf(b.slug) && <img src={coverOf(b.slug)} alt='' className='absolute inset-0 w-full h-full object-cover' />}
                   </span>
                   <span className='p-5 flex flex-col gap-1.5 min-w-0'>
-                    <BrandMark brand={b} className='!text-left text-[1.6rem] max-h-12' />
+                    <BrandMark brand={b} className='!text-left text-[1.6rem] max-h-12 self-start' />
+                    {b.logo && <span className='font-bold text-ink'>{b.name}</span>}
                     <span className='text-sm text-mauve line-clamp-2'>{b.tagline}</span>
                     <span className='text-xs font-bold text-berry mt-1 flex items-center gap-1'>{b.productCount} gift{b.productCount === 1 ? '' : 's'} <Icon name='arrow' size={13} className='transition group-hover:translate-x-1' /></span>
                   </span>

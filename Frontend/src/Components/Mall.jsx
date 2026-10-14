@@ -31,7 +31,10 @@ const budgetLink = (b) => `/collection?${new URLSearchParams({ ...(b.min ? { min
 // Logo, or the brand name as a coloured wordmark
 export const BrandMark = ({ brand, className = '', light = false }) => {
     if (!brand) return null
-    if (brand.logo) return <img src={brand.logo} alt={brand.name} className={`object-contain ${className}`} />
+    if (brand.logo) {
+        const img = <img src={brand.logo} alt={brand.name} className={`object-contain max-w-full w-auto h-14 ${light ? '' : className}`} />
+        return light ? <span className='inline-flex bg-white rounded-2xl px-5 py-3 shadow-sm'>{img}</span> : img
+    }
     return (
         <span className={`font-display italic font-semibold leading-none text-center ${className}`} style={{ color: light ? '#fff' : brand.colour }}>
             {brand.name}

@@ -205,6 +205,11 @@ for (const brand of brands) {
         await brandModel.create(brand)
         console.log('brand added:', brand.name)
     }
+    else if (brand.logo) {
+        // give existing brands their logo, without replacing one the admin uploaded
+        const { modifiedCount } = await brandModel.updateOne({ slug: brand.slug, logo: { $in: ['', null] } }, { logo: brand.logo })
+        if (modifiedCount) console.log('logo set:', brand.name)
+    }
 }
 let branded = 0
 for (const product of await productModel.find({ $or: [{ brand: { $exists: false } }, { brand: '' }] })) {
