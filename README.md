@@ -8,6 +8,16 @@ MERN e-commerce platform for gift and chocolate hampers (Group_33).
 | `Frontend/` | Customer store (React + Vite + Tailwind) | http://localhost:5173 |
 | `admin/` | Admin panel (React + Vite + Tailwind) | http://localhost:5174 |
 
+## Team — Group_33 (BSc (Hons) IT, Intake 11)
+
+| Member | Responsibility |
+| --- | --- |
+| S. Kestroy | Backend: API, authentication & security, payments (Stripe, Razorpay, COD), orders, notifications, chat & contact APIs |
+| V. Thanushan | Admin panel: dashboard, product management, orders, chats & messages inboxes |
+| A.V. Sanju | Shopping flow: cart, checkout, order confirmation & tracking, login and profile |
+| S. Jineshini | Storefront design: brand theme & logo, home page, About, Contact, Gift Guide, gift research |
+| N. Kishnapriyan (Krishna) | Personalisation & studios: gift personaliser, cake & custom printing studios, live chat widget, product & shop pages, catalogue seed |
+
 ## Features
 
 **Customers:** home / latest collection / best sellers, collection page with search, category and occasion filters and price sorting, product detail with sizes and related products, **gift personalisation** (recipient name, card message with live preview, ribbon colour, wrapping, paid add-ons and customer photo upload — priced and validated on the server), guest cart that merges into the account on login, sign up / login / forgot & reset password, profile page, checkout with an optional hand-lettered **gift note** and **Stripe**, **Razorpay** or **Cash on Delivery**, order confirmation page, My Orders with a live **order tracking** timeline, newsletter signup, a Contact page whose messages land in the admin inbox, **live chat** (with photo attachments) to plan custom gifts, a **Cake Studio** (design, flavour, size, eggless, message or edible photo, delivery date & time slot), a **Custom Studio** for photo mugs, T-shirts, canvas, frames and cushions, shopping by recipient (**For her / him / couples / kids / teens / elders / baby**), engraving on pens, key tags, jewellery and clocks, and a **Gift Guide** covering Sinhala, Tamil, Indian, Muslim and Christian occasions.
