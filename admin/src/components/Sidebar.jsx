@@ -23,6 +23,7 @@ const groups = [
     label: 'Customers', links: [
       { to: '/chats', label: 'Live chats', icon: 'chats', badge: 'chats' },
       { to: '/messages', label: 'Messages', icon: 'messages', badge: 'messages' },
+      { to: '/reviews', label: 'Reviews', icon: 'star', badge: 'reviews' },
     ]
   },
 ]

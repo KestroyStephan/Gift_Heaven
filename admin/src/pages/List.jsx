@@ -266,7 +266,7 @@ const List = ({token}) => {
                         <img className='w-12 h-12 rounded-xl object-cover border border-line shrink-0' src={item.image[0]} alt='' loading='lazy' />
                         <span className='min-w-0'>
                           <span className='block font-semibold text-ink leading-snug'>{item.name}</span>
-                          <span className='block text-xs text-mauve'>{item.sizes?.length || 0} option{item.sizes?.length === 1 ? '' : 's'}</span>
+                          <span className='block text-xs text-mauve'>{item.sizes?.length || 0} option{item.sizes?.length === 1 ? '' : 's'}{item.ratingCount > 0 && <> · <span className='text-gold font-bold'>★ {item.ratingAvg.toFixed(1)}</span> ({item.ratingCount})</>}</span>
                         </span>
                       </span>
                     </td>

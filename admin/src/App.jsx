@@ -13,6 +13,7 @@ import Brands from './pages/Brands'
 import Inventory from './pages/Inventory'
 import Reports from './pages/Reports'
 import Promotions from './pages/Promotions'
+import Reviews from './pages/Reviews'
 import Login from './components/Login'
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -104,7 +105,7 @@ const App = () => {
   useEffect(() => {
     if (!token) return
     const load = () => axios.post(backendUrl + '/api/orders/stats', {}, { headers: { token } })
-      .then(({ data }) => data.success && setBadges({ orders: data.stats.byStatus['Order Placed'], chats: data.stats.unreadChats, messages: data.stats.unreadMessages, stock: data.stats.stockAlerts }))
+      .then(({ data }) => data.success && setBadges({ orders: data.stats.byStatus['Order Placed'], chats: data.stats.unreadChats, messages: data.stats.unreadMessages, stock: data.stats.stockAlerts, reviews: data.stats.reviewsToAnswer }))
       .catch(() => {})
     load()
     const id = setInterval(load, 30000)
@@ -135,6 +136,7 @@ const App = () => {
                 <Route path='/inventory' element={<Inventory token={token} />} />
                 <Route path='/reports' element={<Reports token={token} />} />
                 <Route path='/promotions' element={<Promotions token={token} />} />
+                <Route path='/reviews' element={<Reviews token={token} />} />
                 <Route path='*' element={<Navigate to='/dashboard' replace />} />
               </Routes>
 
