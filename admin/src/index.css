@@ -1,18 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Manrope:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --color-berry: #A3214F;
+  --color-berry-dark: #7E1A3D;
+  --color-ink: #2B1B24;
+  --color-mauve: #5E4853;
+  --color-line: #EADCE0;
+  --color-gold: #C9973B;
 
-*{
-    font-family:Outfit;
+  --color-pink-50: #FBEFF2;
+  --color-pink-100: #F6DEE4;
+  --color-pink-400: #C9577F;
+  --color-pink-700: #8C1C44;
 }
 
-select,input,textarea{
-    border: 1px solid #c2c2c2;
-    outline-color: #7e757a;
-    border-radius: 4px;
+body { font-family: var(--font-sans); color: var(--color-ink); background: #FAF6F7; }
+
+select, input, textarea {
+  border: 1.5px solid #E4D3D8;
+  border-radius: 10px;
+  background: #fff;
+  outline-color: var(--color-berry);
 }
 
-.active{
-    background-color: white;
-    border-color: #4b484a;
+/* Sidebar active link */
+.side-link.active {
+  background-color: #fff;
+  border-color: var(--color-berry);
+  color: var(--color-berry);
+  font-weight: 700;
 }
+
+.btn-dark {
+  background: var(--color-berry); color: #fff; font-weight: 700;
+  border-radius: 999px; cursor: pointer; transition: background .2s;
+}
+.btn-dark:hover { background: var(--color-berry-dark); }
+.btn-dark:disabled { opacity: .6; cursor: wait; }
