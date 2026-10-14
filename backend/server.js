@@ -12,6 +12,7 @@ import contactRouter from './routes/contactRoute.js'
 import chatRouter from './routes/chatRoute.js'
 import brandRouter from './routes/brandRoute.js'
 import promoRouter from './routes/promoRoute.js'
+import reviewRouter from './routes/reviewRoute.js'
 import { sweepAbandonedOrders } from './controllers/orderController.js'
 
 // App configuration setup
@@ -34,6 +35,7 @@ app.use('/api/contact', contactRouter)
 app.use('/api/chat', chatRouter)
 app.use('/api/brand', brandRouter)
 app.use('/api/promo', promoRouter)
+app.use('/api/review', reviewRouter)
 
 // Give back the stock of online orders that were never paid
 setInterval(sweepAbandonedOrders, 15 * 60 * 1000)

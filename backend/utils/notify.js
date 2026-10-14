@@ -95,6 +95,7 @@ export const notifyOrder = async (order, event) => {
     if (event === 'status') {
         subject = `${storeName}: order #${id} is now "${order.status}"`
         intro = `Your order status has been updated to <b>${order.status}</b>.`
+        if (order.status === 'Delivered') intro += `<br><br>We hope they loved it! <a href="${frontendUrl}/orders">Rate your gifts</a> to help other customers choose.`
         sms = `${storeName}: your order #${id} is now "${order.status}". Track it at ${trackUrl}`
     } else {
         subject = `${storeName}: order #${id} confirmed`

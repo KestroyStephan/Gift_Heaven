@@ -23,6 +23,9 @@ const productSchema = new mongoose.Schema({
     lowStock:{type:Number, default: 5},
     // what one unit costs us at the base price (private, used for profit)
     costPrice:{type:Number, default: 0},
+    // from published customer reviews
+    ratingAvg:{type:Number, default: 0},
+    ratingCount:{type:Number, default: 0},
     date:{type:Number, required:true}
 
 })

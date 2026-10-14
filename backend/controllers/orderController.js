@@ -13,6 +13,7 @@ import { priceBox } from '../utils/box.js'
 import { reserveStock, releaseStock, unitCostOf } from '../utils/stock.js'
 import { runningOffers, salePrice, evaluateCoupon, reserveCoupon, releaseCoupon } from '../utils/promo.js'
 import brandModel from '../models/brandModel.js'
+import reviewModel from '../models/reviewModel.js'
 
 
 //Gate way Initialization (lazy, so the server still starts when a key is missing)
@@ -442,16 +443,17 @@ const orderStats = async (req, res) => {
         }
         const topProducts = Object.values(products).sort((a, b) => b.sales - a.sales).slice(0, 5)
 
-        const [unreadMessages, unreadChats, lowStockItems] = await Promise.all([
+        const [unreadMessages, unreadChats, lowStockItems, reviewsToAnswer] = await Promise.all([
             messageModel.countDocuments({ read: false }),
             chatModel.countDocuments({ status: 'open', unreadAdmin: { $gt: 0 } }),
             productModel.find({ trackStock: true, $expr: { $lte: ['$stock', '$lowStock'] } }).select('name image stock lowStock').sort({ stock: 1 }).lean(),
+            reviewModel.countDocuments({ status: 'published', rating: { $lte: 3 }, 'reply.text': { $exists: false } }),
         ])
         const lowStock = lowStockItems.map(p => ({ _id: p._id, name: p.name, image: p.image?.[0] || '', stock: p.stock, lowStock: p.lowStock }))
 
         res.json({
             success: true,
-            stats: { totalOrders: orders.length, revenue, pendingPayments, totalProducts, totalUsers, byStatus, byMethod, daily, topProducts, byCategory, unreadMessages, unreadChats, lowStock: lowStock.slice(0, 6), stockAlerts: lowStock.length, outOfStock: lowStock.filter(p => p.stock <= 0).length },
+            stats: { totalOrders: orders.length, revenue, pendingPayments, totalProducts, totalUsers, byStatus, byMethod, daily, topProducts, byCategory, unreadMessages, unreadChats, lowStock: lowStock.slice(0, 6), stockAlerts: lowStock.length, outOfStock: lowStock.filter(p => p.stock <= 0).length, reviewsToAnswer },
             recentOrders: orders.sort((a, b) => b.date - a.date).slice(0, 5)
         })
     } catch (error) {
