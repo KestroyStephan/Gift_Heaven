@@ -25,11 +25,12 @@ export const recipientNames = {
 // Unknown values: "ChocolateBucket" -> "Chocolate Bucket"
 export const prettify = (value) => catalogNames[value] || String(value || '').replace(/([a-z])([A-Z])/g, '$1 $2')
 
-const ProductItem = ({id,image,name,price,category,bestseller,sizePrices}) => {
+const ProductItem = ({id,image,name,price,category,bestseller,sizePrices,brand}) => {
 
     const isBox = name === 'Build-Your-Own Surprise Box'
 
-    const {currency} = useContext(ShopContext)
+    const {currency, brandOf} = useContext(ShopContext)
+    const brandName = brandOf(brand)?.name
 
   return (
     <Link className='group flex flex-col gap-3 text-ink' to={isBox ? '/build-a-box' : `/product/${id}`}>
@@ -39,7 +40,7 @@ const ProductItem = ({id,image,name,price,category,bestseller,sizePrices}) => {
             <span className='absolute bottom-3 right-3 bg-white/95 text-ink text-xs font-bold px-3 py-2 rounded-full opacity-0 translate-y-2 transition group-hover:opacity-100 group-hover:translate-y-0'>View gift</span>
         </div>
         <div className='flex flex-col gap-1'>
-            {category && <p className='text-xs font-semibold text-muted'>{prettify(category)}</p>}
+            {(brandName || category) && <p className='text-xs font-semibold text-muted'>{brandName ? <span className='text-berry'>{brandName}</span> : null}{brandName && category ? ' · ' : ''}{category ? prettify(category) : ''}</p>}
             <p className='font-bold leading-snug group-hover:text-berry'>{name}</p>
             <p className='text-[15px]'>{sizePrices ? 'From ' : ''}{currency}{fromPrice({ price, sizePrices }).toLocaleString('en-LK')}</p>
         </div>

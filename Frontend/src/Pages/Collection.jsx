@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { departments, budgets } from '../Components/Mall'
+import { fromPrice } from '../Context/ShopContext'
 import { ShopContext } from '../Context/ShopContext'
 import Title from '../Components/Title'
 import ProductItem, { prettify, recipientNames } from '../Components/ProductItem'
@@ -19,12 +21,14 @@ const FilterGroup = ({ title, options, selected, onToggle, names }) => (
 
 const Collection = () => {
 
-  const {products ,search, showSearch, productsLoading} = useContext(ShopContext);
+  const {products ,search, showSearch, productsLoading, brands} = useContext(ShopContext);
   const [searchParams] = useSearchParams()
   const [showFilter, setShowFilter] = useState(false);
   const [category,setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [recipient, setRecipient] = useState([]);
+  const [brand, setBrand] = useState([]);
+  const [budget, setBudget] = useState(null);
   const [sortType, setSortType] = useState('relevant')
 
   // Links like /collection?sub=BirthdayGift preselect a filter
@@ -32,14 +36,20 @@ const Collection = () => {
     const sub = searchParams.get('sub')
     const cat = searchParams.get('category')
     const forWho = searchParams.get('for')
+    const dept = departments.find(d => d.slug === searchParams.get('dept'))
+    const min = Number(searchParams.get('min')) || 0, max = Number(searchParams.get('max')) || 0
     setSubCategory(sub ? [sub] : [])
-    setCategory(cat ? [cat] : [])
+    setCategory(dept ? dept.categories : cat ? cat.split(',') : [])
     setRecipient(forWho ? [forWho] : [])
+    setBrand(searchParams.get('brand') ? [searchParams.get('brand')] : [])
+    setBudget(min || max ? { min, max } : null)
   }, [searchParams])
 
   // Filter options come from the products that actually exist
   const categories = useMemo(() => [...new Set(products.map(item => item.category))].sort(), [products])
   const subCategories = useMemo(() => [...new Set(products.map(item => item.subCategory))].sort(), [products])
+  const brandOptions = useMemo(() => brands.filter(b => products.some(p => p.brand === b.slug)), [brands, products])
+  const brandNames = Object.fromEntries(brands.map(b => [b.slug, b.name]))
   const recipients = useMemo(() => Object.keys(recipientNames).filter(r => products.some(p => p.recipients?.includes(r))), [products])
 
   const toggle = (setter) => (value) => {
@@ -66,19 +76,29 @@ const Collection = () => {
       productsCopy = productsCopy.filter(item => item.recipients?.some(r => recipient.includes(r)))
     }
 
+    if (brand.length > 0) {
+      productsCopy = productsCopy.filter(item => brand.includes(item.brand))
+    }
+
+    if (budget) {
+      productsCopy = productsCopy.filter(item => { const price = fromPrice(item); return (!budget.min || price >= budget.min) && (!budget.max || price < budget.max) })
+    }
+
     if (sortType === 'low-high') productsCopy.sort((a,b)=>(a.price - b.price))
     if (sortType === 'high-low') productsCopy.sort((a,b)=>(b.price - a.price))
 
     return productsCopy
-  }, [products, search, showSearch, category, subCategory, recipient, sortType])
+  }, [products, search, showSearch, category, subCategory, recipient, brand, budget, sortType])
 
-  const activeFilters = category.length + subCategory.length + recipient.length
+  const activeFilters = category.length + subCategory.length + recipient.length + brand.length + (budget ? 1 : 0)
+  const department = departments.find(d => d.slug === searchParams.get('dept'))
+  const budgetLabel = budget && (budgets.find(b => (b.min || 0) === budget.min && (b.max || 0) === budget.max)?.label || `${budget.min ? `From Rs. ${budget.min.toLocaleString('en-LK')}` : ''} ${budget.max ? `under Rs. ${budget.max.toLocaleString('en-LK')}` : ''}`)
 
   return (
     <div className='pt-10 pb-4'>
       <div className='flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6 mb-8'>
         <div>
-          <Title as='h1' eyebrow='Shop' text1={'All'} text2={'gifts'} />
+          {department ? <Title as='h1' eyebrow='Department' text1={department.name.split(' ')[0]} text2={department.name.split(' ').slice(1).join(' ')} /> : budget ? <Title as='h1' eyebrow={budgetLabel} text1='Gifts by' text2='budget' /> : <Title as='h1' eyebrow='Shop' text1={'All'} text2={'gifts'} />}
           <p className='text-mauve -mt-1'>{productsLoading ? 'Loading gifts…' : `${filterProducts.length} ${filterProducts.length === 1 ? 'gift' : 'gifts'}`}</p>
         </div>
 
@@ -101,10 +121,14 @@ const Collection = () => {
         {/* Filter Options */}
         <aside className={`md:w-56 shrink-0 flex-col gap-8 ${showFilter ? 'flex' : 'hidden'} md:flex`}>
           {recipients.length > 0 && <FilterGroup title='GIFT FOR' options={recipients} selected={recipient} onToggle={toggle(setRecipient)} names={recipientNames} />}
+          {budget && (
+            <p className='flex items-center justify-between gap-2 text-sm bg-rose-50 rounded-2xl px-4 py-3'><span><b>Budget:</b> {budgetLabel}</span><button onClick={() => setBudget(null)} aria-label='Remove budget filter' className='cursor-pointer text-berry'><Icon name='close' size={16} /></button></p>
+          )}
+          {brandOptions.length > 0 && <FilterGroup title='BRAND' options={brandOptions.map(b => b.slug)} selected={brand} onToggle={toggle(setBrand)} names={brandNames} />}
           {categories.length > 0 && <FilterGroup title='CATEGORY' options={categories} selected={category} onToggle={toggle(setCategory)} />}
           {subCategories.length > 0 && <FilterGroup title='OCCASION' options={subCategories} selected={subCategory} onToggle={toggle(setSubCategory)} />}
           {activeFilters > 0 && (
-            <button onClick={()=>{setCategory([]); setSubCategory([]); setRecipient([])}} className='self-start text-sm font-semibold text-berry underline underline-offset-4 cursor-pointer'>Clear all filters</button>
+            <button onClick={()=>{setCategory([]); setSubCategory([]); setRecipient([]); setBrand([]); setBudget(null)}} className='self-start text-sm font-semibold text-berry underline underline-offset-4 cursor-pointer'>Clear all filters</button>
           )}
         </aside>
 
@@ -121,7 +145,7 @@ const Collection = () => {
           <div className='grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-9'>
             {
               filterProducts.map((item)=>(
-                <ProductItem key={item._id} name={item.name} id={item._id} price={item.price} image={item.image} category={item.category} bestseller={item.bestseller} sizePrices={item.sizePrices}/>
+                <ProductItem key={item._id} name={item.name} id={item._id} price={item.price} image={item.image} category={item.category} bestseller={item.bestseller} sizePrices={item.sizePrices} brand={item.brand}/>
               ))
             }
           </div>

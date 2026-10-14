@@ -22,6 +22,8 @@ import Cakes from './Pages/Cakes'
 import CustomStudio from './Pages/CustomStudio'
 import GiftGuide from './Pages/GiftGuide'
 import BuildBox from './Pages/BuildBox'
+import Brands from './Pages/Brands'
+import Brand from './Pages/Brand'
 import ChatWidget from './Components/ChatWidget'
 
 import {ToastContainer} from 'react-toastify';
@@ -58,6 +60,8 @@ const App = () => {
           <Route path='/custom-studio' element={<CustomStudio />} />
           <Route path='/gift-guide' element={<GiftGuide />} />
           <Route path='/build-a-box' element={<BuildBox />} />
+          <Route path='/brands' element={<Brands />} />
+          <Route path='/brand/:slug' element={<Brand />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/product/:productId' element={<Product />} />

@@ -13,7 +13,7 @@ const sizeLabels = { S: 'Small', M: 'Medium', L: 'Large' }
 const Product = () => {
 
   const {productId} = useParams();
-  const {products,currency, addToCart, productsLoading, extrasOf, customOptions} = useContext(ShopContext);
+  const {products,currency, addToCart, productsLoading, extrasOf, customOptions, brandOf} = useContext(ShopContext);
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState('');
   const [size,setSize] = useState('');
@@ -90,6 +90,11 @@ const Product = () => {
         {/* Details */}
         <div className='flex flex-col gap-7'>
           <div className='flex flex-col gap-3'>
+            {brandOf(productData.brand) && (
+              <Link to={`/brand/${productData.brand}`} className='self-start flex items-center gap-2 text-sm font-bold hover:underline underline-offset-4' style={{ color: brandOf(productData.brand).colour }}>
+                <Icon name='star' size={15} />{brandOf(productData.brand).name} <span className='font-medium text-muted'>· visit the brand store</span>
+              </Link>
+            )}
             <p className='eyebrow'>{prettify(productData.category)} · {prettify(productData.subCategory)}</p>
             <h1 className='font-display font-semibold text-[2.6rem] sm:text-[3.4rem] leading-[1.03]'>{productData.name}</h1>
             <p className='text-2xl font-semibold'>{!size && productData.sizePrices ? 'From ' : ''}{currency}{(size ? unitPrice : Math.min(...productData.sizes.map(s => priceOf(productData, s)))).toLocaleString('en-LK')}

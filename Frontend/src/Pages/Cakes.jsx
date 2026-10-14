@@ -53,7 +53,7 @@ const Cakes = () => {
         {!productsLoading && cakes.length === 0 && <p className='text-mauve'>Cake designs are coming soon — chat with us to order one today.</p>}
         <div className='grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-9'>
           {cakes.map(item => (
-            <ProductItem key={item._id} id={item._id} name={item.name} price={item.price} image={item.image} category={item.subCategory} bestseller={item.bestseller} sizePrices={item.sizePrices} />
+            <ProductItem key={item._id} id={item._id} name={item.name} price={item.price} image={item.image} category={item.subCategory} bestseller={item.bestseller} sizePrices={item.sizePrices} brand={item.brand} />
           ))}
         </div>
       </section>

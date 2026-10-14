@@ -25,7 +25,7 @@ const BestSeller = () => {
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-9'>
             {
                 bestSeller.map((item)=>(
-                    <ProductItem key={item._id} id={item._id} name={item.name} image={item.image} price={item.price} category={item.category} bestseller sizePrices={item.sizePrices} />
+                    <ProductItem key={item._id} id={item._id} name={item.name} image={item.image} price={item.price} category={item.category} bestseller sizePrices={item.sizePrices} brand={item.brand} />
                 ))
             }
         </div>
