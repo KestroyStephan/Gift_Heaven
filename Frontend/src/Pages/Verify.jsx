@@ -6,8 +6,8 @@ import axios from 'axios'
 
 const Verify = () => {
 
-    const { navigate, token, setCartItems, backendUrl } = useContext(ShopContext)
-    const [searchParams, setSearchParams] = useSearchParams()
+    const { navigate, token, clearCart, backendUrl } = useContext(ShopContext)
+    const [searchParams] = useSearchParams()
 
     const success = searchParams.get('success')
     const orderId = searchParams.get('orderId')
@@ -20,10 +20,11 @@ const Verify = () => {
             }
             const response = await axios.post(backendUrl + '/api/orders/verifyStripe', { success, orderId }, { headers: { token } })
             if (response.data.success) {
-                setCartItems({})
-                navigate('/orders')
+                clearCart()
+                navigate(`/order-success/${orderId}`, { replace: true })
             }else{
-                navigate('/cart')
+                toast.error(success === 'true' ? (response.data.message || 'Payment could not be verified') : 'Payment cancelled')
+                navigate('/cart', { replace: true })
             }
 
         } catch (error) {
@@ -37,8 +38,9 @@ const Verify = () => {
     }, [token])
 
     return (
-        <div>
-
+        <div className='min-h-[60vh] flex flex-col items-center justify-center gap-4 text-gray-600'>
+            <div className='w-12 h-12 border-4 border-rose-200 border-t-rose-600 rounded-full animate-spin'></div>
+            <p>Confirming your payment, please wait...</p>
         </div>
     )
 }
