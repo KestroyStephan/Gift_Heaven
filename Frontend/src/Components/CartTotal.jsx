@@ -1,39 +1,33 @@
 import React from 'react'
 import { useContext } from 'react'
 import { ShopContext } from '../Context/ShopContext'
-import Title from './Title'
 
 const CartTotal = () => {
 
-
-    const {currency,delivery_fee,getCartAmount} = useContext(ShopContext);
+    const {currency,delivery_fee,getCartAmount,getCartCount} = useContext(ShopContext);
+    const subtotal = getCartAmount()
+    const shipping = subtotal === 0 ? 0 : delivery_fee
 
   return (
-    <div className='w-full'>
-        <div className='text-2xl'>
-            <Title text1={'CART'} text2={'TOTALs'} />
+    <div className='w-full flex flex-col gap-3 text-[15px]'>
+        <h2 className='font-display text-3xl font-semibold mb-2'>Order summary</h2>
+        <div className='flex justify-between text-mauve'>
+            <p>Subtotal ({getCartCount()} {getCartCount() === 1 ? 'item' : 'items'})</p>
+            <p>{currency}{subtotal.toFixed(2)}</p>
         </div>
-
-
-        <div className='flex flex-col gap2 mt-2 text-sm'>
-            <div className='flex justify-between'>
-                <p>Subtotal</p>
-                <p>{currency} {getCartAmount()}.00</p>
-
-            </div>
-            <hr />
-            <div className='flex justify-between'>
-                <p>Shipping Fee</p>
-                <p>{currency} {delivery_fee}.00</p>
-            </div>
-            <hr />
-            <div className='flex justify-between'>
-                <b>Total</b>
-                <b>{currency} {getCartAmount() === 0 ? 0 : getCartAmount() + delivery_fee}.00</b>
-            </div>
-
+        <div className='flex justify-between text-mauve'>
+            <p>Delivery</p>
+            <p>{currency}{shipping.toFixed(2)}</p>
         </div>
-      
+        <div className='flex justify-between text-mauve'>
+            <p>Gift note</p>
+            <p className='text-[#2F5A37] font-semibold'>Free</p>
+        </div>
+        <hr className='border-line my-1' />
+        <div className='flex justify-between text-lg font-bold'>
+            <p>Total</p>
+            <p>{currency}{(subtotal + shipping).toFixed(2)}</p>
+        </div>
     </div>
   )
 }
