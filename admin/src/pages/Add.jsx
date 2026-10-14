@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import axios from 'axios'
-import {backendUrl} from '../App'
+import {backendUrl, categories, subCategories} from '../App'
 import { toast } from 'react-toastify'
+import CustomizationSwitches, { defaultCustomization } from '../components/CustomizationSwitches'
+import SizeEditor from '../components/SizeEditor'
+import RecipientPicker from '../components/RecipientPicker'
 
 const Add = ({token}) => {
 
@@ -14,14 +17,20 @@ const Add = ({token}) => {
   const [name,setName] = useState("");
   const [description,setDescription] = useState("");
   const [price,setPrice] = useState("");
-  const [category,setCategory] = useState("Men");
-  const [subCategory,setSubCategory] = useState("Topwear");
+  const [category,setCategory] = useState(categories[0].value);
+  const [subCategory,setSubCategory] = useState(subCategories[0].value);
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
+  const [customization, setCustomization] = useState(defaultCustomization);
+  const [sizePrices, setSizePrices] = useState({});
+  const [recipients, setRecipients] = useState([]);
 
   
   const onSubmitHandler = async (e)=>{
       e.preventDefault();
+
+      if (!image1 && !image2 && !image3 && !image4) return toast.error('Please upload at least one image')
+      if (sizes.length === 0) return toast.error('Please select at least one size')
 
       try {
         const formData = new FormData()
@@ -33,6 +42,9 @@ const Add = ({token}) => {
         formData.append("subCategory",subCategory)
         formData.append("bestseller",bestseller)
         formData.append("sizes",JSON.stringify(sizes))
+        formData.append("customization",JSON.stringify(customization))
+        formData.append("sizePrices",JSON.stringify(sizePrices))
+        formData.append("recipients",JSON.stringify(recipients))
 
         image1 && formData.append("image1",image1)
         image2 && formData.append("image2",image2)
@@ -50,6 +62,10 @@ const Add = ({token}) => {
           setImage3(false)
           setImage4(false)
           setPrice('')
+          setSizes([])
+          setSizePrices({})
+          setRecipients([])
+          setBestseller(false)
           
         }else{
           toast.error(response.data.message)
@@ -74,22 +90,22 @@ const Add = ({token}) => {
 
           <label htmlFor="image1">
             <img className='w-20' src={!image1 ? assets.upload_area : URL.createObjectURL(image1)} alt="" />
-            <input onChange={(e)=>setImage1(e.target.files[0])} type="file" id='image1' hidden/>
+            <input onChange={(e)=>setImage1(e.target.files[0])} type="file" accept="image/*" id='image1' hidden/>
           </label>
 
           <label htmlFor="image2">
             <img className='w-20' src={!image2 ? assets.upload_area : URL.createObjectURL(image2)} alt="" />
-            <input onChange={(e)=>setImage2(e.target.files[0])} type="file" id='image2' hidden/>
+            <input onChange={(e)=>setImage2(e.target.files[0])} type="file" accept="image/*" id='image2' hidden/>
           </label>
 
           <label htmlFor="image3">
             <img className='w-20' src={!image3 ? assets.upload_area : URL.createObjectURL(image3)} alt="" />
-            <input onChange={(e)=>setImage3(e.target.files[0])} type="file" id='image3' hidden/>
+            <input onChange={(e)=>setImage3(e.target.files[0])} type="file" accept="image/*" id='image3' hidden/>
           </label>
 
           <label htmlFor="image4">
             <img className='w-20' src={!image4 ? assets.upload_area : URL.createObjectURL(image4)} alt="" />
-            <input onChange={(e)=>setImage4(e.target.files[0])} type="file" id='image4' hidden/>
+            <input onChange={(e)=>setImage4(e.target.files[0])} type="file" accept="image/*" id='image4' hidden/>
           </label>
 
         </div>
@@ -109,56 +125,37 @@ const Add = ({token}) => {
 
         <div>
           <p className='mb-2'>Product category</p>
-          <select onChange={(e)=>setCategory(e.target.value)} className='w-full px-3 py-2'>
-            <option value="ChocolateBucket">Chocolate Bucket</option>
-            <option value="Bouquet">Bouquet</option>
-            <option value="LoveFocil">Love Focil</option>
+          <select value={category} onChange={(e)=>setCategory(e.target.value)} className='w-full px-3 py-2'>
+            {categories.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </div>
 
         <div>
           <p className='mb-2'>Sub category</p>
-          <select onChange={(e)=>setSubCategory(e.target.value)} className='w-full px-3 py-2'>
-            <option value="BirthdayGift">Birthday Gift</option>
-            <option value="SurpriseGift">Surprise Gift</option>
-            <option value="AnniversaryGift">Anniversary Gift</option>
+          <select value={subCategory} onChange={(e)=>setSubCategory(e.target.value)} className='w-full px-3 py-2'>
+            {subCategories.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </div>
 
         <div>
           <p className='mb-2'>Product Price</p>
-          <input onChange={(e)=>setPrice(e.target.value)} value={price} className='w-full px-3 py-2 sm:w-[120px]' type="Number" placeholder='25' />
+          <input onChange={(e)=>setPrice(e.target.value)} value={price} className='w-full px-3 py-2 sm:w-[120px]' type="number" min="0" step="0.01" placeholder='25' required />
         </div>
 
       </div>
 
-      <div>
-        <p className='mb-2'>Product Sizes</p>
+      <SizeEditor sizes={sizes} setSizes={setSizes} sizePrices={sizePrices} setSizePrices={setSizePrices} basePrice={price} />
 
-        <div className='flex gap-3'>
+      <RecipientPicker value={recipients} onChange={setRecipients} />
 
-          <div onClick={()=>setSizes(prev => prev.includes("S") ? prev.filter(item => item !== "S") : [...prev,"S"])}>
-            <p className={`${sizes.includes("S") ? "bg-pink-100" : "bg-slate-200" } px-3 py-1 cursor-pointer`}>S</p>
-          </div>
-
-          <div onClick={()=>setSizes(prev => prev.includes("M") ? prev.filter(item => item !== "M") : [...prev,"M"])}>
-            <p className={`${sizes.includes("M") ? "bg-pink-100" : "bg-slate-200" } px-3 py-1 cursor-pointer`}>M</p>
-          </div>
-
-          <div onClick={()=>setSizes(prev => prev.includes("L") ? prev.filter(item => item !== "L") : [...prev,"L"])}>
-            <p className={`${sizes.includes("L") ? "bg-pink-100" : "bg-slate-200" } px-3 py-1 cursor-pointer`}>L</p>
-          </div>
-
-
-        </div>
-      </div>
+      <CustomizationSwitches value={customization} onChange={setCustomization} />
 
       <div className='flex gap-2 mt-2'>
         <input onChange={()=>setBestseller(prev => !prev)} checked={bestseller} type="checkbox" id='bestseller' />
         <label className='cursor-pointer' htmlFor="bestseller">Add to bestseller</label>
       </div>
 
-      <button type='submit' className='w-28 py-3 mt-4 bg-black text-white cursor-pointer'>ADD</button>
+      <button type='submit' className='btn-dark px-10 py-3 mt-4'>Add product</button>
       
     </form>
   )
