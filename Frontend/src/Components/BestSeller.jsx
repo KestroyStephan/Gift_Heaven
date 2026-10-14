@@ -1,38 +1,35 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import {ShopContext} from '../Context/ShopContext'
 import Title from './Title'
 import ProductItem from './ProductItem';
+import Icon from './Icons';
 
 const BestSeller = () => {
 
     const {products} = useContext(ShopContext);
-    const [bestSeller, setBestSeller] = useState([]);
+    const bestSeller = useMemo(() => products.filter((item)=>(item.bestseller)).slice(0,8), [products])
 
-    useEffect(()=>{
-        const bestProduct = products.filter((item)=>(item.bestseller));
-        setBestSeller(bestProduct.slice(0,5))
-    },[products])
+    if (bestSeller.length === 0) return null
 
   return (
-    <div className='my-10'>
-        <div className='text-center text-3xl py-8'>
-            <Title text1={'BEST'} text2={'SELLER'}/>
-            <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
-                The gifts our customers keep coming back for. Handpicked favourites for 
-                anniversaries, date nights, and every "just because" moment, with secure 
-                checkout and delivery straight to your loved one's door.
-            </p>
+    <section className='shell py-20'>
+        <div className='flex flex-wrap items-end justify-between gap-4 mb-8'>
+            <div>
+                <Title eyebrow='Most loved' text1={'Best'} text2={'sellers'}/>
+                <p className='text-mauve max-w-xl -mt-1'>The gifts our customers keep coming back for.</p>
+            </div>
+            <Link to='/collection' className='font-bold text-sm text-berry flex items-center gap-1'>Shop all <Icon name='arrow' size={16} /></Link>
         </div>
 
-        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-9'>
             {
-                bestSeller.map((item,index)=>(
-                    <ProductItem key={index} id={item._id} name={item.name} image={item.image} price={item.price} />
+                bestSeller.map((item)=>(
+                    <ProductItem key={item._id} id={item._id} name={item.name} image={item.image} price={item.price} category={item.category} bestseller sizePrices={item.sizePrices} />
                 ))
             }
         </div>
-      
-    </div>
+    </section>
   )
 }
 

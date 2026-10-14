@@ -1,40 +1,39 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { ShopContext } from '../Context/ShopContext'
 import Title from './Title'
 import ProductItem from './ProductItem'
+import Icon from './Icons'
 
 const LatestCollection = () => {
 
-    const {products} = useContext(ShopContext);
-    const [latestProducts, setLatestProducts] = useState([])
+    const {products, productsLoading} = useContext(ShopContext);
+    const latestProducts = products.slice(0,8)
 
-    useEffect(()=>{
-        setLatestProducts(products.slice(0,10));
-    },[products])
-
-    
   return (
-    <div className='my-10'>
-        <div className='text-center py-8 text-3xl'>
-            <Title text1={'LATEST'} text2={'COLLECTION'} />
-            <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
-                Freshly added gifts for the people you love most. Browse romantic keepsakes, 
-                anniversary picks, and sweet everyday surprises, compare details, and 
-                order online for delivery right to their door.
-            </p>
+    <section className='shell py-20'>
+        <div className='flex flex-wrap items-end justify-between gap-4 mb-8'>
+            <div>
+                <Title eyebrow='Just in' text1={'Latest'} text2={'collection'} />
+                <p className='text-mauve max-w-xl -mt-1'>Freshly added gifts for the people you love most.</p>
+            </div>
+            <Link to='/collection' className='font-bold text-sm text-berry flex items-center gap-1'>View all <Icon name='arrow' size={16} /></Link>
         </div>
 
-        {/* Rendering Products */}
-        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
+        {!productsLoading && latestProducts.length === 0 && (
+            <div className='rounded-[28px] border border-dashed border-rose-300 bg-white py-16 text-center text-mauve'>
+                New gifts are being wrapped — check back soon.
+            </div>
+        )}
+
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-9'>
             {
-                latestProducts.map((item, index)=>(
-                    <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price} />
+                latestProducts.map((item)=>(
+                    <ProductItem key={item._id} id={item._id} image={item.image} name={item.name} price={item.price} category={item.category} bestseller={item.bestseller} sizePrices={item.sizePrices} />
                 ))
             }
         </div>
-
-      
-    </div>
+    </section>
   )
 }
 
