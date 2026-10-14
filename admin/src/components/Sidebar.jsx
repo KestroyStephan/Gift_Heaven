@@ -8,6 +8,7 @@ const groups = [
     label: 'Catalogue', links: [
       { to: '/list', label: 'Products', icon: 'list' },
       { to: '/add', label: 'Add product', icon: 'add' },
+      { to: '/brands', label: 'Brands', icon: 'tag' },
     ]
   },
   { label: 'Sales', links: [{ to: '/orders', label: 'Orders', icon: 'orders', badge: 'orders' }] },

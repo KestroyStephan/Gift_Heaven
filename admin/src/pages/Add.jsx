@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import {backendUrl, currency, categories, subCategories} from '../App'
-import { Icon, PageHeader } from '../components/ui'
+import { Icon, PageHeader, BrandSelect, BrandMark, useBrands } from '../components/ui'
 import { toast } from 'react-toastify'
 import CustomizationSwitches, { defaultCustomization } from '../components/CustomizationSwitches'
 import SizeEditor from '../components/SizeEditor'
@@ -25,6 +25,8 @@ const Add = ({token}) => {
   const [sizePrices, setSizePrices] = useState({});
   const [recipients, setRecipients] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [brand, setBrand] = useState('');
+  const [brands] = useBrands();
 
   
   const onSubmitHandler = async (e)=>{
@@ -47,6 +49,7 @@ const Add = ({token}) => {
         formData.append("customization",JSON.stringify(customization))
         formData.append("sizePrices",JSON.stringify(sizePrices))
         formData.append("recipients",JSON.stringify(recipients))
+        formData.append("brand",brand)
 
         image1 && formData.append("image1",image1)
         image2 && formData.append("image2",image2)
@@ -67,6 +70,7 @@ const Add = ({token}) => {
           setSizes([])
           setSizePrices({})
           setRecipients([])
+          setBrand('')
           setBestseller(false)
           
         }else{
@@ -127,6 +131,9 @@ const Add = ({token}) => {
               <label className='label'>Description
                 <textarea onChange={(e)=>setDescription(e.target.value)} value={description} rows={4} className='field font-normal resize-y' placeholder="What's inside, size, and why it makes a lovely gift" required />
               </label>
+              <label className='label'>Brand <span className='font-normal text-xs text-mauve -mt-1'>Customers can shop by brand. Manage the list on the Brands page.</span>
+                <BrandSelect brands={brands} value={brand} onChange={setBrand} />
+              </label>
               <div className='grid sm:grid-cols-3 gap-4'>
                 <label className='label'>Category
                   <select value={category} onChange={(e)=>setCategory(e.target.value)} className='field font-normal'>
@@ -164,6 +171,7 @@ const Add = ({token}) => {
             <div className='aspect-square rounded-2xl bg-pink-50 overflow-hidden flex items-center justify-center text-berry'>
               {cover ? <img src={URL.createObjectURL(cover)} alt='' className='w-full h-full object-cover' /> : <Icon name='gift' size={40} />}
             </div>
+            {brands.find(b => b.slug === brand) && <span className='mt-4 flex items-center gap-2 text-sm font-semibold text-ink'><BrandMark brand={brands.find(b => b.slug === brand)} size='sm' />{brands.find(b => b.slug === brand).name}</span>}
             <p className='text-[11px] font-bold tracking-[0.14em] uppercase text-mauve mt-4'>{labelOf(categories, category)}</p>
             <p className='font-display text-2xl font-semibold text-ink leading-tight mt-1'>{name || 'Product name'}</p>
             <p className='font-bold text-berry mt-1'>{currency}{Number(price || 0).toLocaleString('en-LK')}</p>

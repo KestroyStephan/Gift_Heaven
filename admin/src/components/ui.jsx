@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { backendUrl } from '../App'
 
 // Line icons used across the admin portal
 const paths = {
@@ -29,6 +31,7 @@ const paths = {
   pin: <><path d="M12 21s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.5" /></>,
   sparkle: <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6" />,
   chevron: <path d="M9 6l6 6-6 6" />,
+  tag: <><path d="M3 12V4a1 1 0 011-1h8l9 9-9 9-9-9z" /><circle cx="7.5" cy="7.5" r="1.5" /></>,
 }
 
 export const Icon = ({ name, size = 20, className = '', strokeWidth = 1.8 }) => (
@@ -89,3 +92,29 @@ export const Empty = ({ icon = 'gift', title, text }) => (
 )
 
 export const orderNo = (id) => '#' + String(id).slice(-8).toUpperCase()
+
+// Brand logo, or its name as a coloured wordmark when no logo is uploaded
+export const BrandMark = ({ brand, size = 'md' }) => {
+  if (!brand) return null
+  const box = size === 'sm' ? 'w-9 h-9 rounded-xl text-[13px]' : 'w-16 h-16 rounded-2xl text-xl'
+  return brand.logo
+    ? <img src={brand.logo} alt={brand.name} className={`${box} object-contain bg-white border border-line p-1 shrink-0`} />
+    : <span className={`${box} shrink-0 flex items-center justify-center font-display italic font-semibold text-white`} style={{ background: brand.colour }}>
+        {brand.name.split(/\s+/).slice(0, 2).map(w => w[0]).join('')}
+      </span>
+}
+
+// Brands for pickers and tables
+export const useBrands = () => {
+  const [brands, setBrands] = useState([])
+  const load = () => axios.get(backendUrl + '/api/brand/list').then(({ data }) => data.success && setBrands(data.brands)).catch(() => {})
+  useEffect(() => { load() }, [])
+  return [brands, load]
+}
+
+export const BrandSelect = ({ brands, value, onChange, className = 'field font-normal' }) => (
+  <select value={value} onChange={(e) => onChange(e.target.value)} className={className}>
+    <option value=''>No brand</option>
+    {brands.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
+  </select>
+)

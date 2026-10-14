@@ -9,6 +9,7 @@ import Orders from './pages/Orders'
 import Dashboard from './pages/Dashboard'
 import Messages from './pages/Messages'
 import Chats from './pages/Chats'
+import Brands from './pages/Brands'
 import Login from './components/Login'
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -127,6 +128,7 @@ const App = () => {
                 <Route path='/orders' element={<Orders token={token} />} />
                 <Route path='/messages' element={<Messages token={token} />} />
                 <Route path='/chats' element={<Chats token={token} />} />
+                <Route path='/brands' element={<Brands token={token} />} />
                 <Route path='*' element={<Navigate to='/dashboard' replace />} />
               </Routes>
 

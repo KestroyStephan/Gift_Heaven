@@ -6,13 +6,13 @@ import { toast } from 'react-toastify'
 import CustomizationSwitches, { defaultCustomization } from '../components/CustomizationSwitches'
 import SizeEditor from '../components/SizeEditor'
 import RecipientPicker from '../components/RecipientPicker'
-import { Icon, PageHeader, Empty } from '../components/ui'
+import { Icon, PageHeader, Empty, BrandMark, BrandSelect, useBrands } from '../components/ui'
 
 const labelOf = (options, value) => options.find(option => option.value === value)?.label || value
 const PER_PAGE = 20
 
 // Modal form for editing an existing product
-const EditProduct = ({ product, token, onClose, onSaved }) => {
+const EditProduct = ({ product, token, brands, onClose, onSaved }) => {
 
   const [form, setForm] = useState({
     name: product.name,
@@ -25,6 +25,7 @@ const EditProduct = ({ product, token, onClose, onSaved }) => {
     customization: { ...defaultCustomization, ...(product.customization || {}) },
     sizePrices: product.sizePrices || {},
     recipients: product.recipients || [],
+    brand: product.brand || '',
   })
   const [images, setImages] = useState([false, false, false, false])
   const [saving, setSaving] = useState(false)
@@ -48,6 +49,7 @@ const EditProduct = ({ product, token, onClose, onSaved }) => {
       formData.append('customization', JSON.stringify(form.customization))
       formData.append('sizePrices', JSON.stringify(form.sizePrices))
       formData.append('recipients', JSON.stringify(form.recipients))
+      formData.append('brand', form.brand)
       images.forEach((file, index) => file && formData.append(`image${index + 1}`, file))
 
       const { data } = await axios.post(backendUrl + '/api/product/update', formData, { headers: { token } })
@@ -87,6 +89,8 @@ const EditProduct = ({ product, token, onClose, onSaved }) => {
 
         <label className='label'>Name<input value={form.name} onChange={set('name')} className='field font-normal' required /></label>
         <label className='label'>Description<textarea value={form.description} onChange={set('description')} className='field font-normal' rows={3} required /></label>
+
+        <label className='label'>Brand<BrandSelect brands={brands} value={form.brand} onChange={(brand) => setForm(prev => ({ ...prev, brand }))} /></label>
 
         <div className='grid sm:grid-cols-3 gap-3'>
           <label className='label'>Category
@@ -137,6 +141,9 @@ const List = ({token}) => {
   const [editing, setEditing] = useState(null)
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('')
+  const [brandFilter, setBrandFilter] = useState('')
+  const [brands] = useBrands()
+  const brandOf = (slug) => brands.find(b => b.slug === slug)
   const [page, setPage] = useState(1)
 
   const fetchList = async ()=>{
@@ -185,6 +192,7 @@ const List = ({token}) => {
 
   const visible = list.filter(item =>
     (!category || item.category === category) &&
+    (!brandFilter || (brandFilter === '-' ? !item.brand : item.brand === brandFilter)) &&
     item.name.toLowerCase().includes(query.toLowerCase()))
   const pages = Math.max(1, Math.ceil(visible.length / PER_PAGE))
   const current = Math.min(page, pages)
@@ -207,6 +215,11 @@ const List = ({token}) => {
             <option value=''>All categories</option>
             {usedCategories.map(c => <option key={c.value} value={c.value}>{c.label} ({list.filter(i => i.category === c.value).length})</option>)}
           </select>
+          <select value={brandFilter} onChange={(e) => { setBrandFilter(e.target.value); setPage(1) }} aria-label='Filter by brand' className='field !w-auto'>
+            <option value=''>All brands</option>
+            {brands.map(b => <option key={b.slug} value={b.slug}>{b.name} ({b.productCount})</option>)}
+            <option value='-'>No brand</option>
+          </select>
         </div>
 
         {shown.length === 0 ? <div className='p-6'><Empty icon='search' title='No products found' text='Try another name or category.' /></div> : (
@@ -215,6 +228,7 @@ const List = ({token}) => {
               <thead className='bg-[#FCF8F9] border-b border-line'>
                 <tr className='table-head text-left'>
                   <th className='pl-5 pr-3 py-3 font-bold'>Product</th>
+                  <th className='px-3 py-3 font-bold'>Brand</th>
                   <th className='px-3 py-3 font-bold'>Category</th>
                   <th className='px-3 py-3 font-bold hidden lg:table-cell'>Occasion</th>
                   <th className='px-3 py-3 font-bold'>Price</th>
@@ -233,6 +247,9 @@ const List = ({token}) => {
                           <span className='block text-xs text-mauve'>{item.sizes?.length || 0} option{item.sizes?.length === 1 ? '' : 's'}</span>
                         </span>
                       </span>
+                    </td>
+                    <td className='px-3 py-3 whitespace-nowrap'>
+                      {brandOf(item.brand) ? <span className='flex items-center gap-2 font-medium text-ink'><BrandMark brand={brandOf(item.brand)} size='sm' />{brandOf(item.brand).name}</span> : <span className='text-xs text-mauve'>—</span>}
                     </td>
                     <td className='px-3 py-3 whitespace-nowrap'><span className='px-2.5 py-1 rounded-full bg-pink-50 text-pink-700 text-xs font-semibold'>{labelOf(categories, item.category)}</span></td>
                     <td className='px-3 py-3 hidden lg:table-cell whitespace-nowrap'>{labelOf(subCategories, item.subCategory)}</td>
@@ -272,6 +289,7 @@ const List = ({token}) => {
         <EditProduct
           product={editing}
           token={token}
+          brands={brands}
           onClose={() => setEditing(null)}
           onSaved={async () => { setEditing(null); await fetchList() }}
         />
