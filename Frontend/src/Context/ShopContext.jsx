@@ -85,6 +85,9 @@ const ShopContextProvider = (props) => {
     const [couponResult, setCouponResult] = useState(null)
     const [couponError, setCouponError] = useState('')
     const [couponChecking, setCouponChecking] = useState(false)
+    // Saved gifts: kept in the browser for guests, in the account once logged in
+    const [wishlist, setWishlist] = useState(() => { try { return JSON.parse(localStorage.getItem('guestWishlist')) || [] } catch { return [] } })
+    const [wishlistShare, setWishlistShare] = useState({ shared: false, shareId: null })
     const [token, setToken] = useState(localStorage.getItem('token') || '')
     // Live chat panel (any page can open it with a topic)
     const [chat, setChat] = useState({ open: false, topic: '' })
@@ -109,6 +112,8 @@ const ShopContextProvider = (props) => {
         localStorage.removeItem('token')
         setToken('')
         clearCart()
+        setWishlist([])
+        setWishlistShare({ shared: false, shareId: null })
         if (message) toast.info(message)
         navigate('/login')
     }
@@ -315,6 +320,49 @@ const ShopContextProvider = (props) => {
         await checkCoupon(clean)
     }
 
+    // ---------- wishlist
+    useEffect(() => { if (!token) localStorage.setItem('guestWishlist', JSON.stringify(wishlist)) }, [wishlist, token])
+
+    const loadWishlist = async () => {
+        try {
+            const guest = (() => { try { return JSON.parse(localStorage.getItem('guestWishlist')) || [] } catch { return [] } })()
+            const { data } = guest.length
+                ? await axios.post(backendUrl + '/api/user/wishlist/merge', { ids: guest }, { headers: { token } })
+                : await axios.post(backendUrl + '/api/user/wishlist', {}, { headers: { token } })
+            if (handleAuthError(data)) return
+            if (data.success) {
+                localStorage.removeItem('guestWishlist')
+                setWishlist(data.wishlist)
+                setWishlistShare({ shared: data.shared, shareId: data.shareId })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const inWishlist = (id) => wishlist.includes(id)
+    const toggleWishlist = async (id) => {
+        const adding = !wishlist.includes(id)
+        setWishlist(prev => adding ? [id, ...prev] : prev.filter(x => x !== id))
+        toast.success(adding ? 'Saved to your wishlist' : 'Removed from your wishlist', { autoClose: 1200 })
+        if (!token) return
+        try {
+            const { data } = await axios.post(backendUrl + '/api/user/wishlist/toggle', { productId: id }, { headers: { token } })
+            if (handleAuthError(data)) return
+            if (data.success) setWishlist(data.wishlist)
+            else { toast.error(data.message); setWishlist(prev => adding ? prev.filter(x => x !== id) : [id, ...prev]) }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const setWishlistShared = async (shared) => {
+        const { data } = await axios.post(backendUrl + '/api/user/wishlist/share', { shared }, { headers: { token } })
+        if (handleAuthError(data)) return
+        if (data.success) setWishlistShare({ shared: data.shared, shareId: data.shareId })
+        else toast.error(data.message)
+    }
+
     // Re-check the coupon whenever the bag changes
     useEffect(() => {
         if (!couponCode || !products.length) return
@@ -388,6 +436,7 @@ const ShopContextProvider = (props) => {
     useEffect(() => {
         if (token) {
             getUserCart(token)
+            loadWishlist()
         }
     }, [token])
 
@@ -401,6 +450,7 @@ const ShopContextProvider = (props) => {
         cartItems, cartCustoms, customOptions, extrasOf, addToCart, getCartCount, updateQuantity,
         getCartAmount, navigate, backendUrl, token, setToken, logout, handleAuthError,
         chat, openChat, closeChat, brands, brandOf,
+        wishlist, inWishlist, toggleWishlist, wishlistShare, setWishlistShared,
         offers, publicCoupons, couponCode, couponResult, couponError, couponChecking, applyCoupon, removeCoupon
     }
 

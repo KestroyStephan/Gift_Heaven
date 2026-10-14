@@ -21,7 +21,8 @@ const Navbar = () => {
 
     const [visible, setVisible] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
-    const { setShowSearch, getCartCount, navigate, token, logout, publicCoupons } = useContext(ShopContext);
+    const { setShowSearch, getCartCount, navigate, token, logout, publicCoupons, wishlist, products } = useContext(ShopContext);
+    const wishCount = products.length ? wishlist.filter(id => products.some(p => p._id === id)).length : wishlist.length
     const promo = publicCoupons.find(c => c.firstOrderOnly) || publicCoupons[0]
     const location = useLocation()
 
@@ -54,6 +55,11 @@ const Navbar = () => {
                             <Icon name='search' />
                         </button>
 
+                        <Link to='/wishlist' aria-label={`Wishlist, ${wishCount} saved`} className={`${iconButton} relative`}>
+                            <Icon name='heart' />
+                            {wishCount > 0 && <span className='absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-berry text-white text-[10px] font-bold flex items-center justify-center'>{wishCount}</span>}
+                        </Link>
+
                         <div className='relative'>
                             <button aria-label='Account' aria-expanded={menuOpen} onClick={() => token ? setMenuOpen(!menuOpen) : navigate('/login')} className={iconButton}>
                                 <Icon name='user' />
@@ -62,6 +68,7 @@ const Navbar = () => {
                                 <div className='absolute right-0 top-12 w-48 bg-white border border-line rounded-2xl shadow-lg py-2 text-sm'>
                                     <button onClick={() => navigate('/profile')} className='w-full text-left px-4 py-2.5 hover:bg-rose-50 cursor-pointer'>My profile</button>
                                     <button onClick={() => navigate('/orders')} className='w-full text-left px-4 py-2.5 hover:bg-rose-50 cursor-pointer'>My orders</button>
+                                    <button onClick={() => navigate('/wishlist')} className='w-full text-left px-4 py-2.5 hover:bg-rose-50 cursor-pointer'>My wishlist</button>
                                     <hr className='my-1 border-line' />
                                     <button onClick={() => logout()} className='w-full text-left px-4 py-2.5 hover:bg-rose-50 text-berry cursor-pointer'>Log out</button>
                                 </div>

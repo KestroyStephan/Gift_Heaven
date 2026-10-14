@@ -4,6 +4,7 @@ import {ShopContext} from '../Context/ShopContext';
 import RelatedProducts from '../Components/RelatedProducts';
 import Reviews from '../Components/Reviews';
 import { Stars } from '../Components/Stars';
+import WishlistButton from '../Components/WishlistButton';
 import Icon from '../Components/Icons';
 import { prettify } from '../Components/ProductItem';
 import GiftCustomizer, { emptyCustom, compactCustom, missingChoices } from '../Components/GiftCustomizer';
@@ -142,7 +143,10 @@ const Product = () => {
           </fieldset>
 
           {productData.customization?.box ? (
-            <Link to='/build-a-box' className='btn-primary self-start'><Icon name='gift' size={18} /> Start building your box</Link>
+            <span className='flex flex-wrap gap-3'>
+              <Link to='/build-a-box' className='btn-primary self-start'><Icon name='gift' size={18} /> Start building your box</Link>
+              <WishlistButton productId={productData._id} name={productData.name} variant='button' />
+            </span>
           ) : <>
           <GiftCustomizer product={productData} value={custom} onChange={setCustom} />
 
@@ -152,6 +156,7 @@ const Product = () => {
               <span aria-live='polite' className='w-8 text-center font-bold'>{quantity}</span>
               <button onClick={()=>setQuantity(q => Math.min(maxQty, q + 1))} disabled={quantity >= maxQty} aria-label='Increase quantity' className='w-12 h-full flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-default'><Icon name='plus' size={18} /></button>
             </div>
+            <WishlistButton productId={productData._id} name={productData.name} variant='button' />
             {maxQty <= 0 ? (
               <button disabled className='btn-primary flex-1 min-w-[220px] !bg-stone-400 !cursor-not-allowed'>Sold out</button>
             ) : (
