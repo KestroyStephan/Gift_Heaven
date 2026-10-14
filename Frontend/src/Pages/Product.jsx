@@ -5,7 +5,7 @@ import RelatedProducts from '../Components/RelatedProducts';
 import Icon from '../Components/Icons';
 import { prettify } from '../Components/ProductItem';
 import GiftCustomizer, { emptyCustom, compactCustom, missingChoices } from '../Components/GiftCustomizer';
-import { priceOf, available, stockLabel } from '../Context/ShopContext';
+import { priceOf, listPriceOf, offerOf, available, stockLabel } from '../Context/ShopContext';
 import { toast } from 'react-toastify';
 
 const sizeLabels = { S: 'Small', M: 'Medium', L: 'Large' }
@@ -48,6 +48,9 @@ const Product = () => {
   const finalCustom = compactCustom(custom)
   const extras = extrasOf(finalCustom)
   const unitPrice = priceOf(productData, size)
+  const shownSize = size || productData.sizes.reduce((a, b) => priceOf(productData, b) < priceOf(productData, a) ? b : a, productData.sizes[0])
+  const listPrice = listPriceOf(productData, shownSize)
+  const deal = offerOf(productData, listPrice)
 
   const addGift = async () => {
     if (maxQty <= 0) return toast.error('Sorry, this gift is sold out')
@@ -102,8 +105,15 @@ const Product = () => {
             <p className='eyebrow'>{prettify(productData.category)} · {prettify(productData.subCategory)}</p>
             <h1 className='font-display font-semibold text-[2.6rem] sm:text-[3.4rem] leading-[1.03]'>{productData.name}</h1>
             <p className='text-2xl font-semibold'>{!size && productData.sizePrices ? 'From ' : ''}{currency}{(size ? unitPrice : Math.min(...productData.sizes.map(s => priceOf(productData, s)))).toLocaleString('en-LK')}
+              {deal && <s className='ml-3 text-lg font-medium text-muted'>{currency}{listPrice.toLocaleString('en-LK')}</s>}
               {extras > 0 && <span className='ml-2 text-base font-medium text-mauve'>+ {currency}{extras.toLocaleString('en-LK')} personalisation</span>}
             </p>
+            {deal && (
+              <p className='self-start flex flex-wrap items-center gap-2 text-sm'>
+                <span className='bg-berry text-white font-bold px-3 py-1 rounded-full'>{deal.offer.badge || deal.offer.name}</span>
+                <span className='font-semibold text-berry'>You save {currency}{deal.saving.toLocaleString('en-LK')}{deal.offer.endsAt ? ` · ends ${new Date(deal.offer.endsAt).toLocaleDateString('en-LK', { day: 'numeric', month: 'short' })}` : ''}</span>
+              </p>
+            )}
             <p className={`flex items-center gap-2 text-sm font-semibold ${!stock ? 'text-violet-800' : stock.tone === 'out' ? 'text-rose-700' : stock.tone === 'low' ? 'text-amber-700' : 'text-emerald-700'}`}>
               <span className='w-2 h-2 rounded-full bg-current'></span>
               {!stock ? 'Made to order for you' : stock.tone === 'in' ? 'In stock — ready to gift' : stock.tone === 'low' ? `Hurry, only ${productData.stock} left` : 'Sold out — check back soon'}

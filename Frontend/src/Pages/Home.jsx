@@ -6,12 +6,13 @@ import LatestCollection from '../Components/LatestCollection'
 import BestSeller from '../Components/BestSeller'
 import OurPolicy from '../Components/OurPolicy'
 import NewsletterBox from '../Components/NewsletterBox'
-import { ShopByDepartment, BrandStrip, BudgetDeals, BrandSpotlight } from '../Components/Mall'
+import { ShopByDepartment, BrandStrip, BudgetDeals, BrandSpotlight, DealsStrip } from '../Components/Mall'
 
 const Home = () => {
   return (
     <div>
       <Hero />
+      <DealsStrip />
       <ShopByDepartment />
       <BrandStrip />
       <BudgetDeals />

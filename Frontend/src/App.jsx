@@ -24,6 +24,7 @@ import GiftGuide from './Pages/GiftGuide'
 import BuildBox from './Pages/BuildBox'
 import Brands from './Pages/Brands'
 import Brand from './Pages/Brand'
+import Offers from './Pages/Offers'
 import ChatWidget from './Components/ChatWidget'
 
 import {ToastContainer} from 'react-toastify';
@@ -61,6 +62,7 @@ const App = () => {
           <Route path='/gift-guide' element={<GiftGuide />} />
           <Route path='/build-a-box' element={<BuildBox />} />
           <Route path='/brands' element={<Brands />} />
+          <Route path='/offers' element={<Offers />} />
           <Route path='/brand/:slug' element={<Brand />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />

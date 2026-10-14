@@ -70,11 +70,12 @@ const OrderSuccess = () => {
                             <p className='text-gray-500'>Size: {item.size} · Qty: {item.quantity}</p>
                             <CustomSummary custom={item.custom} />
                         </div>
-                        <p>{currency}{(item.price * item.quantity).toLocaleString('en-LK')}</p>
+                        <p className='text-right'>{currency}{(item.price * item.quantity).toLocaleString('en-LK')}{item.listPrice > item.price && <s className='block text-xs text-gray-400'>{currency}{(item.listPrice * item.quantity).toLocaleString('en-LK')}</s>}</p>
                     </div>
                 ))}
                 <div className='flex justify-between mt-4 text-gray-600'><p>Subtotal</p><p>{currency}{subtotal.toLocaleString('en-LK')}</p></div>
-                <div className='flex justify-between text-gray-600'><p>Shipping</p><p>{currency}{(order.amount - subtotal).toLocaleString('en-LK')}</p></div>
+                {order.discount > 0 && <div className='flex justify-between text-[#2F5A37] font-semibold'><p>Coupon {order.couponCode}</p><p>−{currency}{order.discount.toLocaleString('en-LK')}</p></div>}
+                <div className='flex justify-between text-gray-600'><p>Delivery</p><p>{(order.deliveryFee ?? (order.amount - subtotal)) === 0 ? 'Free' : `${currency}${(order.deliveryFee ?? (order.amount - subtotal)).toLocaleString('en-LK')}`}</p></div>
                 <div className='flex justify-between font-semibold mt-1'><p>Total</p><p>{currency}{order.amount.toLocaleString('en-LK')}</p></div>
             </div>
 

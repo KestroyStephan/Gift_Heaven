@@ -13,17 +13,41 @@ export const splitKey = (key) => {
     return { size, customId }
 }
 
-// Price for a size (cakes, canvases… can cost more in bigger sizes)
-export const priceOf = (product, size) => {
+// Running sales from the server (set by the provider; the server applies the same rules at checkout)
+let liveOffers = []
+
+// Price for a size before any offer (cakes, canvases… can cost more in bigger sizes)
+export const listPriceOf = (product, size) => {
     const sized = product?.sizePrices?.[size]
     return typeof sized === 'number' ? sized : product?.price || 0
 }
 
-// Lowest price across sizes, for "From $X" labels
-export const fromPrice = (product) => {
-    const prices = Object.values(product?.sizePrices || {}).filter(v => typeof v === 'number')
-    return prices.length ? Math.min(...prices) : product?.price || 0
+// The best running offer for a product at a price: { offer, saving }
+export const offerOf = (product, price) => {
+    let best = null
+    for (const offer of liveOffers) {
+        const covers = offer.scope === 'all' || (offer.scope === 'category' && offer.targets.includes(product?.category)) ||
+            (offer.scope === 'brand' && offer.targets.includes(product?.brand)) || (offer.scope === 'products' && offer.targets.includes(product?._id))
+        if (!covers) continue
+        const saving = Math.min(price, Math.round(offer.type === 'percent' ? price * offer.value / 100 : offer.value))
+        if (!best || saving > best.saving) best = { offer, saving }
+    }
+    return best
 }
+
+// Price for a size after offers
+export const priceOf = (product, size) => {
+    const list = listPriceOf(product, size)
+    return list - (offerOf(product, list)?.saving || 0)
+}
+
+const sizesOf = (product) => {
+    const sized = Object.keys(product?.sizePrices || {}).filter(s => typeof product.sizePrices[s] === 'number')
+    return sized.length ? sized : [null]
+}
+// Lowest price across sizes, for "From Rs. X" labels (after offers)
+export const fromPrice = (product) => Math.min(...sizesOf(product).map(s => priceOf(product, s)))
+export const fromListPrice = (product) => Math.min(...sizesOf(product).map(s => listPriceOf(product, s)))
 
 // How many a customer can buy (Infinity for made-to-order gifts)
 export const available = (product) => product?.trackStock ? Math.max(0, product.stock || 0) : Infinity
@@ -54,6 +78,13 @@ const ShopContextProvider = (props) => {
     const [productsLoading, setProductsLoading] = useState(true);
     const [customOptions, setCustomOptions] = useState(null);
     const [brands, setBrands] = useState([]);
+    const [offers, setOffers] = useState([]);
+    const [publicCoupons, setPublicCoupons] = useState([]);
+    // Coupon typed at checkout; the discount always comes from the server
+    const [couponCode, setCouponCode] = useState(() => localStorage.getItem('coupon') || '')
+    const [couponResult, setCouponResult] = useState(null)
+    const [couponError, setCouponError] = useState('')
+    const [couponChecking, setCouponChecking] = useState(false)
     const [token, setToken] = useState(localStorage.getItem('token') || '')
     // Live chat panel (any page can open it with a topic)
     const [chat, setChat] = useState({ open: false, topic: '' })
@@ -64,6 +95,14 @@ const ShopContextProvider = (props) => {
     const clearCart = () => {
         setCartItems({})
         setCartCustoms({})
+        removeCoupon()
+    }
+
+    const removeCoupon = () => {
+        localStorage.removeItem('coupon')
+        setCouponCode('')
+        setCouponResult(null)
+        setCouponError('')
     }
 
     const logout = (message) => {
@@ -221,6 +260,68 @@ const ShopContextProvider = (props) => {
         }
     }
 
+    const getPromos = async () => {
+        try {
+            const { data } = await axios.get(backendUrl + '/api/promo/public')
+            if (data.success) {
+                liveOffers = data.offers
+                setOffers(data.offers)
+                setPublicCoupons(data.coupons)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // Bag lines in the shape the server prices
+    const cartLines = () => {
+        const lines = []
+        for (const itemId in cartItems) {
+            if (products.length && !products.some(p => p._id === itemId)) continue
+            for (const key in cartItems[itemId]) {
+                if (cartItems[itemId][key] > 0) {
+                    const { size, customId } = splitKey(key)
+                    lines.push({ _id: itemId, size, quantity: cartItems[itemId][key], custom: customId ? cartCustoms[customId] || null : null })
+                }
+            }
+        }
+        return lines
+    }
+
+    const checkCoupon = async (code) => {
+        const clean = String(code || '').trim().toUpperCase()
+        if (!clean) return
+        if (!token) { setCouponResult(null); setCouponError('Log in to use a coupon'); return }
+        const items = cartLines()
+        if (!items.length) { setCouponResult(null); return }
+        setCouponChecking(true)
+        try {
+            const { data } = await axios.post(backendUrl + '/api/promo/apply', { code: clean, items }, { headers: { token } })
+            if (handleAuthError(data)) return
+            if (data.success) { setCouponResult(data); setCouponError('') }
+            else { setCouponResult(null); setCouponError(data.message) }
+        } catch (error) {
+            setCouponError(error.message)
+        } finally {
+            setCouponChecking(false)
+        }
+    }
+
+    const applyCoupon = async (code) => {
+        const clean = String(code || '').trim().toUpperCase()
+        if (!clean) return
+        localStorage.setItem('coupon', clean)
+        setCouponCode(clean)
+        await checkCoupon(clean)
+    }
+
+    // Re-check the coupon whenever the bag changes
+    useEffect(() => {
+        if (!couponCode || !products.length) return
+        const id = setTimeout(() => checkCoupon(couponCode), 350)
+        return () => clearTimeout(id)
+    }, [couponCode, cartItems, cartCustoms, token, products.length])
+
     const getBrands = async () => {
         try {
             const { data } = await axios.get(backendUrl + '/api/brand/list')
@@ -281,6 +382,7 @@ const ShopContextProvider = (props) => {
         getProductData()
         getCustomOptions()
         getBrands()
+        getPromos()
     }, [])
 
     useEffect(() => {
@@ -298,7 +400,8 @@ const ShopContextProvider = (props) => {
         showSearch, setShowSearch, setCartItems, clearCart,
         cartItems, cartCustoms, customOptions, extrasOf, addToCart, getCartCount, updateQuantity,
         getCartAmount, navigate, backendUrl, token, setToken, logout, handleAuthError,
-        chat, openChat, closeChat, brands, brandOf
+        chat, openChat, closeChat, brands, brandOf,
+        offers, publicCoupons, couponCode, couponResult, couponError, couponChecking, applyCoupon, removeCoupon
     }
 
     return (

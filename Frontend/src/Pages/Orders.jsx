@@ -69,7 +69,7 @@ const Orders = () => {
             <div key={order._id} className='border-t border-b py-4 text-gray-700'>
               <div className='flex flex-wrap justify-between gap-2 text-xs text-gray-500 mb-2'>
                 <p>Order <b className='text-gray-700'>#{String(order._id).slice(-8).toUpperCase()}</b> · {new Date(order.date).toDateString()}</p>
-                <p>Total: <b className='text-gray-700'>{currency}{order.amount.toLocaleString('en-LK')}</b> · {order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod} · <span className={order.payment ? 'text-green-600' : 'text-amber-600'}>{order.payment ? 'Paid' : 'Payment pending'}</span></p>
+                <p>Total: <b className='text-gray-700'>{currency}{order.amount.toLocaleString('en-LK')}</b>{order.discount > 0 && <span className='text-[#2F5A37]'> (saved {currency}{order.discount.toLocaleString('en-LK')} with {order.couponCode})</span>} · {order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod} · <span className={order.payment ? 'text-green-600' : 'text-amber-600'}>{order.payment ? 'Paid' : 'Payment pending'}</span></p>
               </div>
 
               {order.items.map((item,index)=>(

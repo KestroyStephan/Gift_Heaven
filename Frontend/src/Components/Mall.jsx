@@ -4,6 +4,7 @@ import { ShopContext, fromPrice } from '../Context/ShopContext'
 import Title from './Title'
 import Icon from './Icons'
 import ProductItem from './ProductItem'
+import { CouponTicket, offerText } from '../Pages/Offers'
 
 // Departments group our categories the way a gift mall's floors would
 export const departments = [
@@ -181,6 +182,36 @@ export const BrandSpotlight = ({ index = 0 }) => {
                 </Link>
                 <div className='grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-8'>
                     {items.map(item => <ProductItem key={item._id} id={item._id} name={item.name} price={item.price} image={item.image} category={item.category} bestseller={item.bestseller} sizePrices={item.sizePrices} brand={item.brand} />)}
+                </div>
+            </div>
+        </section>
+    )
+}
+
+// This week's sales and coupon codes, near the top of the home page
+export const DealsStrip = () => {
+    const { offers, publicCoupons } = useContext(ShopContext)
+    if (!offers.length && !publicCoupons.length) return null
+    return (
+        <section className='shell py-10'>
+            <div className='rounded-[32px] bg-white border border-line p-6 sm:p-8'>
+                <div className='flex flex-wrap items-end justify-between gap-4 mb-6'>
+                    <Title eyebrow='Deals this week' text1='Offers &' text2='coupons' className='!mb-0' />
+                    <Link to='/offers' className='font-bold text-sm text-berry flex items-center gap-1'>All offers <Icon name='arrow' size={16} /></Link>
+                </div>
+                <div className='grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-5'>
+                    <div className='grid sm:grid-cols-3 gap-3'>
+                        {offers.slice(0, 3).map((o, i) => (
+                            <Link key={o._id} to='/offers' className={`rounded-[22px] p-5 text-white flex flex-col justify-between min-h-[150px] ${['bg-berry', 'bg-ink', 'bg-[#8C5A1E]'][i % 3]}`}>
+                                <span className='text-[11px] font-bold tracking-[0.16em] uppercase text-white/70'>{o.badge || 'Offer'}</span>
+                                <span className='font-display text-[2rem] leading-none font-semibold'>{offerText(o)}</span>
+                                <span className='text-xs text-white/80'>{o.name}</span>
+                            </Link>
+                        ))}
+                    </div>
+                    <div className='flex flex-col gap-3'>
+                        {publicCoupons.slice(0, 2).map(c => <CouponTicket key={c.code} coupon={c} compact />)}
+                    </div>
                 </div>
             </div>
         </section>

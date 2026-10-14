@@ -21,7 +21,7 @@ const PlaceOrder = () => {
 
    const [method, setMethod] = useState('cod');
    const [loading, setLoading] = useState(false);
-   const { navigate, backendUrl, token, cartItems, cartCustoms, clearCart, getCartAmount, getCartCount, products, handleAuthError } = useContext(ShopContext);
+   const { navigate, backendUrl, token, cartItems, cartCustoms, clearCart, getCartAmount, getCartCount, products, handleAuthError, couponCode, couponResult } = useContext(ShopContext);
 
 
    const [formData, setFormData] = useState({
@@ -139,7 +139,9 @@ const PlaceOrder = () => {
          // The server recalculates the price from the database
          let orderData = {
             address: formData,
-            items: orderItems.map(({ _id, size, quantity, custom }) => ({ _id, size, quantity, custom }))
+            items: orderItems.map(({ _id, size, quantity, custom }) => ({ _id, size, quantity, custom })),
+            // the server checks the coupon again and works out the discount itself
+            ...(couponResult && couponCode ? { couponCode } : {})
          }
 
          switch (method) {

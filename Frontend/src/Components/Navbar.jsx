@@ -9,6 +9,7 @@ const links = [
     { to: '/', label: 'Home' },
     { to: '/collection', label: 'Shop' },
     { to: '/brands', label: 'Brands' },
+    { to: '/offers', label: 'Offers' },
     { to: '/build-a-box', label: 'Build a box' },
     { to: '/cakes', label: 'Cakes' },
     { to: '/custom-studio', label: 'Custom studio' },
@@ -20,7 +21,8 @@ const Navbar = () => {
 
     const [visible, setVisible] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
-    const { setShowSearch, getCartCount, navigate, token, logout } = useContext(ShopContext);
+    const { setShowSearch, getCartCount, navigate, token, logout, publicCoupons } = useContext(ShopContext);
+    const promo = publicCoupons.find(c => c.firstOrderOnly) || publicCoupons[0]
     const location = useLocation()
 
     // Close menus whenever the page changes
@@ -32,7 +34,9 @@ const Navbar = () => {
         <>
             <div className='bg-ink text-[#F6E9EE] text-[13px] px-4 py-2.5 flex flex-wrap justify-center gap-x-8 gap-y-1 text-center'>
                 <span>Same-day delivery in Colombo for orders before 2 pm</span>
-                <span className='text-gold-light hidden sm:inline'>Free hand-lettered gift note with every order</span>
+                {promo
+                    ? <Link to='/offers' className='text-gold-light hidden sm:inline hover:underline underline-offset-4'>{promo.description} — use <b className='tracking-wider'>{promo.code}</b></Link>
+                    : <span className='text-gold-light hidden sm:inline'>Free hand-lettered gift note with every order</span>}
             </div>
 
             <header className='sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-line'>
@@ -41,7 +45,7 @@ const Navbar = () => {
 
                     <nav aria-label='Main' className='hidden lg:flex gap-7 text-sm font-semibold'>
                         {links.map(link => (
-                            <NavLink key={link.to} to={link.to} end={link.to === '/'} className='nav-link text-ink hover:text-berry'>{link.label}</NavLink>
+                            <NavLink key={link.to} to={link.to} end={link.to === '/'} className={`nav-link hover:text-berry ${link.to === '/offers' ? 'text-berry' : 'text-ink'}`}>{link.label}</NavLink>
                         ))}
                     </nav>
 
