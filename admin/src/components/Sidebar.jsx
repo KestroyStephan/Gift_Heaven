@@ -1,37 +1,67 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
+import { AdminLogo, Icon } from './ui'
 
-const icons = {
-    dashboard: <><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>,
-    add: <><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></>,
-    list: <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />,
-    orders: <><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8V6a3 3 0 016 0v2" /></>,
-    messages: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></>,
-    chats: <path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.4A8 8 0 1121 12z" />,
-}
-
-const links = [
-    { to: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { to: '/add', label: 'Add product', icon: 'add' },
-    { to: '/list', label: 'Products', icon: 'list' },
-    { to: '/orders', label: 'Orders', icon: 'orders' },
-    { to: '/chats', label: 'Chats', icon: 'chats' },
-    { to: '/messages', label: 'Messages', icon: 'messages' },
+const groups = [
+  { label: 'Overview', links: [{ to: '/dashboard', label: 'Dashboard', icon: 'dashboard' }] },
+  {
+    label: 'Catalogue', links: [
+      { to: '/list', label: 'Products', icon: 'list' },
+      { to: '/add', label: 'Add product', icon: 'add' },
+    ]
+  },
+  { label: 'Sales', links: [{ to: '/orders', label: 'Orders', icon: 'orders', badge: 'orders' }] },
+  {
+    label: 'Customers', links: [
+      { to: '/chats', label: 'Live chats', icon: 'chats', badge: 'chats' },
+      { to: '/messages', label: 'Messages', icon: 'messages', badge: 'messages' },
+    ]
+  },
 ]
 
-const Sidebar = () => {
-    return (
-        <aside className='w-[18%] min-h-screen border-r border-line bg-[#FCF9FA]'>
-            <nav className='flex flex-col gap-2 pt-6 pl-[16%] text-[15px]'>
-                {links.map(link => (
-                    <NavLink key={link.to} to={link.to} className='side-link flex items-center gap-3 border border-transparent border-r-0 px-3 py-2.5 rounded-l-xl text-mauve hover:bg-white'>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icons[link.icon]}</svg>
-                        <span className='hidden md:block'>{link.label}</span>
-                    </NavLink>
-                ))}
-            </nav>
-        </aside>
-    )
+const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:5173'
+
+const Sidebar = ({ badges = {}, open, onClose, onLogout }) => {
+  return (
+    <>
+      {open && <div className='fixed inset-0 bg-black/40 z-40 lg:hidden' onClick={onClose}></div>}
+      <aside className={`sidebar fixed lg:sticky top-0 left-0 z-50 h-screen w-[264px] shrink-0 flex flex-col transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className='px-6 pt-6 pb-5 flex items-center justify-between'>
+          <AdminLogo size={38} light />
+          <button onClick={onClose} aria-label='Close menu' className='lg:hidden text-white/70 hover:text-white cursor-pointer'><Icon name='close' /></button>
+        </div>
+
+        <nav className='flex-1 overflow-y-auto px-4 pb-4 flex flex-col gap-5'>
+          {groups.map(group => (
+            <div key={group.label} className='flex flex-col gap-1'>
+              <p className='px-3 mb-1 text-[10.5px] font-bold tracking-[0.18em] uppercase text-white/40'>{group.label}</p>
+              {group.links.map(link => (
+                <NavLink key={link.to} to={link.to} onClick={onClose} className='side-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14.5px] font-medium'>
+                  <Icon name={link.icon} size={19} />
+                  <span className='flex-1'>{link.label}</span>
+                  {badges[link.badge] > 0 && <span className='min-w-5 h-5 px-1.5 rounded-full bg-gold text-ink text-[11px] font-bold flex items-center justify-center'>{badges[link.badge]}</span>}
+                </NavLink>
+              ))}
+            </div>
+          ))}
+        </nav>
+
+        <div className='p-4 flex flex-col gap-3 border-t border-white/10'>
+          <a href={storeUrl} target='_blank' rel='noreferrer' className='flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/10 text-white/85 text-sm font-medium'>
+            <Icon name='store' size={18} /> <span className='flex-1'>View storefront</span> <span aria-hidden='true'>↗</span>
+          </a>
+          <div className='flex items-center gap-3 px-2'>
+            <span className='w-9 h-9 rounded-full bg-gradient-to-br from-gold to-[#E0B866] text-ink text-sm font-bold flex items-center justify-center'>SH</span>
+            <span className='flex-1 leading-tight'>
+              <span className='block text-sm font-semibold text-white'>Store admin</span>
+              <span className='block text-xs text-white/50'>Surprise Heaven</span>
+            </span>
+            <button onClick={onLogout} aria-label='Log out' title='Log out' className='w-9 h-9 rounded-full text-white/60 hover:text-white hover:bg-white/10 flex items-center justify-center cursor-pointer'><Icon name='logout' size={18} /></button>
+          </div>
+        </div>
+      </aside>
+    </>
+  )
 }
 
 export default Sidebar

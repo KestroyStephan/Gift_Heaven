@@ -94,17 +94,30 @@ const App = () => {
   }, [])
 
 
+  // Sidebar badges: new orders, unread chats and messages (refreshed every 30 s)
+  const [badges, setBadges] = useState({})
+  const [menuOpen, setMenuOpen] = useState(false)
+  useEffect(() => {
+    if (!token) return
+    const load = () => axios.post(backendUrl + '/api/orders/stats', {}, { headers: { token } })
+      .then(({ data }) => data.success && setBadges({ orders: data.stats.byStatus['Order Placed'], chats: data.stats.unreadChats, messages: data.stats.unreadMessages }))
+      .catch(() => {})
+    load()
+    const id = setInterval(load, 30000)
+    return () => clearInterval(id)
+  }, [token])
+
+
   return (
     <div className='min-h-screen'>
-      <ToastContainer />
+      <ToastContainer position='top-right' autoClose={2500} />
 
       {token === "" ? <Login setToken={setToken} /> :
-        <>
-          <Navbar setToken={setToken} />
-          <hr />
-          <div className='flex w-full'>
-            <Sidebar />
-            <div className='w-[70%] mx-auto ml-[max(5vw, 25px)] my-8 text-gray-600 text-base'>
+        <div className='flex'>
+          <Sidebar badges={badges} open={menuOpen} onClose={() => setMenuOpen(false)} onLogout={() => setToken('')} />
+          <div className='flex-1 min-w-0 flex flex-col'>
+            <Navbar onMenu={() => setMenuOpen(true)} />
+            <main className='w-full max-w-[1240px] mx-auto px-4 sm:px-8 py-8 text-mauve text-[15px]'>
 
               <Routes>
                 <Route path='/' element={<Navigate to='/dashboard' replace />} />
@@ -117,9 +130,9 @@ const App = () => {
                 <Route path='*' element={<Navigate to='/dashboard' replace />} />
               </Routes>
 
-            </div>
+            </main>
           </div>
-        </>
+        </div>
       }
 
     </div>
