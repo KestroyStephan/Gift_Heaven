@@ -19,6 +19,7 @@ const categories = [
     { key: 'Teddy', tint: 'bg-cream' },
     { key: 'Plants', tint: 'bg-sage' },
     { key: 'HomeDecor', tint: 'bg-lilac' },
+    { key: 'KitchenDining', tint: 'bg-cream' },
     { key: 'ArtSupplies', tint: 'bg-cream' },
     { key: 'Stationery', tint: 'bg-sage' },
     { key: 'Games', tint: 'bg-lilac' },

@@ -17,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
 // Must match STORE_CURRENCY in the backend .env
-export const currency = import.meta.env.VITE_CURRENCY_SYMBOL || '$'
+export const currency = import.meta.env.VITE_CURRENCY_SYMBOL || 'Rs. '
 
 // Shared product options for Add / Edit
 export const categories = [
@@ -40,6 +40,7 @@ export const categories = [
   { value: 'ArtSupplies', label: 'Art & Drawing' },
   { value: 'Games', label: 'Games & Puzzles' },
   { value: 'Accessories', label: 'Fashion Accessories' },
+  { value: 'KitchenDining', label: 'Kitchen & Dining' },
 ]
 export const recipientOptions = [
   { value: 'her', label: 'Her' }, { value: 'him', label: 'Him' }, { value: 'couples', label: 'Couples' },

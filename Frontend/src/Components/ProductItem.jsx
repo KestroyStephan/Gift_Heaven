@@ -9,7 +9,7 @@ export const catalogNames = {
     Teddy: 'Teddy & Plush', LoveFocil: 'Love Boxes', Personalised: 'Personalised Gifts',
     CustomPrint: 'Custom Printing', Cake: 'Cakes', Festive: 'Festive & Cultural',
     Toys: 'Kids & Toys', Baby: 'Baby', Jewellery: 'Jewellery', Plants: 'Plants & Pots', HomeDecor: 'Home & Décor',
-    Stationery: 'Pens & Key Tags', ArtSupplies: 'Art & Drawing', Games: 'Games & Puzzles', GiftPackage: 'Gift Packages', Accessories: 'Fashion Accessories',
+    Stationery: 'Pens & Key Tags', ArtSupplies: 'Art & Drawing', Games: 'Games & Puzzles', GiftPackage: 'Gift Packages', Accessories: 'Fashion Accessories', KitchenDining: 'Kitchen & Dining',
     BirthdayGift: 'Birthday', AnniversaryGift: 'Anniversary', SurpriseGift: 'Surprise',
     ValentineGift: "Valentine's", WeddingGift: 'Wedding', ThankYouGift: 'Thank You',
     HousewarmingGift: 'Housewarming', BabyGift: 'New Baby', GraduationGift: 'Graduation',
@@ -39,7 +39,7 @@ const ProductItem = ({id,image,name,price,category,bestseller,sizePrices}) => {
         <div className='flex flex-col gap-1'>
             {category && <p className='text-xs font-semibold text-muted'>{prettify(category)}</p>}
             <p className='font-bold leading-snug group-hover:text-berry'>{name}</p>
-            <p className='text-[15px]'>{sizePrices ? 'From ' : ''}{currency}{fromPrice({ price, sizePrices }).toFixed(2)}</p>
+            <p className='text-[15px]'>{sizePrices ? 'From ' : ''}{currency}{fromPrice({ price, sizePrices }).toLocaleString('en-LK')}</p>
         </div>
     </Link>
   )
