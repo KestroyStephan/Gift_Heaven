@@ -10,9 +10,11 @@ export const customizationFields = [
   { key: 'print', label: 'Print text & product colour' },
   { key: 'cake', label: 'Cake options (flavour, date…)' },
   { key: 'engrave', label: 'Engraving text' },
+  { key: 'album', label: 'Photo album (many photos + quotes)' },
+  { key: 'box', label: 'Surprise box (gifts inside)' },
 ]
 
-export const defaultCustomization = { name: true, message: true, ribbon: true, wrap: true, addOns: true, photo: false, print: false, cake: false, engrave: false }
+export const defaultCustomization = { name: true, message: true, ribbon: true, wrap: true, addOns: true, photo: false, print: false, cake: false, engrave: false, album: false, box: false }
 
 // Which personalisation options customers see for a product
 const CustomizationSwitches = ({ value, onChange }) => (

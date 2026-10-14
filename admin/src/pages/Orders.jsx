@@ -101,7 +101,7 @@ const Orders = ({ token }) => {
                           <b className='text-pink-700'>Personalised</b>
                           {item.custom.cakeFlavour && <span>Cake: <b>{item.custom.cakeFlavour}</b>{item.custom.eggless ? ' · eggless' : ''}</span>}
                           {item.custom.cakeMessage && <span>On the cake: “{item.custom.cakeMessage}”</span>}
-                          {item.custom.deliveryDate && <span className='text-pink-700 font-semibold'>Deliver: {item.custom.deliveryDate}{item.custom.timeSlot ? `, ${item.custom.timeSlot}` : ''}</span>}
+                          {item.custom.deliveryDate && !item.custom.boxItems && <span className='text-pink-700 font-semibold'>Deliver: {item.custom.deliveryDate}{item.custom.timeSlot ? `, ${item.custom.timeSlot}` : ''}</span>}
                           {item.custom.printText && <span>Print: “{item.custom.printText}”</span>}
                           {item.custom.printColour && <span>Colour: {item.custom.printColour}</span>}
                           {item.custom.name && <span>For: {item.custom.name}</span>}
@@ -109,6 +109,32 @@ const Orders = ({ token }) => {
                           {item.custom.ribbon && <span>Ribbon: {item.custom.ribbon}</span>}
                           {item.custom.wrap && <span>Wrapping: {item.custom.wrap}</span>}
                           {item.custom.addOns?.length > 0 && <span>Add-ons: {item.custom.addOns.join(', ')}</span>}
+                          {item.custom.photos?.length > 0 && (
+                            <span className='flex flex-col gap-1'>
+                              <span>Album ({item.custom.photos.length} photos){item.custom.albumTitle ? ` · “${item.custom.albumTitle}”` : ''}</span>
+                              <span className='flex flex-wrap gap-1'>{item.custom.photos.map((url, i) => <a key={url} href={url} target='_blank' rel='noreferrer'><img src={url} alt={`Album photo ${i + 1}`} className='w-10 h-10 object-cover rounded' /></a>)}</span>
+                            </span>
+                          )}
+                          {item.custom.albumQuotes && <span>Quotes to paper-cut: “{item.custom.albumQuotes}”</span>}
+                          {item.custom.boxItems?.length > 0 && (
+                            <span className='flex flex-col gap-1 mt-1 p-2 bg-white rounded border border-pink-100'>
+                              <b className='text-ink'>Pack in the box:</b>
+                              {item.custom.boxItems.map((b, i) => (
+                                <span key={i} className='flex flex-col'>
+                                  <span>☐ {b.name} ({b.size}) × {b.quantity}</span>
+                                  {b.custom?.cakeFlavour && <span className='ml-4'>Cake: {b.custom.cakeFlavour}{b.custom.eggless ? ' · eggless' : ''}{b.custom.cakeMessage ? ` · “${b.custom.cakeMessage}”` : ''}</span>}
+                                  {b.custom?.photos?.length > 0 && (
+                                    <span className='ml-4 flex flex-col gap-1'>
+                                      <span>Album: {b.custom.photos.length} photos{b.custom.albumTitle ? ` · “${b.custom.albumTitle}”` : ''}{b.custom.albumQuotes ? ` · quotes: “${b.custom.albumQuotes}”` : ''}</span>
+                                      <span className='flex flex-wrap gap-1'>{b.custom.photos.map((url, j) => <a key={url} href={url} target='_blank' rel='noreferrer'><img src={url} alt={`Album photo ${j + 1}`} className='w-10 h-10 object-cover rounded' /></a>)}</span>
+                                    </span>
+                                  )}
+                                </span>
+                              ))}
+                            </span>
+                          )}
+                          {item.custom.boxItems && item.custom.deliveryDate && <span className='text-pink-700 font-semibold'>Deliver box: {item.custom.deliveryDate}{item.custom.timeSlot ? `, ${item.custom.timeSlot}` : ''}</span>}
+                          {item.custom.surprise && <span className='font-bold text-red-700'>SURPRISE — call the customer, not the recipient</span>}
                           {item.custom.photo && <a href={item.custom.photo} target='_blank' rel='noreferrer' className='flex items-center gap-2 text-pink-700 underline'><img src={item.custom.photo} alt='' className='w-10 h-10 object-cover rounded' />Customer photo</a>}
                         </div>
                       )}
