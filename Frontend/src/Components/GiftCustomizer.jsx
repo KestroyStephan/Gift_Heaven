@@ -8,6 +8,7 @@ export const emptyCustom = {
     name: '', message: '', ribbon: '', wrap: '', addOns: [], photo: '',
     printText: '', printColour: '',
     cakeFlavour: '', eggless: false, cakeMessage: '', deliveryDate: '', timeSlot: '',
+    photos: [], albumTitle: '', albumQuotes: '',
 }
 
 // True when the customer actually chose something
@@ -17,7 +18,8 @@ export const hasCustomization = (custom) => !!compactCustom(custom)
 export const compactCustom = (custom) => {
     if (!custom) return null
     const out = {}
-    for (const key of ['name', 'message', 'printText', 'cakeMessage']) if (custom[key]?.trim()) out[key] = custom[key].trim()
+    for (const key of ['name', 'message', 'printText', 'cakeMessage', 'albumTitle', 'albumQuotes']) if (custom[key]?.trim()) out[key] = custom[key].trim()
+    if (custom.photos?.length) out.photos = custom.photos
     for (const key of ['ribbon', 'wrap', 'photo', 'printColour', 'cakeFlavour', 'deliveryDate', 'timeSlot']) if (custom[key]) out[key] = custom[key]
     if (custom.addOns?.length) out.addOns = custom.addOns
     if (custom.eggless) out.eggless = true
@@ -27,6 +29,7 @@ export const compactCustom = (custom) => {
 // Missing required choices for this product (cakes need flavour + date)
 export const missingChoices = (product, custom, options) => {
     const allowed = { ...options?.defaultCustomization, ...(product.customization || {}) }
+    if (allowed.album && !custom.photos?.length) return 'Please upload photos for the album'
     if (!allowed.cake) return ''
     if (!custom.cakeFlavour) return 'Please choose a cake flavour'
     if (!custom.deliveryDate) return 'Please choose a delivery date for the cake'
@@ -83,6 +86,31 @@ const GiftCustomizer = ({ product, value, onChange }) => {
         } finally {
             setUploading(false)
         }
+    }
+
+    // Several photos for a handmade album
+    const uploadAlbum = async (files) => {
+        if (!files?.length) return
+        if (!token) {
+            toast.info('Please log in to upload photos')
+            return navigate(`/login?redirect=/product/${product._id}`)
+        }
+        setUploading(true)
+        const uploaded = []
+        for (const file of [...files].slice(0, customOptions.limits.albumPhotos - value.photos.length)) {
+            if (file.size > 5 * 1024 * 1024) { toast.error(`${file.name} is over 5 MB`); continue }
+            try {
+                const formData = new FormData()
+                formData.append('photo', file)
+                const { data } = await axios.post(backendUrl + '/api/product/upload-photo', formData, { headers: { token } })
+                if (data.success) uploaded.push(data.url)
+                else toast.error(data.message)
+            } catch (error) {
+                toast.error(error.message)
+            }
+        }
+        onChange({ ...value, photos: [...value.photos, ...uploaded] })
+        setUploading(false)
     }
 
     const title = allowed.cake ? 'Design your' : allowed.print ? 'Print your' : 'Make it'
@@ -162,6 +190,33 @@ const GiftCustomizer = ({ product, value, onChange }) => {
                                     className={`w-11 h-11 rounded-full border-2 cursor-pointer ${value.printColour === c.id ? 'border-ink ring-2 ring-offset-2 ring-ink' : 'border-white shadow-[0_0_0_1px_#E4C9D0]'}`}
                                     style={{ background: c.hex }} />
                             ))}
+                        </div>
+                    </Section>
+                </>
+            )}
+
+            {/* ---------- Handmade photo album ---------- */}
+            {allowed.album && (
+                <>
+                    <label className='flex flex-col gap-2 text-sm font-bold'>Cover title <span className='font-medium text-muted -mt-1'>Optional</span>
+                        <input value={value.albumTitle} onChange={e => set('albumTitle', e.target.value)} maxLength={customOptions.limits.albumTitle} placeholder='Our Little Forever' className='field font-normal' />
+                    </label>
+                    <label className='flex flex-col gap-2 text-sm font-bold'>Love quotes to paper-cut on the pages
+                        <textarea rows={3} value={value.albumQuotes} onChange={e => set('albumQuotes', e.target.value)} maxLength={customOptions.limits.albumQuotes} placeholder='You are my today and all of my tomorrows…' className='field font-normal resize-y' />
+                    </label>
+                    <Section title='Your photos' hint={`${value.photos.length} uploaded · we print and hand-decorate each page`}>
+                        <div className='flex flex-wrap gap-2'>
+                            {value.photos.map((url, i) => (
+                                <div key={url} className='relative'>
+                                    <img src={url} alt={`Album photo ${i + 1}`} className='w-20 h-20 rounded-xl object-cover border border-line' />
+                                    <button type='button' aria-label={`Remove photo ${i + 1}`} onClick={() => set('photos', value.photos.filter(p => p !== url))}
+                                        className='absolute -top-2 -right-2 w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center cursor-pointer'><Icon name='close' size={12} /></button>
+                                </div>
+                            ))}
+                            <label className={`w-20 h-20 rounded-xl border border-dashed border-rose-300 flex flex-col items-center justify-center text-xs text-muted ${uploading ? 'opacity-60' : 'cursor-pointer hover:bg-rose-50'}`}>
+                                {uploading ? <span className='w-5 h-5 border-2 border-rose-200 border-t-berry rounded-full animate-spin'></span> : <><Icon name='plus' />Add</>}
+                                <input type='file' accept='image/*' multiple className='sr-only' disabled={uploading} onChange={e => { uploadAlbum(e.target.files); e.target.value = '' }} />
+                            </label>
                         </div>
                     </Section>
                 </>

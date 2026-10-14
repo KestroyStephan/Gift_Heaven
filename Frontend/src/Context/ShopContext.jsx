@@ -90,7 +90,12 @@ const ShopContextProvider = (props) => {
         const flavour = cake.flavours.find(f => f.id === custom.cakeFlavour)?.price || 0
         const eggless = custom.eggless ? cake.eggless.price : 0
         const photoPrint = custom.cakeFlavour && custom.photo ? cake.photoPrint.price : 0
-        return wrap + addOns + flavour + eggless + photoPrint
+        // A surprise box also costs every gift packed inside it
+        const boxContents = (custom.boxItems || []).reduce((sum, item) => {
+            const product = products.find(p => p._id === item._id)
+            return sum + (product ? (priceOf(product, item.size) + extrasOf(item.custom)) * (item.quantity || 1) : 0)
+        }, 0)
+        return wrap + addOns + flavour + eggless + photoPrint + boxContents
     }
 
     const syncLine = async (itemId, key, quantity, custom) => {
