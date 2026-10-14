@@ -1,24 +1,45 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import { ShopContext } from '../Context/ShopContext'
 
 const NewsletterBox = () => {
 
-    const onSUbmitHandler = (event)=>{
-        event.preventDefault(); /* when submit it will not reload webpage */
+    const { backendUrl } = useContext(ShopContext)
+    const [email, setEmail] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const onSubmitHandler = async (event)=>{
+        event.preventDefault();
+        setLoading(true)
+        try {
+            const { data } = await axios.post(backendUrl + '/api/newsletter/subscribe', { email })
+            if (data.success) {
+                toast.success(data.message)
+                setEmail('')
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
-
-
   return (
-    <div className='text-center'>
-        <p className='text-2xl font-medium text-rose-900'>Subscribe Now & Get 20% Off</p>
-        <p className='text-gray-400 mt-3'>Never miss a reason to celebrate. Thank you for shopping with us!
-             Follow us on social media for new arrivals and exclusive offers <br />© 2026 Amora Gifts – Gifts for Lovers & Anniversaries.
-        </p>
-        <form onSubmit={onSUbmitHandler} className='w- sm:w-1/2 flex items-center gap-3 mx-auto my-6 border pl-3 '>
-            <input className='w-full sm:flex-1 outline-none' type="email" placeholder='Enter Your Email' required />
-            <button type='submit' className='bg-rose-600 text-white text-xs px-10 py-4'>Subscribe</button>
+    <section id='newsletter' className='shell pt-20 scroll-mt-24'>
+      <div className='bg-blush rounded-[32px] px-6 py-14 sm:px-12 text-center flex flex-col items-center gap-4'>
+        <p className='eyebrow'>The gift list</p>
+        <h2 className='font-display font-semibold text-[2rem] sm:text-[2.6rem] leading-tight'>Get 20% off your first gift</h2>
+        <p className='text-mauve max-w-lg leading-relaxed'>New arrivals, seasonal hampers and member-only offers. No spam — unsubscribe anytime.</p>
+        <form onSubmit={onSubmitHandler} className='w-full max-w-lg flex flex-col sm:flex-row gap-3 mt-3'>
+            <label htmlFor='newsletter-email' className='sr-only'>Email address</label>
+            <input id='newsletter-email' value={email} onChange={(e)=>setEmail(e.target.value)} className='field flex-1 !h-[3.25rem] !rounded-full !px-5' type="email" placeholder='you@example.com' required />
+            <button type='submit' disabled={loading} className='btn-primary !bg-ink hover:!bg-black'>{loading ? 'Subscribing…' : 'Subscribe'}</button>
         </form>
-    </div>
+      </div>
+    </section>
   )
 }
 
