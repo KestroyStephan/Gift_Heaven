@@ -7,6 +7,7 @@ import Icon from './Icons'
 const links = [
     { to: '/', label: 'Home' },
     { to: '/collection', label: 'Shop' },
+    { to: '/build-a-box', label: 'Build a box' },
     { to: '/cakes', label: 'Cakes' },
     { to: '/custom-studio', label: 'Custom studio' },
     { to: '/gift-guide', label: 'Gift guide' },

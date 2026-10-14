@@ -112,6 +112,9 @@ const Product = () => {
             </div>
           </fieldset>
 
+          {productData.customization?.box ? (
+            <Link to='/build-a-box' className='btn-primary self-start'><Icon name='gift' size={18} /> Start building your box</Link>
+          ) : <>
           <GiftCustomizer product={productData} value={custom} onChange={setCustom} />
 
           <div className='flex flex-wrap gap-3'>
@@ -124,6 +127,7 @@ const Product = () => {
               <Icon name='bag' size={18} /> Add to bag · {currency}{((unitPrice + extras) * quantity).toLocaleString('en-LK')}
             </button>
           </div>
+          </>}
 
           <ul className='grid sm:grid-cols-3 gap-4 p-5 bg-white border border-line rounded-[20px] text-sm text-mauve'>
             <li className='flex gap-3 items-start'><Icon name='truck' className='text-berry shrink-0' />Same-day delivery in Colombo</li>

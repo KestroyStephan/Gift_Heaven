@@ -27,10 +27,12 @@ export const prettify = (value) => catalogNames[value] || String(value || '').re
 
 const ProductItem = ({id,image,name,price,category,bestseller,sizePrices}) => {
 
+    const isBox = name === 'Build-Your-Own Surprise Box'
+
     const {currency} = useContext(ShopContext)
 
   return (
-    <Link className='group flex flex-col gap-3 text-ink' to={`/product/${id}`}>
+    <Link className='group flex flex-col gap-3 text-ink' to={isBox ? '/build-a-box' : `/product/${id}`}>
         <div className='relative overflow-hidden rounded-[22px] bg-blush aspect-square'>
             {image?.[0] && <img className='absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105' src={image[0]} alt={name} loading='lazy' />}
             {bestseller && <span className='absolute top-3 left-3 bg-white text-berry text-[11px] font-bold tracking-[0.08em] px-2.5 py-1.5 rounded-xl'>BEST SELLER</span>}

@@ -10,13 +10,16 @@ const StudioPromo = () => {
     const cake = products.find(p => p.category === 'Cake' && p.bestseller) || products.find(p => p.category === 'Cake')
     const print = products.find(p => p.category === 'CustomPrint' && p.bestseller) || products.find(p => p.category === 'CustomPrint')
 
+    const box = products.find(p => p.name === 'Build-Your-Own Surprise Box')
+
     const tiles = [
+        { to: '/build-a-box', eyebrow: 'New', title: 'Build a surprise box', text: 'Fill one box with their favourite gifts, a cake and a handmade photo album.', image: box?.image?.[0], tint: 'bg-blush' },
         { to: '/cakes', eyebrow: 'Cake studio', title: 'Design your cake', text: 'Pick a design, flavour, message or photo and the delivery day.', image: cake?.image?.[0], tint: 'bg-[#F7E7D7]' },
         { to: '/custom-studio', eyebrow: 'Custom studio', title: 'Print your memories', text: 'Photos on frames, canvas, mugs, T-shirts and cushions.', image: print?.image?.[0], tint: 'bg-lilac' },
     ]
 
     return (
-        <section className='shell py-16 grid lg:grid-cols-3 gap-5'>
+        <section className='shell py-16 grid md:grid-cols-2 xl:grid-cols-4 gap-5'>
             {tiles.map(tile => (
                 <Link key={tile.to} to={tile.to} className={`group rounded-[28px] overflow-hidden ${tile.tint} grid grid-cols-[1fr_42%] min-h-[230px]`}>
                     <span className='p-6 flex flex-col gap-2'>

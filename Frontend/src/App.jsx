@@ -21,13 +21,14 @@ import ResetPassword from './Pages/ResetPassword'
 import Cakes from './Pages/Cakes'
 import CustomStudio from './Pages/CustomStudio'
 import GiftGuide from './Pages/GiftGuide'
+import BuildBox from './Pages/BuildBox'
 import ChatWidget from './Components/ChatWidget'
 
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
 // Pages that draw their own full-width bands
-const fullBleed = ['/', '/about', '/contact', '/cakes', '/custom-studio', '/gift-guide']
+const fullBleed = ['/', '/about', '/contact', '/cakes', '/custom-studio', '/gift-guide', '/build-a-box']
 
 const NotFound = () => (
   <div className='py-24 text-center flex flex-col items-center gap-4'>
@@ -56,6 +57,7 @@ const App = () => {
           <Route path='/cakes' element={<Cakes />} />
           <Route path='/custom-studio' element={<CustomStudio />} />
           <Route path='/gift-guide' element={<GiftGuide />} />
+          <Route path='/build-a-box' element={<BuildBox />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/product/:productId' element={<Product />} />
