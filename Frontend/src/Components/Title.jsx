@@ -1,10 +1,15 @@
 import React from 'react'
 
-const Title = ({text1, text2}) => {
+// Section heading: "text1 text2" with the second word in italic berry
+const Title = ({text1, text2, eyebrow, as = 'h2', className = ''}) => {
+  const Heading = as
+  const cap = (s) => String(s || '').charAt(0) + String(s || '').slice(1).toLowerCase()
   return (
-    <div className='inline-flex gap-2 items-center mb-3'>
-        <p className='text-gray-500'>{text1} <span className='text-gray-700 font-medium'>{text2}</span></p>
-        <p className='w-8 sm:w-12 h-[1px] sm:h-[2px] bg-rose-700'></p>
+    <div className={`flex flex-col gap-2 mb-4 ${className}`}>
+        {eyebrow && <p className='eyebrow'>{eyebrow}</p>}
+        <Heading className='font-display font-semibold text-ink text-[2rem] sm:text-[2.6rem] leading-[1.05]'>
+          {cap(text1)} <span className='italic text-berry'>{cap(text2)}</span>
+        </Heading>
     </div>
   )
 }
