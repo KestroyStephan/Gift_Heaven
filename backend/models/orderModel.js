@@ -14,6 +14,12 @@ const orderSchema = new mongoose.Schema({
     paymentId: { type: String },
     // true while the order holds stock (released when it's cancelled or never paid)
     stockReserved: { type: Boolean, default: false },
+    // money breakdown: amount = subtotal - discount + deliveryFee
+    subtotal: { type: Number },
+    discount: { type: Number, default: 0 },
+    deliveryFee: { type: Number },
+    couponCode: { type: String },
+    couponCounted: { type: Boolean, default: false },
     date :{type:Number, required:true}
 })
 
@@ -22,6 +28,7 @@ orderSchema.index({ userId: 1, date: -1 });
 orderSchema.index({ status: 1, date: -1 });
 orderSchema.index({ payment: 1, status: 1 });
 orderSchema.index({ razorpayOrderId: 1 });
+orderSchema.index({ couponCode: 1, userId: 1 });
 
 const orderModel = mongoose.models.order || mongoose.model('giftorder', orderSchema)
 

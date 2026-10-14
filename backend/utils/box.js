@@ -1,5 +1,6 @@
 import productModel from '../models/productModel.js'
 import { unitCostOf } from './stock.js'
+import { salePrice } from './promo.js'
 import { boxStyles, albumLeadDays, cleanCustomization, customizationOf, earliestDay, priceForSize } from '../config/customization.js'
 
 const MAX_LINES = 40
@@ -7,7 +8,7 @@ const MAX_LINES = 40
 // Price and validate the gifts inside a build-your-own surprise box.
 // Every gift is looked up in the database, so the customer can't change prices.
 // Returns the box customisation with clean contents and the total of the gifts inside.
-export const priceBox = async (custom, boxSize) => {
+export const priceBox = async (custom, boxSize, offers = []) => {
     const capacity = boxStyles[boxSize]
     if (!capacity) throw new Error('Unknown box style')
 
@@ -44,11 +45,13 @@ export const priceBox = async (custom, boxSize) => {
         if (allowed.album) hasAlbum = true
         if (!allowed.cake) giftCount += quantity
 
-        const unitPrice = priceForSize(product, line.size) + extras
+        const sale = salePrice(product, line.size, offers)
+        const unitPrice = sale.price + extras
         total += unitPrice * quantity
         items.push({
             _id: String(product._id), name: product.name, image: product.image?.[0] || '', category: product.category,
             size: line.size, quantity, unitPrice, custom: itemCustom,
+            ...(sale.offerName ? { listPrice: sale.listPrice + extras, offerName: sale.offerName } : {}),
             unitCost: unitCostOf(product, priceForSize(product, line.size)),
         })
     }

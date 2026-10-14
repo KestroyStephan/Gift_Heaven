@@ -80,6 +80,8 @@ const itemsTable = (order) => `
                 <td align="center">x ${item.quantity}</td>
                 <td align="right">${money(item.price * item.quantity)}</td>
             </tr>`).join('')}
+        ${order.discount ? `<tr><td colspan="2" align="right">Coupon ${escapeHtml(order.couponCode || '')}</td><td align="right">- ${money(order.discount)}</td></tr>` : ''}
+        ${order.deliveryFee !== undefined ? `<tr><td colspan="2" align="right">Delivery</td><td align="right">${order.deliveryFee ? money(order.deliveryFee) : 'Free'}</td></tr>` : ''}
         <tr><td colspan="2" align="right"><b>Total</b></td><td align="right"><b>${money(order.amount)}</b></td></tr>
     </table>`
 

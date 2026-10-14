@@ -11,6 +11,7 @@ import { notifyOrder } from '../utils/notify.js'
 import { cleanCustomization, customizationOf, priceForSize } from '../config/customization.js'
 import { priceBox } from '../utils/box.js'
 import { reserveStock, releaseStock, unitCostOf } from '../utils/stock.js'
+import { runningOffers, salePrice, evaluateCoupon, reserveCoupon, releaseCoupon } from '../utils/promo.js'
 import brandModel from '../models/brandModel.js'
 
 
@@ -33,13 +34,10 @@ const toMinorUnits = (value) => Math.round(Number(value) * 100)
 
 const requiredAddressFields = ['firstName', 'lastName', 'email', 'street', 'city', 'state', 'zipcode', 'country', 'phone']
 
-// Build the order from the database, never from client prices
-const buildOrder = async ({ userId, items, address }, paymentMethod) => {
+// Price cart lines from the database (with running offers), never from client prices
+export const priceItems = async (items) => {
     if (!Array.isArray(items) || items.length === 0) throw new Error('Your cart is empty')
-    if (!address || requiredAddressFields.some(field => !String(address[field] ?? '').trim())) {
-        throw new Error('Please fill in all delivery details')
-    }
-
+    const offers = await runningOffers()
     const products = await productModel.find({ _id: { $in: items.map(item => item._id) } })
     const orderItems = await Promise.all(items.map(async item => {
         const product = products.find(p => String(p._id) === String(item._id))
@@ -50,28 +48,44 @@ const buildOrder = async ({ userId, items, address }, paymentMethod) => {
         let { custom, extras } = cleanCustomization(item.custom, product)
         // Surprise boxes add the price of every gift packed inside
         if (customizationOf(product).box) {
-            const boxed = await priceBox(custom, item.size)
+            const boxed = await priceBox(custom, item.size, offers)
             custom = boxed.custom
             extras += boxed.extras
         }
         const { customization, sizePrices, costPrice, stock, lowStock, trackStock, ...productData } = product.toObject()
-        const basePrice = priceForSize(product, item.size)
+        const sale = salePrice(product, item.size, offers)
+        const basePrice = sale.price
         // What this line costs us, including the gifts inside a box (for profit reports)
-        const unitCost = unitCostOf(product, basePrice) + (custom?.boxItems || []).reduce((sum, b) => sum + (b.unitCost || 0) * b.quantity, 0)
-        return { ...productData, basePrice, extras, price: basePrice + extras, custom, size: item.size, quantity, unitCost }
+        const unitCost = unitCostOf(product, sale.listPrice) + (custom?.boxItems || []).reduce((sum, b) => sum + (b.unitCost || 0) * b.quantity, 0)
+        const offer = sale.offerName ? { listPrice: sale.listPrice + extras, offerName: sale.offerName } : {}
+        return { ...productData, basePrice, extras, price: basePrice + extras, ...offer, custom, size: item.size, quantity, unitCost }
     }))
+    return orderItems
+}
+
+// Build the order from the database, never from client prices
+const buildOrder = async ({ userId, items, address, couponCode }, paymentMethod) => {
+    if (!address || requiredAddressFields.some(field => !String(address[field] ?? '').trim())) {
+        throw new Error('Please fill in all delivery details')
+    }
+    const orderItems = await priceItems(items)
 
     // Keep only known address fields; the gift note is optional
     const cleanAddress = Object.fromEntries(requiredAddressFields.map(field => [field, String(address[field]).trim()]))
     if (address.giftNote) cleanAddress.giftNote = String(address.giftNote).trim().slice(0, 300)
 
     const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const coupon = await evaluateCoupon(couponCode, userId, orderItems, deliveryCharge)
+    const discount = coupon?.discount || 0
+    const deliveryFee = coupon ? coupon.deliveryFee : deliveryCharge
 
     return {
         userId,
         items: orderItems,
         address: cleanAddress,
-        amount: subtotal + deliveryCharge,
+        subtotal, discount, deliveryFee,
+        ...(coupon ? { couponCode: coupon.code } : {}),
+        amount: subtotal - discount + deliveryFee,
         paymentMethod,
         payment: false,
         status: 'Order Placed',
@@ -96,7 +110,8 @@ const placeOrder = async (req, res) => {
 
         const newOrder = new orderModel(await buildOrder(req.body, 'COD'))
         await reserveStock(newOrder)
-        await newOrder.save().catch(async (error) => { await releaseStock(newOrder); throw error })
+        await reserveCoupon(newOrder).catch(async (error) => { await releaseStock(newOrder); throw error })
+        await newOrder.save().catch(async (error) => { await releaseStock(newOrder); await releaseCoupon(newOrder); throw error })
 
         await userModel.findByIdAndUpdate(req.body.userId, { cartData: {}, cartCustoms: {} })
         notifyOrder(newOrder, 'placed')
@@ -121,9 +136,14 @@ const placeOrderStripe = async (req, res) => {
 
         newOrder = new orderModel(await buildOrder(req.body, 'Stripe'))
         await reserveStock(newOrder)
+        await reserveCoupon(newOrder)
         await newOrder.save()
 
-        const line_items = newOrder.items.map((item) => ({
+        // With a coupon, Stripe gets one line for the discounted total
+        const line_items = newOrder.discount > 0 ? [{
+            price_data: { currency, product_data: { name: `Surprise Heaven order (${newOrder.items.length} gift${newOrder.items.length === 1 ? '' : 's'}, coupon ${newOrder.couponCode})` }, unit_amount: toMinorUnits(newOrder.amount - newOrder.deliveryFee) },
+            quantity: 1,
+        }] : newOrder.items.map((item) => ({
             price_data: {
                 currency: currency,
                 product_data: {
@@ -140,10 +160,11 @@ const placeOrderStripe = async (req, res) => {
                 product_data: {
                     name: 'Delivery Charges'
                 },
-                unit_amount: toMinorUnits(deliveryCharge)
+                unit_amount: toMinorUnits(newOrder.deliveryFee)
             },
             quantity: 1
         })
+        if (!newOrder.deliveryFee) line_items.pop()
 
         const session = await stripe.checkout.sessions.create({
             success_url: `${origin}/verify?success=true&orderId=${newOrder._id}`,
@@ -164,6 +185,7 @@ const placeOrderStripe = async (req, res) => {
 
     } catch (error) {
         await releaseStock(newOrder).catch(() => {})
+        await releaseCoupon(newOrder).catch(() => {})
         if (newOrder?._id) await orderModel.findByIdAndDelete(newOrder._id).catch(() => {})
         console.log(error)
         res.json({ success: false, message: error.message })
@@ -188,6 +210,7 @@ const verifyStripe = async (req, res) => {
         }
 
         await releaseStock(order, 'Payment not completed')
+        await releaseCoupon(order)
         await orderModel.findByIdAndDelete(orderId)
         res.json({ success: false, message: 'Payment was not completed' })
 
@@ -207,6 +230,7 @@ const placeOrderRazorpay = async (req, res) => {
 
         newOrder = new orderModel(await buildOrder(req.body, 'Razorpay'))
         await reserveStock(newOrder)
+        await reserveCoupon(newOrder)
         await newOrder.save()
 
         const razorpayOrder = await razorpay.orders.create({
@@ -222,6 +246,7 @@ const placeOrderRazorpay = async (req, res) => {
 
     } catch (error) {
         await releaseStock(newOrder).catch(() => {})
+        await releaseCoupon(newOrder).catch(() => {})
         if (newOrder?._id) await orderModel.findByIdAndDelete(newOrder._id).catch(() => {})
         console.log(error)
         res.json({ success: false, message: error.error?.description || error.message })
@@ -264,6 +289,7 @@ const cancelPendingOrder = async (req, res) => {
         const order = await orderModel.findOne({ _id: orderId, userId, payment: false, paymentMethod: { $ne: 'COD' } })
         if (order) {
             await releaseStock(order, 'Checkout cancelled')
+            await releaseCoupon(order)
             await orderModel.deleteOne({ _id: order._id })
         }
         res.json({ success: true })
@@ -281,6 +307,7 @@ const forCustomer = (order) => {
         custom: item.custom?.boxItems ? { ...item.custom, boxItems: item.custom.boxItems.map(({ unitCost, ...inner }) => inner) } : item.custom,
     }))
     delete data.stockReserved
+    delete data.couponCounted
     return data
 }
 
@@ -290,6 +317,7 @@ export const sweepAbandonedOrders = async () => {
         const stale = await orderModel.find({ payment: false, paymentMethod: { $ne: 'COD' }, date: { $lt: Date.now() - 2 * 60 * 60 * 1000 } })
         for (const order of stale) {
             await releaseStock(order, 'Payment never completed')
+            await releaseCoupon(order)
             await orderModel.deleteOne({ _id: order._id })
         }
         if (stale.length) console.log(`Removed ${stale.length} unpaid online order(s)`)
@@ -357,8 +385,8 @@ const updateStatus = async (req, res) => {
         if (!order) return res.json({ success: false, message: 'Order not found' })
 
         // Cancelling puts the stock back; reopening a cancelled order takes it again
-        if (status === 'Cancelled' && order.status !== 'Cancelled') await releaseStock(order, 'Order cancelled')
-        if (status !== 'Cancelled' && order.status === 'Cancelled') await reserveStock(order)
+        if (status === 'Cancelled' && order.status !== 'Cancelled') { await releaseStock(order, 'Order cancelled'); await releaseCoupon(order) }
+        if (status !== 'Cancelled' && order.status === 'Cancelled') { await reserveStock(order); await reserveCoupon(order, { force: true }) }
 
         order.status = status
         order.statusHistory = [...(order.statusHistory || []), { status, date: Date.now() }]
@@ -449,12 +477,15 @@ const salesReport = async (req, res) => {
             const live = list.filter(o => o.status !== 'Cancelled')
             const cancelled = list.filter(o => o.status === 'Cancelled')
             const sales = live.reduce((s, o) => s + o.amount, 0)
-            const delivery = live.length * deliveryCharge
+            const delivery = live.reduce((s, o) => s + (o.deliveryFee ?? deliveryCharge), 0)
+            const discounts = live.reduce((s, o) => s + (o.discount || 0), 0)
+            const offerSavings = live.reduce((s, o) => s + o.items.reduce((t, i) => t + ((i.listPrice || i.price) - i.price) * i.quantity, 0), 0)
             const cost = live.reduce((s, o) => s + o.items.reduce((t, i) => t + (i.unitCost || 0) * i.quantity, 0), 0)
             const income = live.filter(o => o.payment).reduce((s, o) => s + o.amount, 0)
             const units = live.reduce((s, o) => s + o.items.reduce((t, i) => t + i.quantity, 0), 0)
             const productSales = sales - delivery
             return {
+                discounts, offerSavings, couponOrders: live.filter(o => o.couponCode).length,
                 orders: live.length, sales, income, outstanding: sales - income, delivery, productSales, cost,
                 profit: productSales - cost, margin: productSales ? Math.round(((productSales - cost) / productSales) * 1000) / 10 : 0,
                 units, averageOrder: live.length ? Math.round(sales / live.length) : 0,
@@ -477,7 +508,7 @@ const salesReport = async (req, res) => {
             if (row) {
                 row.sales += order.amount; row.orders += 1
                 if (order.payment) row.income += order.amount
-                row.profit += order.amount - deliveryCharge - orderCost
+                row.profit += order.amount - (order.deliveryFee ?? deliveryCharge) - orderCost
             }
             const method = byPayment[order.paymentMethod] = byPayment[order.paymentMethod] || { orders: 0, sales: 0 }
             method.orders += 1; method.sales += order.amount
