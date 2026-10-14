@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { assets } from '../assets/assets'
 import axios from 'axios'
-import {backendUrl, categories, subCategories} from '../App'
+import {backendUrl, currency, categories, subCategories} from '../App'
+import { Icon, PageHeader } from '../components/ui'
 import { toast } from 'react-toastify'
 import CustomizationSwitches, { defaultCustomization } from '../components/CustomizationSwitches'
 import SizeEditor from '../components/SizeEditor'
@@ -24,6 +24,7 @@ const Add = ({token}) => {
   const [customization, setCustomization] = useState(defaultCustomization);
   const [sizePrices, setSizePrices] = useState({});
   const [recipients, setRecipients] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   
   const onSubmitHandler = async (e)=>{
@@ -32,6 +33,7 @@ const Add = ({token}) => {
       if (!image1 && !image2 && !image3 && !image4) return toast.error('Please upload at least one image')
       if (sizes.length === 0) return toast.error('Please select at least one size')
 
+      setSaving(true)
       try {
         const formData = new FormData()
 
@@ -75,88 +77,104 @@ const Add = ({token}) => {
       } catch (error) {
         console.log(error)
         toast.error(error.message)
+      } finally {
+        setSaving(false)
       }
   }
 
 
 
 
+  const images = [[image1, setImage1], [image2, setImage2], [image3, setImage3], [image4, setImage4]]
+  const cover = images.find(([file]) => file)?.[0]
+  const labelOf = (options, value) => options.find(o => o.value === value)?.label || value
+
+  const Section = ({ step, title, hint, children }) => (
+    <section className='card p-6 flex flex-col gap-4'>
+      <div className='flex items-start gap-3'>
+        <span className='w-7 h-7 rounded-full bg-pink-50 text-berry text-xs font-bold flex items-center justify-center shrink-0'>{step}</span>
+        <div>
+          <p className='card-title'>{title}</p>
+          {hint && <p className='text-xs text-mauve mt-0.5'>{hint}</p>}
+        </div>
+      </div>
+      {children}
+    </section>
+  )
+
   return (
-    <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3' action="">
-      <div>
-        <p className='mb-2'>Upload Image</p>
+    <form onSubmit={onSubmitHandler}>
+      <PageHeader title='Add a product' subtitle='New gifts appear in the store as soon as you save them.' />
 
-        <div className='flex gap-2'>
+      <div className='grid xl:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start'>
+        <div className='flex flex-col gap-5 min-w-0'>
+          {Section({ step: 1, title: 'Photos', hint: 'Up to 4 images. The first one is the cover photo.', children: (
+            <div className='flex flex-wrap gap-3'>
+              {images.map(([file, setFile], index) => (
+                <label key={index} htmlFor={`image${index + 1}`} className={`w-28 h-28 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-1 text-xs cursor-pointer overflow-hidden ${file ? 'border-transparent' : 'border-pink-100 hover:border-berry hover:bg-pink-50 text-mauve'}`}>
+                  {file ? <img className='w-full h-full object-cover' src={URL.createObjectURL(file)} alt={`Image ${index + 1}`} /> : <><Icon name='image' size={22} />{index === 0 ? 'Cover' : `Image ${index + 1}`}</>}
+                  <input onChange={(e) => setFile(e.target.files[0])} type="file" accept="image/*" id={`image${index + 1}`} hidden />
+                </label>
+              ))}
+            </div>
+          ) })}
 
-          <label htmlFor="image1">
-            <img className='w-20' src={!image1 ? assets.upload_area : URL.createObjectURL(image1)} alt="" />
-            <input onChange={(e)=>setImage1(e.target.files[0])} type="file" accept="image/*" id='image1' hidden/>
-          </label>
+          {Section({ step: 2, title: 'Details', children: (
+            <>
+              <label className='label'>Product name
+                <input onChange={(e)=>setName(e.target.value)} value={name} className='field font-normal' type="text" placeholder='e.g. Red Rose & Ferrero Bouquet' required />
+              </label>
+              <label className='label'>Description
+                <textarea onChange={(e)=>setDescription(e.target.value)} value={description} rows={4} className='field font-normal resize-y' placeholder="What's inside, size, and why it makes a lovely gift" required />
+              </label>
+              <div className='grid sm:grid-cols-3 gap-4'>
+                <label className='label'>Category
+                  <select value={category} onChange={(e)=>setCategory(e.target.value)} className='field font-normal'>
+                    {categories.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  </select>
+                </label>
+                <label className='label'>Occasion
+                  <select value={subCategory} onChange={(e)=>setSubCategory(e.target.value)} className='field font-normal'>
+                    {subCategories.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  </select>
+                </label>
+                <label className='label'>Price ({currency.trim()})
+                  <input onChange={(e)=>setPrice(e.target.value)} value={price} className='field font-normal' type="number" min="0" step="0.01" placeholder='2500' required />
+                </label>
+              </div>
+            </>
+          ) })}
 
-          <label htmlFor="image2">
-            <img className='w-20' src={!image2 ? assets.upload_area : URL.createObjectURL(image2)} alt="" />
-            <input onChange={(e)=>setImage2(e.target.files[0])} type="file" accept="image/*" id='image2' hidden/>
-          </label>
+          {Section({ step: 3, title: 'Sizes & prices', hint: 'Give bigger sizes their own price, or leave them on the product price.', children: (
+            <SizeEditor sizes={sizes} setSizes={setSizes} sizePrices={sizePrices} setSizePrices={setSizePrices} basePrice={price} />
+          ) })}
 
-          <label htmlFor="image3">
-            <img className='w-20' src={!image3 ? assets.upload_area : URL.createObjectURL(image3)} alt="" />
-            <input onChange={(e)=>setImage3(e.target.files[0])} type="file" accept="image/*" id='image3' hidden/>
-          </label>
-
-          <label htmlFor="image4">
-            <img className='w-20' src={!image4 ? assets.upload_area : URL.createObjectURL(image4)} alt="" />
-            <input onChange={(e)=>setImage4(e.target.files[0])} type="file" accept="image/*" id='image4' hidden/>
-          </label>
-
-        </div>
-      </div>
-
-      <div className='w-full'>
-        <p className='mb-2'>Product name</p>
-        <input onChange={(e)=>setName(e.target.value)} value={name} className='w-full max-w-[500px] px-3 py-2' type="text" placeholder='Type here' required />
-      </div>
-
-      <div className='w-full'>
-        <p className='mb-2'>Product Description</p>
-        <textarea onChange={(e)=>setDescription(e.target.value)} value={description} className='w-full max-w-[500px] px-3 py-2' type="text" placeholder='Type content here' required />
-      </div>
-
-      <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
-
-        <div>
-          <p className='mb-2'>Product category</p>
-          <select value={category} onChange={(e)=>setCategory(e.target.value)} className='w-full px-3 py-2'>
-            {categories.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </select>
-        </div>
-
-        <div>
-          <p className='mb-2'>Sub category</p>
-          <select value={subCategory} onChange={(e)=>setSubCategory(e.target.value)} className='w-full px-3 py-2'>
-            {subCategories.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </select>
-        </div>
-
-        <div>
-          <p className='mb-2'>Product Price</p>
-          <input onChange={(e)=>setPrice(e.target.value)} value={price} className='w-full px-3 py-2 sm:w-[120px]' type="number" min="0" step="0.01" placeholder='2500' required />
+          {Section({ step: 4, title: 'Who is it for & personalisation', children: (
+            <>
+              <RecipientPicker value={recipients} onChange={setRecipients} />
+              <CustomizationSwitches value={customization} onChange={setCustomization} />
+            </>
+          ) })}
         </div>
 
+        {/* Live preview of the store card */}
+        <aside className='xl:sticky xl:top-24 flex flex-col gap-4'>
+          <div className='card p-5'>
+            <p className='table-head mb-3'>Store preview</p>
+            <div className='aspect-square rounded-2xl bg-pink-50 overflow-hidden flex items-center justify-center text-berry'>
+              {cover ? <img src={URL.createObjectURL(cover)} alt='' className='w-full h-full object-cover' /> : <Icon name='gift' size={40} />}
+            </div>
+            <p className='text-[11px] font-bold tracking-[0.14em] uppercase text-mauve mt-4'>{labelOf(categories, category)}</p>
+            <p className='font-display text-2xl font-semibold text-ink leading-tight mt-1'>{name || 'Product name'}</p>
+            <p className='font-bold text-berry mt-1'>{currency}{Number(price || 0).toLocaleString('en-LK')}</p>
+            <label className='mt-4 flex items-center gap-2 text-sm cursor-pointer'>
+              <input onChange={()=>setBestseller(prev => !prev)} checked={bestseller} type="checkbox" className='accent-berry' />
+              Feature as a bestseller
+            </label>
+          </div>
+          <button type='submit' disabled={saving} className='btn-dark py-3.5 w-full flex items-center justify-center gap-2'><Icon name='plus' size={18} strokeWidth={2.2} />{saving ? 'Saving…' : 'Add product'}</button>
+        </aside>
       </div>
-
-      <SizeEditor sizes={sizes} setSizes={setSizes} sizePrices={sizePrices} setSizePrices={setSizePrices} basePrice={price} />
-
-      <RecipientPicker value={recipients} onChange={setRecipients} />
-
-      <CustomizationSwitches value={customization} onChange={setCustomization} />
-
-      <div className='flex gap-2 mt-2'>
-        <input onChange={()=>setBestseller(prev => !prev)} checked={bestseller} type="checkbox" id='bestseller' />
-        <label className='cursor-pointer' htmlFor="bestseller">Add to bestseller</label>
-      </div>
-
-      <button type='submit' className='btn-dark px-10 py-3 mt-4'>Add product</button>
-      
     </form>
   )
 }

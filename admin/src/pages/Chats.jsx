@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { backendUrl } from '../App'
+import { PageHeader } from '../components/ui'
 
 const when = (date) => new Date(date).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
 
@@ -83,14 +84,13 @@ const Chats = ({ token }) => {
 
   return (
     <div className='flex flex-col gap-4'>
-      <div className='flex flex-wrap items-center justify-between gap-3'>
-        <h2 className='text-xl font-semibold text-ink'>Chats <span className='text-sm font-medium text-mauve'>({unreadTotal} unread)</span></h2>
-        <div className='flex gap-1 bg-white border border-line rounded-full p-1 text-sm'>
+      <PageHeader title='Live chats' subtitle={`Customers planning custom frames, printing, cakes and event gifts · ${unreadTotal} unread`}>
+        <div className='tabs'>
           {['open', 'closed', 'all'].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-1.5 rounded-full capitalize cursor-pointer ${filter === f ? 'bg-ink text-white' : ''}`}>{f}</button>
+            <button key={f} onClick={() => setFilter(f)} aria-pressed={filter === f} className='tab capitalize'>{f}</button>
           ))}
         </div>
-      </div>
+      </PageHeader>
 
       <div className='grid lg:grid-cols-[320px_1fr] gap-4 min-h-[560px]'>
         <ul className='bg-white border border-line rounded-2xl overflow-y-auto max-h-[640px]'>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { backendUrl } from '../App'
+import { PageHeader } from '../components/ui'
 
 const Messages = ({ token }) => {
 
@@ -50,14 +51,13 @@ const Messages = ({ token }) => {
 
   return (
     <div className='flex flex-col gap-4'>
-      <div className='flex flex-wrap items-center justify-between gap-3'>
-        <h2 className='text-xl font-semibold text-ink'>Messages <span className='text-sm font-medium text-mauve'>({unread} unread)</span></h2>
+      <PageHeader title='Messages' subtitle={`Contact-form messages from customers · ${unread} unread`}>
         <label className='flex items-center gap-2 text-sm cursor-pointer'>
           <input type='checkbox' checked={showUnread} onChange={() => setShowUnread(!showUnread)} /> Unread only
         </label>
-      </div>
+      </PageHeader>
 
-      {loaded && visible.length === 0 && <p className='bg-white border border-line rounded-2xl p-8 text-center'>No messages yet.</p>}
+      {loaded && visible.length === 0 && <p className='card p-8 text-center'>No messages yet.</p>}
 
       {visible.map(msg => (
         <div key={msg._id} className={`bg-white border rounded-2xl ${msg.read ? 'border-line' : 'border-berry'}`}>
