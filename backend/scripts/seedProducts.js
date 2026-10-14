@@ -17,6 +17,7 @@ import { lifestyleProducts, recipientsByName } from './catalogLifestyle.js'
 import { accessoryProducts } from './catalogAccessories.js'
 import { kitchenProducts } from './catalogKitchen.js'
 import { fashionProducts } from './catalogFashion.js'
+import { styleProducts } from './catalogStyle.js'
 
 const berry = '#A3214F', berryDark = '#7E1A3D', gold = '#C9973B', blush = '#F3D9DE', cream = '#F5E6CC', lilac = '#E8E0EE', sage = '#E2ECE3', ink = '#2B1B24'
 
@@ -122,7 +123,7 @@ const products = [
     },
 ]
 
-products.push(...extraProducts, ...lifestyleProducts, ...accessoryProducts, ...kitchenProducts, ...fashionProducts)
+products.push(...extraProducts, ...lifestyleProducts, ...accessoryProducts, ...kitchenProducts, ...fashionProducts, ...styleProducts)
 
 const unsplashUrl = (id) => `https://images.unsplash.com/photo-${id}?w=1000&h=1000&fit=crop&crop=entropy&q=80&auto=format`
 const imagesFor = (p) => p.photos ? p.photos.map(unsplashUrl) : photosFor(p.name)
