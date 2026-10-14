@@ -53,7 +53,7 @@ cd admin && npm install && npm run dev -- --port 5174
 
 ## Catalogue & photos
 
-- `cd backend && npm run seed` adds the starter catalogue (20 categories, 99 products: cakes, custom printing, festival gifts, toys (incl. Hot Wheels, drones, race tracks), baby, jewellery, fashion accessories (hair clips, bands, earring sets), kitchen & dining (water bottles, mugs, jug sets, tea & dinner sets, table décor), plants, home décor, pens & key tags, art supplies, games and gift packages for her, him, couples, kids, teens and elders) and skips products that already exist.
+- `cd backend && npm run seed` adds the starter catalogue (23 categories, 118 products: cakes, custom printing, festival gifts, toys (incl. Hot Wheels, drones, race tracks), baby, jewellery, fashion accessories (hair clips, bands, earring sets), kitchen & dining (water bottles, mugs, jug sets, tea & dinner sets, table décor), perfumes, watches, wallets and handbags, plants, home décor, pens & key tags, art supplies, games and gift packages for her, him, couples, kids, teens and elders) and skips products that already exist.
 - Research behind the occasions and cultural gifts: `docs/gift-market-research.md`.
 - Product photos are free Unsplash images (https://unsplash.com/license), listed in `backend/scripts/productPhotos.js`. Replace any of them with your own photography from the admin panel (Products › Edit).
 - Personalisation options and prices live in `backend/config/customization.js`; which options each product offers is set per product in the admin panel.

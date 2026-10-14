@@ -41,6 +41,9 @@ export const categories = [
   { value: 'Games', label: 'Games & Puzzles' },
   { value: 'Accessories', label: 'Fashion Accessories' },
   { value: 'KitchenDining', label: 'Kitchen & Dining' },
+  { value: 'Fragrances', label: 'Perfumes & Fragrances' },
+  { value: 'Watches', label: 'Watches' },
+  { value: 'BagsWallets', label: 'Bags & Wallets' },
 ]
 export const recipientOptions = [
   { value: 'her', label: 'Her' }, { value: 'him', label: 'Him' }, { value: 'couples', label: 'Couples' },
