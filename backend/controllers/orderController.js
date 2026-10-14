@@ -443,17 +443,20 @@ const orderStats = async (req, res) => {
         }
         const topProducts = Object.values(products).sort((a, b) => b.sales - a.sales).slice(0, 5)
 
-        const [unreadMessages, unreadChats, lowStockItems, reviewsToAnswer] = await Promise.all([
+        const [unreadMessages, unreadChats, lowStockItems, reviewsToAnswer, wished] = await Promise.all([
             messageModel.countDocuments({ read: false }),
             chatModel.countDocuments({ status: 'open', unreadAdmin: { $gt: 0 } }),
             productModel.find({ trackStock: true, $expr: { $lte: ['$stock', '$lowStock'] } }).select('name image stock lowStock').sort({ stock: 1 }).lean(),
             reviewModel.countDocuments({ status: 'published', rating: { $lte: 3 }, 'reply.text': { $exists: false } }),
+            userModel.aggregate([{ $unwind: '$wishlist' }, { $group: { _id: '$wishlist', count: { $sum: 1 } } }, { $sort: { count: -1 } }, { $limit: 5 }]),
         ])
+        const wishedProducts = await productModel.find({ _id: { $in: wished.map(w => w._id) } }).select('name image stock trackStock').lean()
+        const mostWished = wished.map(w => { const p = wishedProducts.find(x => String(x._id) === w._id); return p && { _id: w._id, name: p.name, image: p.image?.[0] || '', count: w.count, stock: p.trackStock ? p.stock : null } }).filter(Boolean)
         const lowStock = lowStockItems.map(p => ({ _id: p._id, name: p.name, image: p.image?.[0] || '', stock: p.stock, lowStock: p.lowStock }))
 
         res.json({
             success: true,
-            stats: { totalOrders: orders.length, revenue, pendingPayments, totalProducts, totalUsers, byStatus, byMethod, daily, topProducts, byCategory, unreadMessages, unreadChats, lowStock: lowStock.slice(0, 6), stockAlerts: lowStock.length, outOfStock: lowStock.filter(p => p.stock <= 0).length, reviewsToAnswer },
+            stats: { totalOrders: orders.length, revenue, pendingPayments, totalProducts, totalUsers, byStatus, byMethod, daily, topProducts, byCategory, unreadMessages, unreadChats, lowStock: lowStock.slice(0, 6), stockAlerts: lowStock.length, outOfStock: lowStock.filter(p => p.stock <= 0).length, reviewsToAnswer, mostWished },
             recentOrders: orders.sort((a, b) => b.date - a.date).slice(0, 5)
         })
     } catch (error) {
