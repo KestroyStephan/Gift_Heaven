@@ -9,9 +9,15 @@ const groups = [
       { to: '/list', label: 'Products', icon: 'list' },
       { to: '/add', label: 'Add product', icon: 'add' },
       { to: '/brands', label: 'Brands', icon: 'tag' },
+      { to: '/inventory', label: 'Inventory', icon: 'box', badge: 'stock' },
     ]
   },
-  { label: 'Sales', links: [{ to: '/orders', label: 'Orders', icon: 'orders', badge: 'orders' }] },
+  {
+    label: 'Sales', links: [
+      { to: '/orders', label: 'Orders', icon: 'orders', badge: 'orders' },
+      { to: '/reports', label: 'Sales & income', icon: 'chart' },
+    ]
+  },
   {
     label: 'Customers', links: [
       { to: '/chats', label: 'Live chats', icon: 'chats', badge: 'chats' },

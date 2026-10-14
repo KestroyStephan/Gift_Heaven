@@ -167,6 +167,24 @@ const Dashboard = ({ token }) => {
         <StatCard icon='users' tint='bg-sky-50 text-sky-700' label='Customers' value={stats.totalUsers.toLocaleString('en-LK')} note={`${stats.totalProducts} products in the catalogue`} />
       </div>
 
+      {stats.lowStock?.length > 0 && (
+        <div className='card p-5 border-amber-200 bg-gradient-to-r from-amber-50/80 to-white'>
+          <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
+            <p className='card-title flex items-center gap-2'><span className='text-amber-600'><Icon name='alert' size={19} /></span>{stats.stockAlerts} product{stats.stockAlerts === 1 ? ' needs' : 's need'} restocking{stats.outOfStock ? ` · ${stats.outOfStock} sold out` : ''}</p>
+            <Link to='/inventory' className='text-sm font-semibold text-berry flex items-center gap-1'>Open inventory <Icon name='chevron' size={15} /></Link>
+          </div>
+          <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-3'>
+            {stats.lowStock.map(p => (
+              <div key={p._id} className='flex items-center gap-3 bg-white rounded-2xl border border-line p-2.5'>
+                {p.image ? <img src={p.image} alt='' className='w-10 h-10 rounded-xl object-cover' /> : <span className='w-10 h-10 rounded-xl bg-pink-50'></span>}
+                <span className='flex-1 min-w-0 text-sm font-medium text-ink truncate'>{p.name}</span>
+                <b className={`text-sm px-2.5 py-1 rounded-full ${p.stock <= 0 ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-800'}`}>{p.stock <= 0 ? 'Sold out' : `${p.stock} left`}</b>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className='grid xl:grid-cols-[1.7fr_1fr] gap-5'>
         <div className='card p-6'>
           <div className='flex flex-wrap items-start justify-between gap-2 mb-4'>

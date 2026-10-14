@@ -5,7 +5,7 @@ import { Icon } from './ui'
 export { AdminLogo } from './ui'
 
 const titles = {
-  '/dashboard': 'Dashboard', '/list': 'Products', '/add': 'Add product', '/brands': 'Brands',
+  '/dashboard': 'Dashboard', '/list': 'Products', '/add': 'Add product', '/brands': 'Brands', '/inventory': 'Inventory', '/reports': 'Sales & income',
   '/orders': 'Orders', '/chats': 'Live chats', '/messages': 'Messages',
 }
 

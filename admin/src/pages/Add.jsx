@@ -26,6 +26,8 @@ const Add = ({token}) => {
   const [recipients, setRecipients] = useState([]);
   const [saving, setSaving] = useState(false);
   const [brand, setBrand] = useState('');
+  const [inventory, setInventory] = useState({ trackStock: true, stock: '', lowStock: 5, costPrice: '', sku: '' });
+  const setInv = (field) => (e) => setInventory(prev => ({ ...prev, [field]: e.target.value }));
   const [brands] = useBrands();
 
   
@@ -50,6 +52,7 @@ const Add = ({token}) => {
         formData.append("sizePrices",JSON.stringify(sizePrices))
         formData.append("recipients",JSON.stringify(recipients))
         formData.append("brand",brand)
+        Object.entries(inventory).forEach(([key, value]) => formData.append(key, value))
 
         image1 && formData.append("image1",image1)
         image2 && formData.append("image2",image2)
@@ -71,6 +74,7 @@ const Add = ({token}) => {
           setSizePrices({})
           setRecipients([])
           setBrand('')
+          setInventory({ trackStock: true, stock: '', lowStock: 5, costPrice: '', sku: '' })
           setBestseller(false)
           
         }else{
@@ -156,7 +160,23 @@ const Add = ({token}) => {
             <SizeEditor sizes={sizes} setSizes={setSizes} sizePrices={sizePrices} setSizePrices={setSizePrices} basePrice={price} />
           ) })}
 
-          {Section({ step: 4, title: 'Who is it for & personalisation', children: (
+          {Section({ step: 4, title: 'Inventory & cost', hint: 'Stock goes down with every order and back up when an order is cancelled.', children: (
+            <>
+              <label className='flex items-center gap-2 text-sm cursor-pointer'>
+                <input type='checkbox' className='accent-berry' checked={inventory.trackStock} onChange={() => setInventory(prev => ({ ...prev, trackStock: !prev.trackStock }))} />
+                Track stock <span className='text-mauve'>(turn off for made-to-order gifts like cakes and prints)</span>
+              </label>
+              <div className='grid sm:grid-cols-4 gap-4'>
+                {inventory.trackStock && <label className='label'>Opening stock<input type='number' min='0' value={inventory.stock} onChange={setInv('stock')} className='field font-normal' placeholder='0' /></label>}
+                {inventory.trackStock && <label className='label'>Low stock alert at<input type='number' min='0' value={inventory.lowStock} onChange={setInv('lowStock')} className='field font-normal' /></label>}
+                <label className='label'>Cost price ({currency.trim()})<input type='number' min='0' step='0.01' value={inventory.costPrice} onChange={setInv('costPrice')} className='field font-normal' placeholder='What it costs you' /></label>
+                <label className='label'>SKU<input value={inventory.sku} onChange={setInv('sku')} maxLength={40} className='field font-normal' placeholder='Optional' /></label>
+              </div>
+              {Number(price) > 0 && Number(inventory.costPrice) > 0 && <p className='text-xs text-mauve -mt-1'>Profit per sale {currency}{Math.round(price - inventory.costPrice).toLocaleString('en-LK')} · margin <b className='text-ink'>{Math.round(((price - inventory.costPrice) / price) * 100)}%</b></p>}
+            </>
+          ) })}
+
+          {Section({ step: 5, title: 'Who is it for & personalisation', children: (
             <>
               <RecipientPicker value={recipients} onChange={setRecipients} />
               <CustomizationSwitches value={customization} onChange={setCustomization} />

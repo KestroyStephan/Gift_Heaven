@@ -31,6 +31,11 @@ const paths = {
   pin: <><path d="M12 21s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" /><circle cx="12" cy="9" r="2.5" /></>,
   sparkle: <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6" />,
   chevron: <path d="M9 6l6 6-6 6" />,
+  box: <><path d="M21 8l-9-5-9 5 9 5 9-5z" /><path d="M3 8v8l9 5 9-5V8" /><path d="M12 13v8" /></>,
+  chart: <><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>,
+  download: <><path d="M12 4v11M7 10l5 5 5-5" /><path d="M4 20h16" /></>,
+  alert: <><path d="M12 3l9.5 17h-19L12 3z" /><path d="M12 10v4M12 17.5v.01" /></>,
+  history: <><path d="M3 12a9 9 0 103-6.7L3 8" /><path d="M3 3v5h5M12 7v5l3 2" /></>,
   tag: <><path d="M3 12V4a1 1 0 011-1h8l9 9-9 9-9-9z" /><circle cx="7.5" cy="7.5" r="1.5" /></>,
 }
 
@@ -118,3 +123,26 @@ export const BrandSelect = ({ brands, value, onChange, className = 'field font-n
     {brands.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
   </select>
 )
+
+export const money = (n, currency = 'Rs. ') => `${n < 0 ? '−' : ''}${currency}${Math.abs(Math.round(n || 0)).toLocaleString('en-LK')}`
+
+// Stock status of a product
+export const stockStatus = (p) => !p.trackStock ? { label: 'Made to order', style: 'bg-violet-50 text-violet-800 ring-violet-200' }
+  : p.stock <= 0 ? { label: 'Out of stock', style: 'bg-rose-50 text-rose-700 ring-rose-200' }
+  : p.stock <= p.lowStock ? { label: 'Low stock', style: 'bg-amber-50 text-amber-800 ring-amber-200' }
+  : { label: 'In stock', style: 'bg-emerald-50 text-emerald-700 ring-emerald-200' }
+
+export const StockBadge = ({ product }) => {
+  const s = stockStatus(product)
+  return <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ring-inset whitespace-nowrap ${s.style}`}>{s.label}</span>
+}
+
+// Save rows as a CSV file the owner can open in Excel
+export const downloadCsv = (filename, rows) => {
+  const escape = (v) => { const s = String(v ?? ''); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s }
+  const csv = rows.map(r => r.map(escape).join(',')).join('\r\n')
+  const url = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }))
+  const a = Object.assign(document.createElement('a'), { href: url, download: filename })
+  a.click()
+  URL.revokeObjectURL(url)
+}

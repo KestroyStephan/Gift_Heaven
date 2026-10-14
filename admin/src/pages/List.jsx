@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import CustomizationSwitches, { defaultCustomization } from '../components/CustomizationSwitches'
 import SizeEditor from '../components/SizeEditor'
 import RecipientPicker from '../components/RecipientPicker'
-import { Icon, PageHeader, Empty, BrandMark, BrandSelect, useBrands } from '../components/ui'
+import { Icon, PageHeader, Empty, BrandMark, BrandSelect, useBrands, StockBadge } from '../components/ui'
 
 const labelOf = (options, value) => options.find(option => option.value === value)?.label || value
 const PER_PAGE = 20
@@ -26,6 +26,10 @@ const EditProduct = ({ product, token, brands, onClose, onSaved }) => {
     sizePrices: product.sizePrices || {},
     recipients: product.recipients || [],
     brand: product.brand || '',
+    sku: product.sku || '',
+    trackStock: !!product.trackStock,
+    lowStock: product.lowStock ?? 5,
+    costPrice: product.costPrice ?? '',
   })
   const [images, setImages] = useState([false, false, false, false])
   const [saving, setSaving] = useState(false)
@@ -50,6 +54,7 @@ const EditProduct = ({ product, token, brands, onClose, onSaved }) => {
       formData.append('sizePrices', JSON.stringify(form.sizePrices))
       formData.append('recipients', JSON.stringify(form.recipients))
       formData.append('brand', form.brand)
+      for (const key of ['sku', 'trackStock', 'lowStock', 'costPrice']) formData.append(key, form[key])
       images.forEach((file, index) => file && formData.append(`image${index + 1}`, file))
 
       const { data } = await axios.post(backendUrl + '/api/product/update', formData, { headers: { token } })
@@ -111,6 +116,19 @@ const EditProduct = ({ product, token, brands, onClose, onSaved }) => {
         <SizeEditor sizes={form.sizes} setSizes={(fn) => setForm(prev => ({ ...prev, sizes: typeof fn === 'function' ? fn(prev.sizes) : fn }))}
           sizePrices={form.sizePrices} setSizePrices={(fn) => setForm(prev => ({ ...prev, sizePrices: typeof fn === 'function' ? fn(prev.sizePrices) : fn }))} basePrice={form.price} />
 
+        <fieldset className='flex flex-col gap-3'>
+          <legend className='mb-2 text-sm font-semibold text-ink'>Inventory & cost <span className='font-normal text-mauve'>— change stock on the Inventory page</span></legend>
+          <label className='flex items-center gap-2 text-sm cursor-pointer'>
+            <input type='checkbox' className='accent-berry' checked={form.trackStock} onChange={() => setForm(prev => ({ ...prev, trackStock: !prev.trackStock }))} />
+            Track stock {form.trackStock && <span className='text-mauve'>({product.stock ?? 0} in stock)</span>}
+          </label>
+          <div className='grid sm:grid-cols-3 gap-3'>
+            <label className='label'>Cost price<input type='number' min='0' step='0.01' value={form.costPrice} onChange={set('costPrice')} className='field font-normal' /></label>
+            <label className='label'>Low stock alert at<input type='number' min='0' value={form.lowStock} onChange={set('lowStock')} disabled={!form.trackStock} className='field font-normal' /></label>
+            <label className='label'>SKU<input value={form.sku} onChange={set('sku')} maxLength={40} className='field font-normal' /></label>
+          </div>
+        </fieldset>
+
         <RecipientPicker value={form.recipients} onChange={(recipients) => setForm(prev => ({ ...prev, recipients }))} />
 
         <CustomizationSwitches value={form.customization} onChange={(customization) => setForm(prev => ({ ...prev, customization }))} />
@@ -151,7 +169,10 @@ const List = ({token}) => {
         const response = await axios.get(backendUrl + '/api/product/list', { params: { limit: 1000 } })
 
         if (response.data.products){
-          setList(response.data.products);
+          // cost prices are private, so they come from the admin inventory endpoint
+          const inv = await axios.post(backendUrl + '/api/product/inventory', {}, { headers: { token } }).catch(() => null)
+          const costs = Object.fromEntries((inv?.data?.products || []).map(p => [p._id, p.costPrice]))
+          setList(response.data.products.map(p => ({ ...p, costPrice: costs[p._id] ?? 0 })));
         } else{
           toast.error(response.data.message)
         }
@@ -232,6 +253,7 @@ const List = ({token}) => {
                   <th className='px-3 py-3 font-bold'>Category</th>
                   <th className='px-3 py-3 font-bold hidden lg:table-cell'>Occasion</th>
                   <th className='px-3 py-3 font-bold'>Price</th>
+                  <th className='px-3 py-3 font-bold'>Stock</th>
                   <th className='px-3 py-3 font-bold hidden md:table-cell'>Tags</th>
                   <th className='pl-3 pr-5 py-3 font-bold text-right'>Actions</th>
                 </tr>
@@ -254,6 +276,7 @@ const List = ({token}) => {
                     <td className='px-3 py-3 whitespace-nowrap'><span className='px-2.5 py-1 rounded-full bg-pink-50 text-pink-700 text-xs font-semibold'>{labelOf(categories, item.category)}</span></td>
                     <td className='px-3 py-3 hidden lg:table-cell whitespace-nowrap'>{labelOf(subCategories, item.subCategory)}</td>
                     <td className='px-3 py-3 font-semibold text-ink whitespace-nowrap'>{priceRange(item)}</td>
+                    <td className='px-3 py-3 whitespace-nowrap'><span className='flex items-center gap-2'><StockBadge product={item} />{item.trackStock && <b className='text-ink'>{item.stock}</b>}</span></td>
                     <td className='px-3 py-3 hidden md:table-cell'>
                       <span className='flex flex-wrap gap-1'>
                         {item.bestseller && <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[11px] font-bold'><Icon name='star' size={11} />Bestseller</span>}
