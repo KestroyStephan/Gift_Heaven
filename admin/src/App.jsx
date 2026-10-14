@@ -39,6 +39,7 @@ export const categories = [
   { value: 'Stationery', label: 'Pens & Key Tags' },
   { value: 'ArtSupplies', label: 'Art & Drawing' },
   { value: 'Games', label: 'Games & Puzzles' },
+  { value: 'Accessories', label: 'Fashion Accessories' },
 ]
 export const recipientOptions = [
   { value: 'her', label: 'Her' }, { value: 'him', label: 'Him' }, { value: 'couples', label: 'Couples' },

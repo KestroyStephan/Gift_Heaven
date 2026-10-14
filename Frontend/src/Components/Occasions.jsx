@@ -13,6 +13,7 @@ const categories = [
     { key: 'GiftPackage', tint: 'bg-blush' },
     { key: 'GiftHamper', tint: 'bg-sage' },
     { key: 'Jewellery', tint: 'bg-lilac' },
+    { key: 'Accessories', tint: 'bg-blush' },
     { key: 'Toys', tint: 'bg-cream' },
     { key: 'Baby', tint: 'bg-blush' },
     { key: 'Teddy', tint: 'bg-cream' },

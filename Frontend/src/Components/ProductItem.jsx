@@ -9,7 +9,7 @@ export const catalogNames = {
     Teddy: 'Teddy & Plush', LoveFocil: 'Love Boxes', Personalised: 'Personalised Gifts',
     CustomPrint: 'Custom Printing', Cake: 'Cakes', Festive: 'Festive & Cultural',
     Toys: 'Kids & Toys', Baby: 'Baby', Jewellery: 'Jewellery', Plants: 'Plants & Pots', HomeDecor: 'Home & Décor',
-    Stationery: 'Pens & Key Tags', ArtSupplies: 'Art & Drawing', Games: 'Games & Puzzles', GiftPackage: 'Gift Packages',
+    Stationery: 'Pens & Key Tags', ArtSupplies: 'Art & Drawing', Games: 'Games & Puzzles', GiftPackage: 'Gift Packages', Accessories: 'Fashion Accessories',
     BirthdayGift: 'Birthday', AnniversaryGift: 'Anniversary', SurpriseGift: 'Surprise',
     ValentineGift: "Valentine's", WeddingGift: 'Wedding', ThankYouGift: 'Thank You',
     HousewarmingGift: 'Housewarming', BabyGift: 'New Baby', GraduationGift: 'Graduation',
