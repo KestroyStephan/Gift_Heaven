@@ -266,6 +266,26 @@ const Dashboard = ({ token }) => {
         </div>
       </div>
 
+      {stats.mostWished?.length > 0 && (
+        <div className='card p-6'>
+          <div className='flex flex-wrap items-baseline justify-between gap-2 mb-4'>
+            <p className='card-title'>Most wished-for gifts</p>
+            <span className='text-xs text-mauve'>Saved in customers' wishlists — good to keep in stock</span>
+          </div>
+          <div className='grid sm:grid-cols-2 lg:grid-cols-5 gap-3'>
+            {stats.mostWished.map(p => (
+              <div key={p._id} className='flex items-center gap-3 rounded-2xl border border-line p-2.5'>
+                {p.image ? <img src={p.image} alt='' className='w-11 h-11 rounded-xl object-cover' /> : <span className='w-11 h-11 rounded-xl bg-pink-50'></span>}
+                <span className='min-w-0'>
+                  <span className='block text-sm font-semibold text-ink truncate'>{p.name}</span>
+                  <span className='block text-xs text-mauve'><b className='text-berry'>♥ {p.count}</b>{p.stock !== null ? ` · ${p.stock} in stock` : ''}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className='card overflow-hidden'>
         <div className='flex justify-between items-center px-6 py-5'>
           <p className='card-title'>Recent orders</p>
