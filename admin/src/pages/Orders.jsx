@@ -111,7 +111,7 @@ const Orders = ({ token }) => {
                   <p className='table-head mb-2'>Items ({order.items.length})</p>
                   {order.items.map((item, index) => (
                     <div className='py-0.5' key={index}>
-                      <p className='text-ink'><b className='font-semibold'>{item.name}</b> × {item.quantity} <span className='text-mauve'>({item.size})</span></p>
+                      <p className='text-ink'><b className='font-semibold'>{item.name}</b> × {item.quantity} <span className='text-mauve'>({item.size})</span>{item.offerName && <span className='ml-2 text-[11px] font-bold text-berry bg-pink-50 px-2 py-0.5 rounded-full'>{item.offerName}</span>}</p>
                       {item.custom && (
                         <div className='ml-1 my-2 p-3 rounded-xl bg-[#FCF8F9] border-l-[3px] border-berry text-xs text-mauve flex flex-col gap-1'>
                           <b className='text-berry tracking-wide'>{item.custom.boxItems ? 'SURPRISE BOX' : 'PERSONALISED'}</b>
@@ -169,6 +169,8 @@ const Orders = ({ token }) => {
                   <p className='table-head mb-1'>Payment</p>
                   <p className='text-ink font-semibold'>{order.paymentMethod === 'COD' ? 'Cash on delivery' : order.paymentMethod}</p>
                   <p><span className={`px-2.5 py-1 rounded-full text-xs font-bold ${order.payment ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-800'}`}>{order.payment ? 'Paid' : 'Payment pending'}</span></p>
+                  {order.discount > 0 && <p className='mt-2 text-emerald-700'>Coupon <b className='font-mono'>{order.couponCode}</b> −{currency}{order.discount.toLocaleString('en-LK')}</p>}
+                  {order.deliveryFee === 0 && <p className='text-emerald-700'>Free delivery</p>}
                   <p className='mt-2'>Total <b className='text-ink'>{currency}{Number(order.amount).toLocaleString('en-LK')}</b></p>
                 </div>
               </div>

@@ -200,7 +200,12 @@ const Reports = ({ token }) => {
               <p className='card-title mb-4'>Profit & loss</p>
               <dl className='text-sm flex flex-col'>
                 {[
-                  ['Product sales', s.productSales],
+                  ...(s.offerSavings || s.discounts ? [
+                    ['Gifts at full price', s.productSales + s.offerSavings + s.discounts],
+                    ...(s.offerSavings ? [['− Offer savings', -s.offerSavings]] : []),
+                    ...(s.discounts ? [['− Coupon discounts', -s.discounts]] : []),
+                    ['= Product sales', s.productSales, true],
+                  ] : [['Product sales', s.productSales]]),
                   ['+ Delivery fees', s.delivery],
                   ['= Total sales', s.sales, true],
                   ['− Cost of goods', -s.cost],
@@ -218,7 +223,7 @@ const Reports = ({ token }) => {
                 <div className='rounded-2xl bg-sky-50 p-3'><p className='text-xs text-sky-800'>Average order</p><p className='font-bold text-sky-800 text-lg'>{money(s.averageOrder)}</p></div>
                 <div className='rounded-2xl bg-stone-100 p-3'><p className='text-xs text-stone-600'>Cancelled</p><p className='font-bold text-stone-700 text-lg'>{s.cancelledOrders} · {money(s.cancelledValue)}</p></div>
               </div>
-              <p className='text-xs text-mauve mt-3'>{s.units} units sold. Income counts paid orders; cash-on-delivery money is received when the order is delivered.</p>
+              <p className='text-xs text-mauve mt-3'>{s.units} units sold{s.couponOrders ? ` · ${s.couponOrders} orders used a coupon` : ''}. Offer savings and coupon discounts are already taken off product sales. Income counts paid orders; cash-on-delivery money is received when the order is delivered.</p>
             </div>
           </div>
 

@@ -16,6 +16,7 @@ const groups = [
     label: 'Sales', links: [
       { to: '/orders', label: 'Orders', icon: 'orders', badge: 'orders' },
       { to: '/reports', label: 'Sales & income', icon: 'chart' },
+      { to: '/promotions', label: 'Offers & coupons', icon: 'gift' },
     ]
   },
   {
