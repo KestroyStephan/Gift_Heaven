@@ -1,5 +1,5 @@
-import React from 'react'
-import {Routes,Route} from 'react-router-dom'
+import React, { useEffect } from 'react'
+import {Routes,Route, useLocation, Link} from 'react-router-dom'
 
 import Home from './Pages/Home'
 import Collection from './Pages/Collection'
@@ -15,34 +15,64 @@ import Navbar from './Components/Navbar'
 import Footer from './Components/Footer'
 import Searchbar from './Components/Searchbar'
 import Verify from './Pages/Verify'
+import OrderSuccess from './Pages/OrderSuccess'
+import Profile from './Pages/Profile'
+import ResetPassword from './Pages/ResetPassword'
+import Cakes from './Pages/Cakes'
+import CustomStudio from './Pages/CustomStudio'
+import GiftGuide from './Pages/GiftGuide'
+import ChatWidget from './Components/ChatWidget'
 
-import {ToastContainer, toast} from 'react-toastify';
+import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
+// Pages that draw their own full-width bands
+const fullBleed = ['/', '/about', '/contact', '/cakes', '/custom-studio', '/gift-guide']
+
+const NotFound = () => (
+  <div className='py-24 text-center flex flex-col items-center gap-4'>
+    <p className='font-display text-5xl font-semibold'>Page not found</p>
+    <p className='text-mauve'>The page you're looking for has moved or no longer exists.</p>
+    <Link to='/' className='btn-primary mt-2'>Back to home</Link>
+  </div>
+)
 
 const App = () => {
+
+  const { pathname } = useLocation()
+
+  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+
   return (
-    <div className='px-4 sm:px-[5vw] md:px=[7vw] lg:px-[9vw]'>
-      <ToastContainer  />
+    <div className='min-h-screen flex flex-col'>
+      <ToastContainer position='top-right' autoClose={3000} />
       <Navbar />
       <Searchbar />
-      <Routes>
+      <main className={`flex-1 ${fullBleed.includes(pathname) ? '' : 'shell w-full'}`}>
+        <Routes>
 
-        <Route path='/' element={<Home />} />
-        <Route path='/collection' element={<Collection />} />
-        <Route path='/about' element={<About />} />
-        <Route path='/contact' element={<Contact />} />
-        <Route path='/product/:productId' element={<Product />} />
-        <Route path='/cart' element={<Cart />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/place-order' element={<PlaceOrder />} />
-        <Route path='/orders' element={<Orders />} />
-        <Route path='/verify' element={<Verify />} />
-        
-        
-      </Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/collection' element={<Collection />} />
+          <Route path='/cakes' element={<Cakes />} />
+          <Route path='/custom-studio' element={<CustomStudio />} />
+          <Route path='/gift-guide' element={<GiftGuide />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/contact' element={<Contact />} />
+          <Route path='/product/:productId' element={<Product />} />
+          <Route path='/cart' element={<Cart />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/place-order' element={<PlaceOrder />} />
+          <Route path='/orders' element={<Orders />} />
+          <Route path='/verify' element={<Verify />} />
+          <Route path='/order-success/:orderId' element={<OrderSuccess />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/reset-password/:token' element={<ResetPassword />} />
+          <Route path='*' element={<NotFound />} />
+
+        </Routes>
+      </main>
       <Footer />
-      
+      <ChatWidget />
     </div>
   )
 }
