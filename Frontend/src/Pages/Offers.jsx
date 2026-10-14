@@ -22,14 +22,14 @@ export const CouponTicket = ({ coupon, compact = false }) => {
   }
   return (
     <div className={`relative flex rounded-[22px] overflow-hidden bg-white border border-line ${compact ? '' : 'shadow-[0_10px_30px_-18px_rgba(43,27,36,.4)]'}`}>
-      <div className='bg-berry text-white px-5 py-4 flex flex-col justify-center min-w-[7.5rem] border-r-2 border-dashed border-white/40'>
+      <div className='bg-berry text-white px-4 sm:px-5 py-4 flex flex-col justify-center min-w-[6.25rem] sm:min-w-[7.5rem] border-r-2 border-dashed border-white/40'>
         <span className='font-display text-[1.6rem] leading-none font-semibold'>{couponText(coupon)}</span>
         {coupon.maxDiscount > 0 && <span className='text-[11px] text-white/75 mt-1'>up to Rs. {coupon.maxDiscount.toLocaleString('en-LK')}</span>}
       </div>
       <div className='flex-1 min-w-0 px-4 py-3.5 flex flex-col gap-1.5'>
         <p className='text-sm text-ink leading-snug'>{coupon.description}</p>
         <p className='text-xs text-muted'>{coupon.minOrder ? `Min. order Rs. ${coupon.minOrder.toLocaleString('en-LK')} · ` : ''}{coupon.firstOrderOnly ? 'First order · ' : ''}{until(coupon.endsAt)}</p>
-        <button type='button' onClick={copy} className='self-start mt-0.5 flex items-center gap-2 rounded-full border-2 border-dashed border-rose-300 px-3 py-1 text-sm font-bold tracking-[0.12em] text-berry hover:bg-rose-50 cursor-pointer'>
+        <button type='button' onClick={copy} className='self-start max-w-full mt-0.5 flex flex-wrap items-center gap-x-2 rounded-full border-2 border-dashed border-rose-300 px-3 py-1 text-sm font-bold tracking-[0.12em] text-berry hover:bg-rose-50 cursor-pointer'>
           {coupon.code} <span className='text-[11px] tracking-normal font-semibold text-muted'>{copied ? 'Copied & applied ✓' : 'Tap to use'}</span>
         </button>
       </div>

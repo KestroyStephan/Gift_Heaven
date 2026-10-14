@@ -41,8 +41,8 @@ const Navbar = () => {
             </div>
 
             <header className='sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-line'>
-                <div className='shell flex items-center justify-between gap-6 py-3.5'>
-                    <Link to='/' aria-label='Surprise Heaven home'><Logo size={42} /></Link>
+                <div className='shell flex items-center justify-between gap-3 sm:gap-6 py-3.5'>
+                    <Link to='/' aria-label='Surprise Heaven home' className='shrink-0'><span className='sm:hidden'><Logo size={46} showName={false} /></span><span className='hidden sm:block'><Logo size={52} /></span></Link>
 
                     <nav aria-label='Main' className='hidden lg:flex gap-7 text-sm font-semibold'>
                         {links.map(link => (
@@ -92,7 +92,7 @@ const Navbar = () => {
             {visible && <div className='fixed inset-0 bg-ink/40 z-50 lg:hidden' onClick={() => setVisible(false)} />}
             <aside aria-hidden={!visible} className={`fixed z-50 top-0 right-0 bottom-0 w-[82%] max-w-sm bg-white shadow-xl transition-transform duration-300 lg:hidden ${visible ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className='flex items-center justify-between p-4 border-b border-line'>
-                    <Logo size={36} />
+                    <Logo size={44} />
                     <button aria-label='Close menu' onClick={() => setVisible(false)} className={iconButton}><Icon name='close' /></button>
                 </div>
                 <nav className='flex flex-col p-2 text-base font-semibold'>

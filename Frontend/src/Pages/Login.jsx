@@ -86,7 +86,7 @@ const Login = () => {
   return (
     <div className='py-12 grid lg:grid-cols-2 gap-10 items-stretch'>
       <div className='hidden lg:flex rounded-[32px] bg-ink text-[#F6E9EE] p-12 flex-col justify-between'>
-        <Logo size={48} light />
+        <Logo size={64} light />
         <div>
           <p className='font-display text-5xl text-white leading-tight'>Every surprise <span className='italic text-[#F2B8C9]'>starts here</span>.</p>
           <ul className='mt-8 flex flex-col gap-3 text-[#D9C6CE]'>

@@ -31,7 +31,7 @@ const About = () => {
           <Link to='/collection' className='btn-primary self-start mt-2'>Explore the collection <Icon name='arrow' size={18} /></Link>
         </div>
         <div className='rounded-[32px] bg-blush aspect-[4/3.4] flex flex-col items-center justify-center gap-6 p-10 text-center'>
-          <LogoMark size={120} />
+          <LogoMark size={180} />
           <p className='font-display italic text-3xl text-berry-dark max-w-sm leading-snug'>“Little boxes of big feelings.”</p>
         </div>
       </section>

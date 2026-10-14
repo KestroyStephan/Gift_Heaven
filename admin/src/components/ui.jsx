@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { backendUrl } from '../App'
+import logoBadge from '../assets/logo-badge.webp'
 
 // Line icons used across the admin portal
 const paths = {
@@ -46,14 +47,9 @@ export const Icon = ({ name, size = 20, className = '', strokeWidth = 1.8 }) => 
 
 export const AdminLogo = ({ size = 40, light = false }) => (
   <span className='flex items-center gap-3'>
-    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
-      <path d="M24 15.5C24 15.5 14 10.8 14 6.4C14 3.6 16.4 2 18.7 2C20.9 2 22.6 3.4 24 5.4C25.4 3.4 27.1 2 29.3 2C31.6 2 34 3.6 34 6.4C34 10.8 24 15.5 24 15.5Z" fill="#C9973B" />
-      <rect x="6" y="16" width="36" height="8" rx="2.5" fill={light ? '#E8B4C6' : '#7E1A3D'} />
-      <rect x="8.5" y="24" width="31" height="20" rx="3" fill={light ? '#C9577F' : '#A3214F'} />
-      <rect x="22" y="16" width="4" height="28" fill="#C9973B" />
-    </svg>
+    <img src={logoBadge} width={size} height={size} alt='' aria-hidden='true' className='shrink-0 drop-shadow-sm' draggable='false' />
     <span className='flex flex-col leading-none'>
-      <span className={`font-display italic font-semibold ${light ? 'text-white' : 'text-berry'}`} style={{ fontSize: size * 0.62 }}>Surprise</span>
+      <span className={`font-display italic font-semibold ${light ? 'text-white' : 'text-berry'}`} style={{ fontSize: size * 0.55 }}>Surprise</span>
       <span className={`font-bold tracking-[0.4em] text-[10px] mt-[3px] ${light ? 'text-gold' : 'text-ink'}`}>HEAVEN · ADMIN</span>
     </span>
   </span>

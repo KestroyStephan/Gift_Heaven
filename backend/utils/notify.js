@@ -107,7 +107,8 @@ export const notifyOrder = async (order, event) => {
 
     const html = `
         <div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#333">
-            <h2 style="color:#e11d48">${storeName}</h2>
+            <div style="text-align:center;padding:8px 0 4px"><img src="${frontendUrl}/logo-email.png" width="96" height="96" alt="${storeName}" style="display:inline-block"></div>
+            <h2 style="color:#A3214F;text-align:center;margin-top:4px">${storeName}</h2>
             <p>Hi ${escapeHtml(firstName) || 'there'},</p>
             <p>${intro}</p>
             <p>Order <b>#${id}</b></p>

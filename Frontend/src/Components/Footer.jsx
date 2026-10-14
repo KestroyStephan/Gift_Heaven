@@ -8,7 +8,7 @@ const Footer = () => {
     <footer className='bg-ink text-[#D9C6CE] mt-24'>
       <div className='shell py-16 grid gap-12 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1.4fr]'>
         <div className='flex flex-col gap-5 max-w-sm'>
-          <Logo size={42} light />
+          <Logo size={56} light />
           <p className='text-sm leading-relaxed'>
             Curated gifts and chocolate hampers, hand-packed in our boutique and delivered with care —
             so every surprise arrives exactly as you imagined it.

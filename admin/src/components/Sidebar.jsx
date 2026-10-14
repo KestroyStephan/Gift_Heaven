@@ -36,7 +36,7 @@ const Sidebar = ({ badges = {}, open, onClose, onLogout }) => {
       {open && <div className='fixed inset-0 bg-black/40 z-40 lg:hidden' onClick={onClose}></div>}
       <aside className={`sidebar fixed lg:sticky top-0 left-0 z-50 h-screen w-[264px] shrink-0 flex flex-col transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className='px-6 pt-6 pb-5 flex items-center justify-between'>
-          <AdminLogo size={38} light />
+          <AdminLogo size={48} light />
           <button onClick={onClose} aria-label='Close menu' className='lg:hidden text-white/70 hover:text-white cursor-pointer'><Icon name='close' /></button>
         </div>
 

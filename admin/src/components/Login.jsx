@@ -44,7 +44,7 @@ const Login = ({ setToken }) => {
                     <path d='M24 15.5C24 15.5 14 10.8 14 6.4C14 3.6 16.4 2 18.7 2C20.9 2 22.6 3.4 24 5.4C25.4 3.4 27.1 2 29.3 2C31.6 2 34 3.6 34 6.4C34 10.8 24 15.5 24 15.5Z' fill='#fff' />
                     <rect x='6' y='16' width='36' height='8' rx='2.5' fill='#fff' /><rect x='8.5' y='24' width='31' height='20' rx='3' fill='#fff' />
                 </svg>
-                <AdminLogo size={44} light />
+                <AdminLogo size={60} light />
                 <div className='relative max-w-md'>
                     <p className='text-gold text-xs font-bold tracking-[0.25em] uppercase mb-4'>Store management</p>
                     <h2 className='font-display text-5xl leading-[1.05] font-semibold'>Every gift, every order, <i>beautifully</i> in hand.</h2>
@@ -62,7 +62,7 @@ const Login = ({ setToken }) => {
             {/* Sign-in form */}
             <div className='flex items-center justify-center px-5 py-12'>
                 <div className='w-full max-w-[400px]'>
-                    <div className='lg:hidden mb-10'><AdminLogo size={44} /></div>
+                    <div className='lg:hidden mb-10'><AdminLogo size={56} /></div>
                     <h1 className='font-display text-[2.6rem] leading-tight font-semibold text-ink'>Welcome back</h1>
                     <p className='text-sm text-mauve mt-1 mb-8'>Sign in to manage products, orders and customer messages.</p>
                     <form onSubmit={onSubmitHandler} className='flex flex-col gap-5'>
