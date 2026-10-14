@@ -1,41 +1,57 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { ShopContext } from '../Context/ShopContext'
-import { assets } from '../assets/assets'
 import Title from '../Components/Title'
-import ProductItem from '../Components/ProductItem'
+import ProductItem, { prettify, recipientNames } from '../Components/ProductItem'
+import Icon from '../Components/Icons'
+
+const FilterGroup = ({ title, options, selected, onToggle, names }) => (
+  <fieldset className='flex flex-col gap-3'>
+    <legend className='text-xs font-bold tracking-[0.14em] text-ink mb-3'>{title}</legend>
+    {options.map(value => (
+      <label key={value} className='flex items-center gap-3 text-[15px] text-mauve cursor-pointer hover:text-ink'>
+        <input type="checkbox" className='w-4 h-4 accent-berry' value={value} checked={selected.includes(value)} onChange={() => onToggle(value)} />
+        {names?.[value] || prettify(value)}
+      </label>
+    ))}
+  </fieldset>
+)
 
 const Collection = () => {
 
-  const {products ,search, showSearch} = useContext(ShopContext);
+  const {products ,search, showSearch, productsLoading} = useContext(ShopContext);
+  const [searchParams] = useSearchParams()
   const [showFilter, setShowFilter] = useState(false);
-  const [filterProducts, setFilterProducts] = useState([]);
   const [category,setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
-  const [sortType, setSortType] = useState('relavent') 
+  const [recipient, setRecipient] = useState([]);
+  const [sortType, setSortType] = useState('relevant')
 
-  const toggleCategory = (e)=>{
-    if (category.includes(e.target.value)) {
-        setCategory(prev=>prev.filter(item=>item !== e.target.value))
-    }
-    else{
-      setCategory(prev => [...prev, e.target.value])
-    }
+  // Links like /collection?sub=BirthdayGift preselect a filter
+  useEffect(() => {
+    const sub = searchParams.get('sub')
+    const cat = searchParams.get('category')
+    const forWho = searchParams.get('for')
+    setSubCategory(sub ? [sub] : [])
+    setCategory(cat ? [cat] : [])
+    setRecipient(forWho ? [forWho] : [])
+  }, [searchParams])
+
+  // Filter options come from the products that actually exist
+  const categories = useMemo(() => [...new Set(products.map(item => item.category))].sort(), [products])
+  const subCategories = useMemo(() => [...new Set(products.map(item => item.subCategory))].sort(), [products])
+  const recipients = useMemo(() => Object.keys(recipientNames).filter(r => products.some(p => p.recipients?.includes(r))), [products])
+
+  const toggle = (setter) => (value) => {
+    setter(prev => prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value])
   }
 
-  const toggleSubCategory = (e)=>{
-      if(subCategory.includes(e.target.value)){
-        setSubCategory(prev=>prev.filter(item=>item !== e.target.value))
-      }
-      else{
-        setSubCategory(prev => [...prev, e.target.value])
-      }
-  }
-
-  const applyFilter = ()=>{
+  const filterProducts = useMemo(() => {
     let productsCopy = products.slice();
 
     if(showSearch && search){
-      productsCopy = productsCopy.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+      const term = search.toLowerCase()
+      productsCopy = productsCopy.filter(item => item.name.toLowerCase().includes(term) || item.description?.toLowerCase().includes(term))
     }
 
     if(category.length > 0 ){
@@ -46,110 +62,70 @@ const Collection = () => {
       productsCopy = productsCopy.filter(item => subCategory.includes(item.subCategory))
     }
 
-    setFilterProducts(productsCopy)
-  }
-
-  const sortProduct = ()=>{
-    let fpCopy = filterProducts.slice();
-
-    switch(sortType){
-      case 'low-high':
-        setFilterProducts(fpCopy.sort((a,b)=>(a.price - b.price)));
-        break;
-
-      case 'high-low':
-        setFilterProducts(fpCopy.sort((a,b)=>(b.price - a.price)));
-        break
-        
-      default:
-        applyFilter();
-        break;
+    if (recipient.length > 0) {
+      productsCopy = productsCopy.filter(item => item.recipients?.some(r => recipient.includes(r)))
     }
-  }
 
-  useEffect(()=>{
-    applyFilter();
-  },[category,products,subCategory,search,showSearch])
+    if (sortType === 'low-high') productsCopy.sort((a,b)=>(a.price - b.price))
+    if (sortType === 'high-low') productsCopy.sort((a,b)=>(b.price - a.price))
 
-  useEffect(()=>{
-    sortProduct();
-  },[sortType])
+    return productsCopy
+  }, [products, search, showSearch, category, subCategory, recipient, sortType])
 
-
-
-  
+  const activeFilters = category.length + subCategory.length + recipient.length
 
   return (
-    <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t'>
-
-      {/* Filter Options */}
-      <div className='min-w-60'>
-        <p onClick={()=>setShowFilter(!showFilter)} className='my-2 text-xl flex items-center cursor-pointer gap-2'>FILTERS
-           <img className={`h-3 sm:hidden ${showFilter ? 'rotate-90': ''}`} src={assets.dropdown_icon} alt="" />
-        </p>
-        {/* Category Filter */}
-        <div className={`border border-rose-200 pl-5 py-3 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
-          <p className='mb-3 text-sm font-medium'>CATEGORIES</p>
-          <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Men'} onChange={toggleCategory} />Men
-            </p>
-
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Women'} onChange={toggleCategory} />Women
-            </p>
-
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Kids'} onChange={toggleCategory} />Kids
-            </p>
-          </div>
+    <div className='pt-10 pb-4'>
+      <div className='flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6 mb-8'>
+        <div>
+          <Title as='h1' eyebrow='Shop' text1={'All'} text2={'gifts'} />
+          <p className='text-mauve -mt-1'>{productsLoading ? 'Loading gifts…' : `${filterProducts.length} ${filterProducts.length === 1 ? 'gift' : 'gifts'}`}</p>
         </div>
 
-        {/* Sub category Filter */}
-        <div className={`border border-rose-200 pl-5 py-3 my-5 ${showFilter ? '' : 'hidden'} sm:block`}>
-          <p className='mb-3 text-sm font-medium'>TYPE</p>
-          <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Topwear'}  onChange={toggleSubCategory}/>Topwear
-            </p>
-
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Bottomwear'} onChange={toggleSubCategory} />Bottomwear
-            </p>
-
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Winterwear'} onChange={toggleSubCategory} />Winterwear
-            </p>
-          </div>
+        <div className='flex gap-3'>
+          <button onClick={()=>setShowFilter(!showFilter)} aria-expanded={showFilter} className='md:hidden h-11 px-5 rounded-full border border-rose-300 bg-white text-sm font-semibold cursor-pointer'>
+            Filters{activeFilters ? ` (${activeFilters})` : ''}
+          </button>
+          <label className='flex items-center gap-2 text-sm'>
+            <span className='sr-only sm:not-sr-only text-mauve'>Sort by</span>
+            <select value={sortType} onChange={(e)=>setSortType(e.target.value)} className='h-11 px-4 rounded-full border border-rose-300 bg-white font-semibold cursor-pointer'>
+               <option value="relevant">Newest</option>
+               <option value="low-high">Price: low to high</option>
+               <option value="high-low">Price: high to low</option>
+            </select>
+          </label>
         </div>
       </div>
-      
-      {/* Right side */}
-      <div className='flex-1'>
 
-        <div className='flex justify-between text-base sm:text-2xl mb-4'> 
-            <Title text1={'ALL'} text2={'COLLECTIONS'} />
+      <div className='flex flex-col md:flex-row gap-10'>
+        {/* Filter Options */}
+        <aside className={`md:w-56 shrink-0 flex-col gap-8 ${showFilter ? 'flex' : 'hidden'} md:flex`}>
+          {recipients.length > 0 && <FilterGroup title='GIFT FOR' options={recipients} selected={recipient} onToggle={toggle(setRecipient)} names={recipientNames} />}
+          {categories.length > 0 && <FilterGroup title='CATEGORY' options={categories} selected={category} onToggle={toggle(setCategory)} />}
+          {subCategories.length > 0 && <FilterGroup title='OCCASION' options={subCategories} selected={subCategory} onToggle={toggle(setSubCategory)} />}
+          {activeFilters > 0 && (
+            <button onClick={()=>{setCategory([]); setSubCategory([]); setRecipient([])}} className='self-start text-sm font-semibold text-berry underline underline-offset-4 cursor-pointer'>Clear all filters</button>
+          )}
+        </aside>
 
-            {/* Product sort */}
-            <select onChange={(e)=>setSortType(e.target.value)} className='border-2 border-rose-200 text-sm px-2'>
-               <option value="relavent">Sort by: Relavent</option>
-               <option value="low-high">Sort by: low to high</option>
-               <option value="high-low">Sort by: high to low</option>
-            </select>
+        {/* Products */}
+        <div className='flex-1 min-w-0'>
+          {!productsLoading && filterProducts.length === 0 && (
+            <div className='rounded-[28px] border border-dashed border-rose-300 bg-white py-16 px-6 text-center flex flex-col items-center gap-3'>
+              <Icon name='gift' size={36} className='text-berry' />
+              <p className='font-display text-2xl font-semibold'>No gifts match your filters</p>
+              <p className='text-mauve text-sm'>Try removing a filter or searching for something else.</p>
+            </div>
+          )}
 
+          <div className='grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-9'>
+            {
+              filterProducts.map((item)=>(
+                <ProductItem key={item._id} name={item.name} id={item._id} price={item.price} image={item.image} category={item.category} bestseller={item.bestseller} sizePrices={item.sizePrices}/>
+              ))
+            }
+          </div>
         </div>
-
-        {/* Map Products */}
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
-          {
-            filterProducts.map((item,index)=>(
-              <ProductItem key={index} name={item.name} id={item._id} price={item.price} image={item.image}/>
-            ))
-          }
-        </div>
-
       </div>
     </div>
   )
