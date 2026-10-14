@@ -21,6 +21,7 @@ const categories = [
     { key: 'Eyewear', tint: 'bg-lilac' },
     { key: 'Beauty', tint: 'bg-blush' },
     { key: 'Tech', tint: 'bg-sage' },
+    { key: 'Gaming', tint: 'bg-lilac' },
     { key: 'Toys', tint: 'bg-cream' },
     { key: 'Baby', tint: 'bg-blush' },
     { key: 'Teddy', tint: 'bg-cream' },
