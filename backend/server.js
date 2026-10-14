@@ -10,6 +10,7 @@ import orderRouter from './routes/orderRoute.js'
 import newsletterRouter from './routes/newsletterRoute.js'
 import contactRouter from './routes/contactRoute.js'
 import chatRouter from './routes/chatRoute.js'
+import brandRouter from './routes/brandRoute.js'
 
 // App configuration setup
 const app = express()
@@ -29,6 +30,7 @@ app.use('/api/orders', orderRouter)
 app.use('/api/newsletter', newsletterRouter)
 app.use('/api/contact', contactRouter)
 app.use('/api/chat', chatRouter)
+app.use('/api/brand', brandRouter)
 
 
 // Upload and other middleware errors come back as JSON like every other API response

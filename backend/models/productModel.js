@@ -14,6 +14,8 @@ const productSchema = new mongoose.Schema({
     sizePrices:{type:Object},
     // who the gift suits: kids, teens, her, him, couples, elders, baby
     recipients:{type:[String], default: []},
+    // brand slug, e.g. "cadbury" or one of our house labels
+    brand:{type:String, default: ''},
     date:{type:Number, required:true}
 
 })
@@ -21,6 +23,7 @@ const productSchema = new mongoose.Schema({
 productSchema.index({category: 1, subCategory: 1});
 productSchema.index({category: 1, price: 1});
 productSchema.index({bestseller: 1, date: -1});
+productSchema.index({brand: 1, date: -1});
 productSchema.index({name: "text", description: "text"});
 
 const productModel =mongoose.models.product || mongoose.model("giftproduct", productSchema);

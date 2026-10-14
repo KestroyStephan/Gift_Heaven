@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import { v2 as cloudinary } from "cloudinary"
 import productModel from "../models/productModel.js"
+import brandModel from "../models/brandModel.js"
 import { wrapOptions, ribbonColors, addOns, limits, defaultCustomization, printColours, cakeOptions, recipientOptions, boxStyles, boxLeadDays, albumLeadDays } from "../config/customization.js"
 
 // Keep only the known on/off switches
@@ -29,6 +30,14 @@ const parseRecipients = (value) => {
     return [...new Set((Array.isArray(input) ? input : []).filter(r => recipientOptions.includes(r)))]
 }
 
+// A brand slug that exists, or '' for no brand
+const parseBrand = async (value) => {
+    const slug = String(value || '').trim()
+    if (!slug) return ''
+    if (!(await brandModel.exists({ slug }))) throw new Error('Unknown brand')
+    return slug
+}
+
 // Personalisation options shown on the product page
 const customizationOptions = (req, res) => {
     res.json({ success: true, options: { wrapOptions, ribbonColors, addOns, limits, defaultCustomization, printColours, cakeOptions, recipientOptions, boxStyles, boxLeadDays, albumLeadDays } })
@@ -54,7 +63,7 @@ const uploadCustomerPhoto = async (req, res) => {
 const addProduct = async (req, res) => {
 
     try {
-        const { name, description, price, category, subCategory, sizes, bestseller, customization, sizePrices, recipients } = req.body
+        const { name, description, price, category, subCategory, sizes, bestseller, customization, sizePrices, recipients, brand } = req.body
 
         req.files = req.files || {}
         const image1 = req.files.image1 && req.files.image1[0]
@@ -84,6 +93,7 @@ const addProduct = async (req, res) => {
             customization: parseCustomization(customization),
             sizePrices: parseSizePrices(sizePrices, JSON.parse(sizes)),
             recipients: parseRecipients(recipients),
+            brand: await parseBrand(brand),
             image: imagesUrl,
             date: Date.now()
         }
@@ -123,6 +133,10 @@ const listProduct = async (req, res) => {
 
         if(subCategory){
             filter.subCategory = subCategory;
+        }
+
+        if(req.query.brand){
+            filter.brand = String(req.query.brand);
         }
 
         if(req.query.recipient){
@@ -177,7 +191,7 @@ const removeProduct = async (req, res) => {
 // funtion update product (images are optional: only uploaded slots are replaced)
 const updateProduct = async (req, res) => {
     try {
-        const { id, name, description, price, category, subCategory, sizes, bestseller, customization, sizePrices, recipients } = req.body
+        const { id, name, description, price, category, subCategory, sizes, bestseller, customization, sizePrices, recipients, brand } = req.body
 
         const product = await productModel.findById(id)
         if (!product) return res.json({ success: false, message: "Product not found" })
@@ -191,6 +205,7 @@ const updateProduct = async (req, res) => {
         if (customization) product.customization = parseCustomization(customization)
         if (sizePrices !== undefined) product.sizePrices = parseSizePrices(sizePrices, product.sizes)
         if (recipients !== undefined) product.recipients = parseRecipients(recipients)
+        if (brand !== undefined) product.brand = await parseBrand(brand)
         if (bestseller !== undefined) product.bestseller = bestseller === "true" || bestseller === true
 
         const images = [...product.image]
