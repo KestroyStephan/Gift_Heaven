@@ -9,6 +9,11 @@ const productSchema = new mongoose.Schema({
     subCategory:{type:String, required:true},
     sizes:{type:Array, required:true},
     bestseller:{type:Boolean},
+    customization:{type:Object},
+    // optional price per size, e.g. { "1kg": 22, "2kg": 40 }
+    sizePrices:{type:Object},
+    // who the gift suits: kids, teens, her, him, couples, elders, baby
+    recipients:{type:[String], default: []},
     date:{type:Number, required:true}
 
 })
