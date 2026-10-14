@@ -3,10 +3,12 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { ShopContext } from '../Context/ShopContext'
 import Logo from './Logo'
 import Icon from './Icons'
+import { DepartmentBar, departments, departmentLink } from './Mall'
 
 const links = [
     { to: '/', label: 'Home' },
     { to: '/collection', label: 'Shop' },
+    { to: '/brands', label: 'Brands' },
     { to: '/build-a-box', label: 'Build a box' },
     { to: '/cakes', label: 'Cakes' },
     { to: '/custom-studio', label: 'Custom studio' },
@@ -72,6 +74,7 @@ const Navbar = () => {
                         </button>
                     </div>
                 </div>
+                <div className='hidden md:block'><DepartmentBar /></div>
             </header>
 
             {/* Drawer menu for small screens */}
@@ -85,6 +88,9 @@ const Navbar = () => {
                     {links.map(link => (
                         <NavLink key={link.to} to={link.to} end={link.to === '/'} className={({ isActive }) => `px-4 py-3.5 rounded-xl ${isActive ? 'bg-rose-50 text-berry' : 'text-ink'}`}>{link.label}</NavLink>
                     ))}
+                    <hr className='my-2 border-line' />
+                    <p className='px-4 pt-2 pb-1 text-xs font-bold tracking-[0.14em] text-muted'>DEPARTMENTS</p>
+                    {departments.map(d => <Link key={d.slug} to={departmentLink(d)} className='px-4 py-2.5 rounded-xl text-[15px] font-medium text-mauve'>{d.name}</Link>)}
                     <hr className='my-2 border-line' />
                     {token ? (
                         <>

@@ -44,6 +44,7 @@ const ShopContextProvider = (props) => {
     const [products, setProducts] = useState([]);
     const [productsLoading, setProductsLoading] = useState(true);
     const [customOptions, setCustomOptions] = useState(null);
+    const [brands, setBrands] = useState([]);
     const [token, setToken] = useState(localStorage.getItem('token') || '')
     // Live chat panel (any page can open it with a topic)
     const [chat, setChat] = useState({ open: false, topic: '' })
@@ -211,6 +212,16 @@ const ShopContextProvider = (props) => {
         }
     }
 
+    const getBrands = async () => {
+        try {
+            const { data } = await axios.get(backendUrl + '/api/brand/list')
+            if (data.success) setBrands(data.brands)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const brandOf = (slug) => brands.find(b => b.slug === slug)
+
     const getCustomOptions = async () => {
         try {
             const { data } = await axios.get(backendUrl + '/api/product/options')
@@ -260,6 +271,7 @@ const ShopContextProvider = (props) => {
     useEffect(() => {
         getProductData()
         getCustomOptions()
+        getBrands()
     }, [])
 
     useEffect(() => {
@@ -277,7 +289,7 @@ const ShopContextProvider = (props) => {
         showSearch, setShowSearch, setCartItems, clearCart,
         cartItems, cartCustoms, customOptions, extrasOf, addToCart, getCartCount, updateQuantity,
         getCartAmount, navigate, backendUrl, token, setToken, logout, handleAuthError,
-        chat, openChat, closeChat
+        chat, openChat, closeChat, brands, brandOf
     }
 
     return (
