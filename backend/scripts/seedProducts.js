@@ -12,6 +12,7 @@ import { v2 as cloudinary } from 'cloudinary'
 import productModel from '../models/productModel.js'
 import brandModel from '../models/brandModel.js'
 import { brands, brandFor } from './catalogBrands.js'
+import stockMoveModel from '../models/stockMoveModel.js'
 import { drawProduct } from './productArt.js'
 import { photosFor } from './productPhotos.js'
 import { extraProducts } from './catalogExtra.js'
@@ -169,6 +170,7 @@ if (process.argv.includes('--photos')) {
 }
 
 let added = 0
+const createdIds = []
 for (const [index, p] of products.entries()) {
     if (await productModel.exists({ name: p.name })) {
         console.log('skip (exists):', p.name)
@@ -189,7 +191,8 @@ for (const [index, p] of products.entries()) {
 
     const { art, photos, ...data } = p
     // Newest first in the store, so give the list order a date order
-    await productModel.create({ ...data, bestseller: !!data.bestseller, image: images, date: Date.now() - index * 60000 })
+    const created = await productModel.create({ ...data, bestseller: !!data.bestseller, image: images, date: Date.now() - index * 60000 })
+    createdIds.push(created._id)
     added++
     console.log('added:', p.name)
 }
@@ -217,6 +220,26 @@ for (const product of await productModel.find({ $or: [{ brand: { $exists: false 
     branded++
 }
 console.log(`${branded} product(s) given a brand`)
+
+// Inventory for products that don't have it yet: made-to-order gifts aren't stocked,
+// everything else gets a SKU, a starting stock and a cost price (about 50-65% of the price)
+const madeToOrder = ['Cake', 'CustomPrint', 'Personalised']
+const hash = (text) => [...text].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7)
+let stocked = 0
+for (const product of await productModel.find({ $or: [{ trackStock: { $exists: false } }, { _id: { $in: createdIds } }] })) {
+    const h = hash(product.name)
+    const tracked = !madeToOrder.includes(product.category) && !product.customization?.box
+    const stock = tracked ? (h % 9 === 0 ? 1 + (h % 4) : 8 + (h % 33)) : 0
+    const update = {
+        sku: `SH-${product.category.replace(/[^A-Z]/g, '').padEnd(3, 'X').slice(0, 3)}-${String(h % 10000).padStart(4, '0')}`,
+        trackStock: tracked, stock, lowStock: 5,
+        costPrice: Math.round(product.price * (0.5 + (h % 16) / 100) / 10) * 10,
+    }
+    await productModel.updateOne({ _id: product._id }, update)
+    if (tracked) await stockMoveModel.create({ productId: String(product._id), productName: product.name, change: stock, stockAfter: stock, reason: 'initial', note: 'Opening stock' })
+    stocked++
+}
+console.log(`${stocked} product(s) given inventory details`)
 
 console.log(`Done - ${added} product(s) added`)
 await mongoose.disconnect()
