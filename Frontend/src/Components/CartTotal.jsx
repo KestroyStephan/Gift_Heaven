@@ -13,11 +13,11 @@ const CartTotal = () => {
         <h2 className='font-display text-3xl font-semibold mb-2'>Order summary</h2>
         <div className='flex justify-between text-mauve'>
             <p>Subtotal ({getCartCount()} {getCartCount() === 1 ? 'item' : 'items'})</p>
-            <p>{currency}{subtotal.toFixed(2)}</p>
+            <p>{currency}{subtotal.toLocaleString('en-LK')}</p>
         </div>
         <div className='flex justify-between text-mauve'>
             <p>Delivery</p>
-            <p>{currency}{shipping.toFixed(2)}</p>
+            <p>{currency}{shipping.toLocaleString('en-LK')}</p>
         </div>
         <div className='flex justify-between text-mauve'>
             <p>Gift note</p>
@@ -26,7 +26,7 @@ const CartTotal = () => {
         <hr className='border-line my-1' />
         <div className='flex justify-between text-lg font-bold'>
             <p>Total</p>
-            <p>{currency}{(subtotal + shipping).toFixed(2)}</p>
+            <p>{currency}{(subtotal + shipping).toLocaleString('en-LK')}</p>
         </div>
     </div>
   )

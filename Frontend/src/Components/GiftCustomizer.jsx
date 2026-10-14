@@ -110,7 +110,7 @@ const GiftCustomizer = ({ product, value, onChange }) => {
                             {cake.flavours.map(f => (
                                 <button key={f.id} type='button' role='radio' aria-checked={value.cakeFlavour === f.id} onClick={() => set('cakeFlavour', f.id)} className={choiceClass(value.cakeFlavour === f.id)}>
                                     <span className='block font-semibold'>{f.name}</span>
-                                    <span className='text-muted'>{f.price ? `+${currency}${f.price.toFixed(2)}` : 'Included'}</span>
+                                    <span className='text-muted'>{f.price ? `+${currency}${f.price.toLocaleString('en-LK')}` : 'Included'}</span>
                                 </button>
                             ))}
                         </div>
@@ -136,7 +136,7 @@ const GiftCustomizer = ({ product, value, onChange }) => {
                             <label className='flex items-center gap-3 rounded-2xl px-4 py-3 text-sm cursor-pointer border-[1.5px] border-rose-300'>
                                 <input type='checkbox' className='w-4 h-4 accent-berry' checked={value.eggless} onChange={() => set('eggless', !value.eggless)} />
                                 <span className='flex-1 font-semibold'>{cake.eggless.name}</span>
-                                <span className='text-muted'>+{currency}{cake.eggless.price.toFixed(2)}</span>
+                                <span className='text-muted'>+{currency}{cake.eggless.price.toLocaleString('en-LK')}</span>
                             </label>
                         </div>
                         {/* Cake top preview */}
@@ -176,7 +176,7 @@ const GiftCustomizer = ({ product, value, onChange }) => {
 
             {/* ---------- Photo ---------- */}
             {allowed.photo && (
-                <Section title={allowed.cake ? 'Photo for the edible print' : 'Your photo'} hint={allowed.cake ? `+${currency}${cake.photoPrint.price.toFixed(2)}` : allowed.print ? 'printed on the product' : 'printed on the gift'}>
+                <Section title={allowed.cake ? 'Photo for the edible print' : 'Your photo'} hint={allowed.cake ? `+${currency}${cake.photoPrint.price.toLocaleString('en-LK')}` : allowed.print ? 'printed on the product' : 'printed on the gift'}>
                     <div className='flex items-center gap-4'>
                         {value.photo
                             ? <img src={value.photo} alt='Your uploaded photo' className='w-20 h-20 rounded-2xl object-cover border border-line' />
@@ -240,7 +240,7 @@ const GiftCustomizer = ({ product, value, onChange }) => {
                         {customOptions.wrapOptions.map(w => (
                             <button key={w.id} type='button' role='radio' aria-checked={value.wrap === w.id} onClick={() => set('wrap', value.wrap === w.id ? '' : w.id)} className={choiceClass(value.wrap === w.id)}>
                                 <span className='block font-semibold'>{w.name}</span>
-                                <span className='text-muted'>{w.price ? `+${currency}${w.price.toFixed(2)}` : 'Free'}</span>
+                                <span className='text-muted'>{w.price ? `+${currency}${w.price.toLocaleString('en-LK')}` : 'Free'}</span>
                             </button>
                         ))}
                     </div>
@@ -254,7 +254,7 @@ const GiftCustomizer = ({ product, value, onChange }) => {
                             <label key={a.id} className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm cursor-pointer ${value.addOns.includes(a.id) ? 'border-2 border-berry bg-rose-50' : 'border-[1.5px] border-rose-300 hover:border-ink'}`}>
                                 <input type='checkbox' className='w-4 h-4 accent-berry' checked={value.addOns.includes(a.id)} onChange={() => toggleAddOn(a.id)} />
                                 <span className='flex-1 font-semibold'>{a.name}</span>
-                                <span className='text-muted'>+{currency}{a.price.toFixed(2)}</span>
+                                <span className='text-muted'>+{currency}{a.price.toLocaleString('en-LK')}</span>
                             </label>
                         ))}
                     </div>

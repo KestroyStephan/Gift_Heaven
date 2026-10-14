@@ -196,7 +196,7 @@ const List = ({token}) => {
               <p>{item.name} {item.bestseller && <span className='ml-1 text-xs bg-pink-100 text-pink-700 px-1.5 py-0.5 rounded'>Bestseller</span>}</p>
               <p className='hidden md:block'>{labelOf(categories, item.category)}</p>
               <p className='hidden md:block'>{labelOf(subCategories, item.subCategory)}</p>
-              <p className='hidden md:block'>{currency}{item.price}</p>
+              <p className='hidden md:block'>{currency}{Number(item.price).toLocaleString('en-LK')}</p>
               <div className='flex justify-end md:justify-center gap-3'>
                 <button onClick={()=>setEditing(item)} className='text-blue-600 cursor-pointer'>Edit</button>
                 <button onClick={()=>removeProduct(item._id, item.name)} className='text-red-600 cursor-pointer'>Delete</button>

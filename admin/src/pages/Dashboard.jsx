@@ -38,8 +38,8 @@ const Dashboard = ({ token }) => {
       <h2 className='text-xl font-semibold text-gray-800'>Dashboard</h2>
 
       <div className='grid grid-cols-2 lg:grid-cols-5 gap-4'>
-        <StatCard label='Revenue (paid)' value={`${currency}${stats.revenue.toFixed(2)}`} />
-        <StatCard label='Awaiting payment' value={`${currency}${stats.pendingPayments.toFixed(2)}`} />
+        <StatCard label='Revenue (paid)' value={`${currency}${stats.revenue.toLocaleString('en-LK')}`} />
+        <StatCard label='Awaiting payment' value={`${currency}${stats.pendingPayments.toLocaleString('en-LK')}`} />
         <StatCard label='Orders' value={stats.totalOrders} />
         <StatCard label='Products' value={stats.totalProducts} />
         <StatCard label='Customers' value={stats.totalUsers} />
@@ -81,7 +81,7 @@ const Dashboard = ({ token }) => {
           <div key={order._id} className='grid grid-cols-[1fr_1fr] sm:grid-cols-[1fr_2fr_1fr_1fr] gap-2 text-sm py-2 border-b last:border-b-0'>
             <p className='font-mono'>#{String(order._id).slice(-8).toUpperCase()}</p>
             <p className='hidden sm:block'>{order.address.firstName} {order.address.lastName}</p>
-            <p>{currency}{order.amount.toFixed(2)}</p>
+            <p>{currency}{order.amount.toLocaleString('en-LK')}</p>
             <p className='hidden sm:block'>{order.status}</p>
           </div>
         ))}

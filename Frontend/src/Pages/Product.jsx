@@ -92,8 +92,8 @@ const Product = () => {
           <div className='flex flex-col gap-3'>
             <p className='eyebrow'>{prettify(productData.category)} · {prettify(productData.subCategory)}</p>
             <h1 className='font-display font-semibold text-[2.6rem] sm:text-[3.4rem] leading-[1.03]'>{productData.name}</h1>
-            <p className='text-2xl font-semibold'>{!size && productData.sizePrices ? 'From ' : ''}{currency}{(size ? unitPrice : Math.min(...productData.sizes.map(s => priceOf(productData, s)))).toFixed(2)}
-              {extras > 0 && <span className='ml-2 text-base font-medium text-mauve'>+ {currency}{extras.toFixed(2)} personalisation</span>}
+            <p className='text-2xl font-semibold'>{!size && productData.sizePrices ? 'From ' : ''}{currency}{(size ? unitPrice : Math.min(...productData.sizes.map(s => priceOf(productData, s)))).toLocaleString('en-LK')}
+              {extras > 0 && <span className='ml-2 text-base font-medium text-mauve'>+ {currency}{extras.toLocaleString('en-LK')} personalisation</span>}
             </p>
           </div>
 
@@ -106,7 +106,7 @@ const Product = () => {
                 <button key={item} onClick={()=>setSize(item)} aria-pressed={item === size}
                   className={`min-w-[5.5rem] min-h-12 py-1.5 px-4 rounded-2xl text-sm font-semibold cursor-pointer ${item === size ? 'border-2 border-berry bg-rose-50 text-berry-dark' : 'border-[1.5px] border-rose-300 bg-white hover:border-ink'}`}>
                   {sizeLabels[item] || item}
-                  {productData.sizePrices && <span className='block text-xs font-medium text-muted'>{currency}{priceOf(productData, item).toFixed(2)}</span>}
+                  {productData.sizePrices && <span className='block text-xs font-medium text-muted'>{currency}{priceOf(productData, item).toLocaleString('en-LK')}</span>}
                 </button>
               ))}
             </div>
@@ -121,7 +121,7 @@ const Product = () => {
               <button onClick={()=>setQuantity(q => q + 1)} aria-label='Increase quantity' className='w-12 h-full flex items-center justify-center cursor-pointer'><Icon name='plus' size={18} /></button>
             </div>
             <button onClick={addGift} className='btn-primary flex-1 min-w-[220px]'>
-              <Icon name='bag' size={18} /> Add to bag · {currency}{((unitPrice + extras) * quantity).toFixed(2)}
+              <Icon name='bag' size={18} /> Add to bag · {currency}{((unitPrice + extras) * quantity).toLocaleString('en-LK')}
             </button>
           </div>
 

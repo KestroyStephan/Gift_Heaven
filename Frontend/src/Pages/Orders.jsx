@@ -69,7 +69,7 @@ const Orders = () => {
             <div key={order._id} className='border-t border-b py-4 text-gray-700'>
               <div className='flex flex-wrap justify-between gap-2 text-xs text-gray-500 mb-2'>
                 <p>Order <b className='text-gray-700'>#{String(order._id).slice(-8).toUpperCase()}</b> · {new Date(order.date).toDateString()}</p>
-                <p>Total: <b className='text-gray-700'>{currency}{order.amount.toFixed(2)}</b> · {order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod} · <span className={order.payment ? 'text-green-600' : 'text-amber-600'}>{order.payment ? 'Paid' : 'Payment pending'}</span></p>
+                <p>Total: <b className='text-gray-700'>{currency}{order.amount.toLocaleString('en-LK')}</b> · {order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod} · <span className={order.payment ? 'text-green-600' : 'text-amber-600'}>{order.payment ? 'Paid' : 'Payment pending'}</span></p>
               </div>
 
               {order.items.map((item,index)=>(
@@ -79,7 +79,7 @@ const Orders = () => {
                       <div>
                         <p className='sm:text-base font-medium'>{item.name}</p>
                         <div className='flex items-center gap-3 mt-1 text-base text-gray-700'>
-                          <p >{currency}{item.price}</p>
+                          <p >{currency}{Number(item.price).toLocaleString('en-LK')}</p>
                           <p>Quantity: {item.quantity}</p>
                           <p>Size: {item.size}</p>
                         </div>

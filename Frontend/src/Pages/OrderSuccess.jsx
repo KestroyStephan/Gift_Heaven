@@ -70,12 +70,12 @@ const OrderSuccess = () => {
                             <p className='text-gray-500'>Size: {item.size} · Qty: {item.quantity}</p>
                             <CustomSummary custom={item.custom} />
                         </div>
-                        <p>{currency}{(item.price * item.quantity).toFixed(2)}</p>
+                        <p>{currency}{(item.price * item.quantity).toLocaleString('en-LK')}</p>
                     </div>
                 ))}
-                <div className='flex justify-between mt-4 text-gray-600'><p>Subtotal</p><p>{currency}{subtotal.toFixed(2)}</p></div>
-                <div className='flex justify-between text-gray-600'><p>Shipping</p><p>{currency}{(order.amount - subtotal).toFixed(2)}</p></div>
-                <div className='flex justify-between font-semibold mt-1'><p>Total</p><p>{currency}{order.amount.toFixed(2)}</p></div>
+                <div className='flex justify-between mt-4 text-gray-600'><p>Subtotal</p><p>{currency}{subtotal.toLocaleString('en-LK')}</p></div>
+                <div className='flex justify-between text-gray-600'><p>Shipping</p><p>{currency}{(order.amount - subtotal).toLocaleString('en-LK')}</p></div>
+                <div className='flex justify-between font-semibold mt-1'><p>Total</p><p>{currency}{order.amount.toLocaleString('en-LK')}</p></div>
             </div>
 
             <div className='flex justify-center gap-4 mt-10'>

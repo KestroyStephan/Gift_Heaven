@@ -63,7 +63,7 @@ const CustomStudio = () => {
           {[
             ['Best photo results', 'Use the original photo from your phone, not a screenshot. Good light and faces looking at the camera print best.'],
             ['Want to see it first?', 'Ask in chat for a digital proof before we print — we will adjust crop, text and colours with you.'],
-            ['Bulk & event orders', `Birthday return gifts, wedding favours and team T-shirts start from a few pieces. Prices from ${currency}${(printed.length ? Math.min(...printed.map(fromPrice)) : 0).toFixed(0)} per item.`],
+            ['Bulk & event orders', `Birthday return gifts, wedding favours and team T-shirts start from a few pieces. Prices from ${currency}${(printed.length ? Math.min(...printed.map(fromPrice)) : 0).toLocaleString('en-LK')} per item.`],
           ].map(([title, text]) => (
             <div key={title} className='flex flex-col gap-2'>
               <p className='font-bold'>{title}</p>

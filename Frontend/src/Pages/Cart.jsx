@@ -54,7 +54,7 @@ const Cart = () => {
                       <p className='text-sm text-mauve mt-1'>Size: {sizeLabels[size] || size}</p>
                       <CustomSummary custom={custom} />
                     </div>
-                    <p className='font-semibold whitespace-nowrap'>{currency}{(unit * quantity).toFixed(2)}</p>
+                    <p className='font-semibold whitespace-nowrap'>{currency}{(unit * quantity).toLocaleString('en-LK')}</p>
                   </div>
                   <div className='flex items-center justify-between mt-auto'>
                     <div className='flex items-center h-10 rounded-full border border-rose-300 bg-white'>

@@ -53,7 +53,7 @@ cd admin && npm install && npm run dev -- --port 5174
 
 ## Catalogue & photos
 
-- `cd backend && npm run seed` adds the starter catalogue (19 categories, 84 products: cakes, custom printing, festival gifts, toys (incl. Hot Wheels, drones, race tracks), baby, jewellery, fashion accessories (hair clips, bands, earring sets), plants, home décor, pens & key tags, art supplies, games and gift packages for her, him, couples, kids, teens and elders) and skips products that already exist.
+- `cd backend && npm run seed` adds the starter catalogue (20 categories, 99 products: cakes, custom printing, festival gifts, toys (incl. Hot Wheels, drones, race tracks), baby, jewellery, fashion accessories (hair clips, bands, earring sets), kitchen & dining (water bottles, mugs, jug sets, tea & dinner sets, table décor), plants, home décor, pens & key tags, art supplies, games and gift packages for her, him, couples, kids, teens and elders) and skips products that already exist.
 - Research behind the occasions and cultural gifts: `docs/gift-market-research.md`.
 - Product photos are free Unsplash images (https://unsplash.com/license), listed in `backend/scripts/productPhotos.js`. Replace any of them with your own photography from the admin panel (Products › Edit).
 - Personalisation options and prices live in `backend/config/customization.js`; which options each product offers is set per product in the admin panel.
@@ -61,8 +61,8 @@ cd admin && npm install && npm run dev -- --port 5174
 ## Payments (test mode)
 
 - **Stripe:** set `STRIPE_SECRET_KEY` to your `sk_test_...` key. Test card `4242 4242 4242 4242`, any future date, any CVC.
-- **Razorpay:** set `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` (test keys `rzp_test_...`). Razorpay charges in `STORE_CURRENCY`; for anything other than INR your Razorpay account needs International Payments enabled (or set `STORE_CURRENCY=inr` and `VITE_CURRENCY_SYMBOL=₹`).
-- `STORE_CURRENCY` / `DELIVERY_FEE` in the backend must match `VITE_CURRENCY_SYMBOL` / `VITE_DELIVERY_FEE` in the frontend.
+- **Razorpay:** set `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` (test keys `rzp_test_...`). Razorpay charges in `STORE_CURRENCY` (LKR); your Razorpay account needs International Payments enabled for LKR.
+- Prices are in **Sri Lankan rupees (LKR, shown as Rs.)** with a Rs. 500 delivery fee. `STORE_CURRENCY` / `DELIVERY_FEE` in the backend must match `VITE_CURRENCY_SYMBOL` / `VITE_DELIVERY_FEE` in the frontend.
 
 ## Email & SMS
 

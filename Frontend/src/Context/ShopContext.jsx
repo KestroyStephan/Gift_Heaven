@@ -34,8 +34,8 @@ const newLineId = () => Math.random().toString(36).slice(2, 10)
 const ShopContextProvider = (props) => {
 
     // Must match STORE_CURRENCY / DELIVERY_FEE in the backend .env
-    const currency = import.meta.env.VITE_CURRENCY_SYMBOL || '$';
-    const delivery_fee = Number(import.meta.env.VITE_DELIVERY_FEE || 10);
+    const currency = import.meta.env.VITE_CURRENCY_SYMBOL || 'Rs. ';
+    const delivery_fee = Number(import.meta.env.VITE_DELIVERY_FEE || 500);
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
     const [search, setSearch] = useState('')
     const [showSearch, setShowSearch] = useState(false);

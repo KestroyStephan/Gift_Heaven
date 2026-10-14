@@ -66,7 +66,8 @@ export const sendSMS = async (phone, body) => {
 
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
 
-const money = (amount) => `${currency.toUpperCase()} ${Number(amount).toFixed(2)}`
+const symbol = currency === 'lkr' ? 'Rs.' : currency.toUpperCase()
+const money = (amount) => `${symbol} ${Number(amount).toLocaleString('en-LK')}`
 const shortId = (order) => String(order._id).slice(-8).toUpperCase()
 
 const itemsTable = (order) => `

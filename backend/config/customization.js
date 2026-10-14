@@ -1,11 +1,11 @@
 // Gift personalisation options shared by every product.
-// Prices are in the store currency and are always recalculated on the server.
+// Prices are in Sri Lankan rupees (LKR) and are always recalculated on the server.
 
 export const wrapOptions = [
     { id: 'classic', name: 'Classic blush wrap', price: 0 },
     { id: 'kraft', name: 'Rustic kraft paper', price: 0 },
-    { id: 'festive', name: 'Festive red & gold', price: 2 },
-    { id: 'luxe', name: 'Luxe black & gold box', price: 4 },
+    { id: 'festive', name: 'Festive red & gold', price: 600 },
+    { id: 'luxe', name: 'Luxe black & gold box', price: 1200 },
 ]
 
 export const ribbonColors = [
@@ -19,11 +19,11 @@ export const ribbonColors = [
 ]
 
 export const addOns = [
-    { id: 'card', name: 'Premium greeting card', price: 3 },
-    { id: 'candle', name: 'Scented candle', price: 7 },
-    { id: 'chocolates', name: 'Extra box of chocolates', price: 8 },
-    { id: 'balloon', name: 'Helium heart balloon', price: 6 },
-    { id: 'teddy', name: 'Mini teddy bear', price: 10 },
+    { id: 'card', name: 'Premium greeting card', price: 900 },
+    { id: 'candle', name: 'Scented candle', price: 2100 },
+    { id: 'chocolates', name: 'Extra box of chocolates', price: 2400 },
+    { id: 'balloon', name: 'Helium heart balloon', price: 1800 },
+    { id: 'teddy', name: 'Mini teddy bear', price: 3000 },
 ]
 
 // Printed products (mugs, T-shirts, cushions, frame art)
@@ -43,12 +43,12 @@ export const cakeOptions = {
         { id: 'vanilla', name: 'Vanilla sponge', price: 0 },
         { id: 'butter', name: 'Butter cake', price: 0 },
         { id: 'ribbon', name: 'Sri Lankan ribbon cake', price: 0 },
-        { id: 'redvelvet', name: 'Red velvet', price: 3 },
-        { id: 'blackforest', name: 'Black forest', price: 3 },
-        { id: 'chocolatebiscuit', name: 'Chocolate biscuit pudding', price: 2 },
+        { id: 'redvelvet', name: 'Red velvet', price: 900 },
+        { id: 'blackforest', name: 'Black forest', price: 900 },
+        { id: 'chocolatebiscuit', name: 'Chocolate biscuit pudding', price: 600 },
     ],
-    eggless: { name: 'Eggless', price: 3 },
-    photoPrint: { name: 'Edible photo print', price: 5 },
+    eggless: { name: 'Eggless', price: 900 },
+    photoPrint: { name: 'Edible photo print', price: 1500 },
     messageLimit: 40,
     leadDays: 2,
     timeSlots: ['9 am – 12 pm', '12 pm – 3 pm', '3 pm – 6 pm', '6 pm – 9 pm'],

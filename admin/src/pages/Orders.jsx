@@ -130,7 +130,7 @@ const Orders = ({ token }) => {
                 <p>Payment : <span className={order.payment ? 'text-green-600' : 'text-amber-600'}>{order.payment ? 'Done' : 'Pending'}</span></p>
                 <p>Date : {new Date(order.date).toLocaleDateString()}</p>
               </div>
-              <p className='text-sm sm:text-[15px]'>{currency}{Number(order.amount).toFixed(2)}</p>
+              <p className='text-sm sm:text-[15px]'>{currency}{Number(order.amount).toLocaleString('en-LK')}</p>
               <select onChange={(event)=>statusHandler(event, order._id)} value={order.status} className='p-2 font-semibold'>
                 <option value="Order Placed">Order Placed</option>
                 <option value="Packing">Packing</option>
