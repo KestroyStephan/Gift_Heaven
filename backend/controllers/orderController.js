@@ -10,6 +10,8 @@ import { currency, deliveryCharge, orderStatuses, frontendUrl } from '../config/
 import { notifyOrder } from '../utils/notify.js'
 import { cleanCustomization, customizationOf, priceForSize } from '../config/customization.js'
 import { priceBox } from '../utils/box.js'
+import { reserveStock, releaseStock, unitCostOf } from '../utils/stock.js'
+import brandModel from '../models/brandModel.js'
 
 
 //Gate way Initialization (lazy, so the server still starts when a key is missing)
@@ -52,9 +54,11 @@ const buildOrder = async ({ userId, items, address }, paymentMethod) => {
             custom = boxed.custom
             extras += boxed.extras
         }
-        const { customization, sizePrices, ...productData } = product.toObject()
+        const { customization, sizePrices, costPrice, stock, lowStock, trackStock, ...productData } = product.toObject()
         const basePrice = priceForSize(product, item.size)
-        return { ...productData, basePrice, extras, price: basePrice + extras, custom, size: item.size, quantity }
+        // What this line costs us, including the gifts inside a box (for profit reports)
+        const unitCost = unitCostOf(product, basePrice) + (custom?.boxItems || []).reduce((sum, b) => sum + (b.unitCost || 0) * b.quantity, 0)
+        return { ...productData, basePrice, extras, price: basePrice + extras, custom, size: item.size, quantity, unitCost }
     }))
 
     // Keep only known address fields; the gift note is optional
@@ -91,7 +95,8 @@ const placeOrder = async (req, res) => {
     try {
 
         const newOrder = new orderModel(await buildOrder(req.body, 'COD'))
-        await newOrder.save()
+        await reserveStock(newOrder)
+        await newOrder.save().catch(async (error) => { await releaseStock(newOrder); throw error })
 
         await userModel.findByIdAndUpdate(req.body.userId, { cartData: {}, cartCustoms: {} })
         notifyOrder(newOrder, 'placed')
@@ -115,6 +120,7 @@ const placeOrderStripe = async (req, res) => {
         const origin = req.headers.origin || frontendUrl
 
         newOrder = new orderModel(await buildOrder(req.body, 'Stripe'))
+        await reserveStock(newOrder)
         await newOrder.save()
 
         const line_items = newOrder.items.map((item) => ({
@@ -145,7 +151,9 @@ const placeOrderStripe = async (req, res) => {
             line_items,
             mode: 'payment',
             customer_email: newOrder.address.email,
-            metadata: { orderId: String(newOrder._id) }
+            metadata: { orderId: String(newOrder._id) },
+            // unpaid sessions expire so their stock goes back on sale
+            expires_at: Math.floor(Date.now() / 1000) + 60 * 60
         })
 
         newOrder.stripeSessionId = session.id
@@ -155,6 +163,7 @@ const placeOrderStripe = async (req, res) => {
 
 
     } catch (error) {
+        await releaseStock(newOrder).catch(() => {})
         if (newOrder?._id) await orderModel.findByIdAndDelete(newOrder._id).catch(() => {})
         console.log(error)
         res.json({ success: false, message: error.message })
@@ -178,6 +187,7 @@ const verifyStripe = async (req, res) => {
             }
         }
 
+        await releaseStock(order, 'Payment not completed')
         await orderModel.findByIdAndDelete(orderId)
         res.json({ success: false, message: 'Payment was not completed' })
 
@@ -196,6 +206,7 @@ const placeOrderRazorpay = async (req, res) => {
         const razorpay = getRazorpay()
 
         newOrder = new orderModel(await buildOrder(req.body, 'Razorpay'))
+        await reserveStock(newOrder)
         await newOrder.save()
 
         const razorpayOrder = await razorpay.orders.create({
@@ -210,6 +221,7 @@ const placeOrderRazorpay = async (req, res) => {
         res.json({ success: true, order: razorpayOrder, key: process.env.RAZORPAY_KEY_ID, orderId: newOrder._id })
 
     } catch (error) {
+        await releaseStock(newOrder).catch(() => {})
         if (newOrder?._id) await orderModel.findByIdAndDelete(newOrder._id).catch(() => {})
         console.log(error)
         res.json({ success: false, message: error.error?.description || error.message })
@@ -249,11 +261,40 @@ const verifyRazorpay = async (req, res) => {
 const cancelPendingOrder = async (req, res) => {
     try {
         const { orderId, userId } = req.body
-        await orderModel.deleteOne({ _id: orderId, userId, payment: false, paymentMethod: { $ne: 'COD' } })
+        const order = await orderModel.findOne({ _id: orderId, userId, payment: false, paymentMethod: { $ne: 'COD' } })
+        if (order) {
+            await releaseStock(order, 'Checkout cancelled')
+            await orderModel.deleteOne({ _id: order._id })
+        }
         res.json({ success: true })
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
+    }
+}
+
+// Customers never see what a gift costs us
+const forCustomer = (order) => {
+    const data = order.toObject()
+    data.items = data.items.map(({ unitCost, ...item }) => ({
+        ...item,
+        custom: item.custom?.boxItems ? { ...item.custom, boxItems: item.custom.boxItems.map(({ unitCost, ...inner }) => inner) } : item.custom,
+    }))
+    delete data.stockReserved
+    return data
+}
+
+// Online orders abandoned at the payment page give their stock back after 2 hours
+export const sweepAbandonedOrders = async () => {
+    try {
+        const stale = await orderModel.find({ payment: false, paymentMethod: { $ne: 'COD' }, date: { $lt: Date.now() - 2 * 60 * 60 * 1000 } })
+        for (const order of stale) {
+            await releaseStock(order, 'Payment never completed')
+            await orderModel.deleteOne({ _id: order._id })
+        }
+        if (stale.length) console.log(`Removed ${stale.length} unpaid online order(s)`)
+    } catch (error) {
+        console.log('Order sweep failed:', error.message)
     }
 }
 
@@ -282,7 +323,7 @@ const userOrders = async (req, res) => {
 
         const { userId } = req.body;
         const orders = await orderModel.find({ userId, ...visibleOrdersFilter }).sort({ date: -1 })
-        res.json({ success: true, orders })
+        res.json({ success: true, orders: orders.map(forCustomer) })
 
 
 
@@ -298,7 +339,7 @@ const singleOrder = async (req, res) => {
         const { userId, orderId } = req.body
         const order = await orderModel.findOne({ _id: orderId, userId })
         if (!order) return res.json({ success: false, message: 'Order not found' })
-        res.json({ success: true, order })
+        res.json({ success: true, order: forCustomer(order) })
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
@@ -314,6 +355,10 @@ const updateStatus = async (req, res) => {
 
         const order = await orderModel.findById(orderId)
         if (!order) return res.json({ success: false, message: 'Order not found' })
+
+        // Cancelling puts the stock back; reopening a cancelled order takes it again
+        if (status === 'Cancelled' && order.status !== 'Cancelled') await releaseStock(order, 'Order cancelled')
+        if (status !== 'Cancelled' && order.status === 'Cancelled') await reserveStock(order)
 
         order.status = status
         order.statusHistory = [...(order.statusHistory || []), { status, date: Date.now() }]
@@ -369,14 +414,16 @@ const orderStats = async (req, res) => {
         }
         const topProducts = Object.values(products).sort((a, b) => b.sales - a.sales).slice(0, 5)
 
-        const [unreadMessages, unreadChats] = await Promise.all([
+        const [unreadMessages, unreadChats, lowStockItems] = await Promise.all([
             messageModel.countDocuments({ read: false }),
             chatModel.countDocuments({ status: 'open', unreadAdmin: { $gt: 0 } }),
+            productModel.find({ trackStock: true, $expr: { $lte: ['$stock', '$lowStock'] } }).select('name image stock lowStock').sort({ stock: 1 }).lean(),
         ])
+        const lowStock = lowStockItems.map(p => ({ _id: p._id, name: p.name, image: p.image?.[0] || '', stock: p.stock, lowStock: p.lowStock }))
 
         res.json({
             success: true,
-            stats: { totalOrders: orders.length, revenue, pendingPayments, totalProducts, totalUsers, byStatus, byMethod, daily, topProducts, byCategory, unreadMessages, unreadChats },
+            stats: { totalOrders: orders.length, revenue, pendingPayments, totalProducts, totalUsers, byStatus, byMethod, daily, topProducts, byCategory, unreadMessages, unreadChats, lowStock: lowStock.slice(0, 6), stockAlerts: lowStock.length, outOfStock: lowStock.filter(p => p.stock <= 0).length },
             recentOrders: orders.sort((a, b) => b.date - a.date).slice(0, 5)
         })
     } catch (error) {
@@ -385,4 +432,84 @@ const orderStats = async (req, res) => {
     }
 }
 
-export { verifyStripe, placeOrder, placeOrderStripe, placeOrderRazorpay, verifyRazorpay, cancelPendingOrder, allOrders, userOrders, singleOrder, updateStatus, orderStats }
+// Sales, income and profit between two dates, compared with the period before
+const salesReport = async (req, res) => {
+    try {
+        const DAY = 24 * 60 * 60 * 1000
+        const to = Number(req.body.to) || Date.now()
+        const from = Number(req.body.from) || to - 30 * DAY
+        if (from >= to || to - from > 400 * DAY) return res.json({ success: false, message: 'Please choose a range of up to 400 days' })
+        const length = to - from
+
+        const orders = await orderModel.find({ ...visibleOrdersFilter, date: { $gte: from - length, $lt: to } }).lean()
+        const brands = await brandModel.find({}).select('slug name').lean()
+        const brandName = Object.fromEntries(brands.map(b => [b.slug, b.name]))
+
+        const summarise = (list) => {
+            const live = list.filter(o => o.status !== 'Cancelled')
+            const cancelled = list.filter(o => o.status === 'Cancelled')
+            const sales = live.reduce((s, o) => s + o.amount, 0)
+            const delivery = live.length * deliveryCharge
+            const cost = live.reduce((s, o) => s + o.items.reduce((t, i) => t + (i.unitCost || 0) * i.quantity, 0), 0)
+            const income = live.filter(o => o.payment).reduce((s, o) => s + o.amount, 0)
+            const units = live.reduce((s, o) => s + o.items.reduce((t, i) => t + i.quantity, 0), 0)
+            const productSales = sales - delivery
+            return {
+                orders: live.length, sales, income, outstanding: sales - income, delivery, productSales, cost,
+                profit: productSales - cost, margin: productSales ? Math.round(((productSales - cost) / productSales) * 1000) / 10 : 0,
+                units, averageOrder: live.length ? Math.round(sales / live.length) : 0,
+                cancelledOrders: cancelled.length, cancelledValue: cancelled.reduce((s, o) => s + o.amount, 0),
+            }
+        }
+
+        const current = orders.filter(o => o.date >= from)
+        const previous = orders.filter(o => o.date < from)
+
+        // Day by day
+        const start = new Date(from); start.setHours(0, 0, 0, 0)
+        const days = Math.min(400, Math.ceil((to - start.getTime()) / DAY))
+        const daily = Array.from({ length: days }, (_, i) => ({ day: new Date(start.getTime() + i * DAY).toISOString().slice(0, 10), sales: 0, income: 0, profit: 0, orders: 0 }))
+        const byCategory = {}, byBrand = {}, byPayment = {}, products = {}
+        for (const order of current) {
+            if (order.status === 'Cancelled') continue
+            const row = daily[Math.floor((order.date - start.getTime()) / DAY)]
+            const orderCost = order.items.reduce((t, i) => t + (i.unitCost || 0) * i.quantity, 0)
+            if (row) {
+                row.sales += order.amount; row.orders += 1
+                if (order.payment) row.income += order.amount
+                row.profit += order.amount - deliveryCharge - orderCost
+            }
+            const method = byPayment[order.paymentMethod] = byPayment[order.paymentMethod] || { orders: 0, sales: 0 }
+            method.orders += 1; method.sales += order.amount
+            for (const item of order.items) {
+                const revenue = item.price * item.quantity, cost = (item.unitCost || 0) * item.quantity
+                byCategory[item.category] = byCategory[item.category] || { sales: 0, units: 0, profit: 0 }
+                byCategory[item.category].sales += revenue; byCategory[item.category].units += item.quantity; byCategory[item.category].profit += revenue - cost
+                const brand = brandName[item.brand] || 'No brand'
+                byBrand[brand] = byBrand[brand] || { sales: 0, units: 0, profit: 0 }
+                byBrand[brand].sales += revenue; byBrand[brand].units += item.quantity; byBrand[brand].profit += revenue - cost
+                const key = String(item._id)
+                products[key] = products[key] || { _id: key, name: item.name, image: item.image?.[0] || '', category: item.category, units: 0, sales: 0, cost: 0 }
+                products[key].units += item.quantity; products[key].sales += revenue; products[key].cost += cost
+            }
+        }
+        const rows = (obj) => Object.entries(obj).map(([name, v]) => ({ name, ...v })).sort((a, b) => b.sales - a.sales)
+
+        res.json({
+            success: true,
+            range: { from, to },
+            summary: summarise(current),
+            previous: summarise(previous),
+            daily,
+            byCategory: rows(byCategory),
+            byBrand: rows(byBrand),
+            byPayment: rows(byPayment),
+            products: Object.values(products).map(p => ({ ...p, profit: p.sales - p.cost })).sort((a, b) => b.sales - a.sales),
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+export { salesReport, verifyStripe, placeOrder, placeOrderStripe, placeOrderRazorpay, verifyRazorpay, cancelPendingOrder, allOrders, userOrders, singleOrder, updateStatus, orderStats }

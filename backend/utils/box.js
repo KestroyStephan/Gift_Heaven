@@ -1,4 +1,5 @@
 import productModel from '../models/productModel.js'
+import { unitCostOf } from './stock.js'
 import { boxStyles, albumLeadDays, cleanCustomization, customizationOf, earliestDay, priceForSize } from '../config/customization.js'
 
 const MAX_LINES = 40
@@ -48,6 +49,7 @@ export const priceBox = async (custom, boxSize) => {
         items.push({
             _id: String(product._id), name: product.name, image: product.image?.[0] || '', category: product.category,
             size: line.size, quantity, unitPrice, custom: itemCustom,
+            unitCost: unitCostOf(product, priceForSize(product, line.size)),
         })
     }
 

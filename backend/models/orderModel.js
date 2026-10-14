@@ -12,6 +12,8 @@ const orderSchema = new mongoose.Schema({
     stripeSessionId: { type: String },
     razorpayOrderId: { type: String },
     paymentId: { type: String },
+    // true while the order holds stock (released when it's cancelled or never paid)
+    stockReserved: { type: Boolean, default: false },
     date :{type:Number, required:true}
 })
 

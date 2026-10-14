@@ -11,6 +11,7 @@ import newsletterRouter from './routes/newsletterRoute.js'
 import contactRouter from './routes/contactRoute.js'
 import chatRouter from './routes/chatRoute.js'
 import brandRouter from './routes/brandRoute.js'
+import { sweepAbandonedOrders } from './controllers/orderController.js'
 
 // App configuration setup
 const app = express()
@@ -31,6 +32,9 @@ app.use('/api/newsletter', newsletterRouter)
 app.use('/api/contact', contactRouter)
 app.use('/api/chat', chatRouter)
 app.use('/api/brand', brandRouter)
+
+// Give back the stock of online orders that were never paid
+setInterval(sweepAbandonedOrders, 15 * 60 * 1000)
 
 
 // Upload and other middleware errors come back as JSON like every other API response
