@@ -7,8 +7,11 @@ import userRouter from './routes/userRoute.js'
 import productRouter from './routes/productRoute.js'
 import cartRouter from './routes/cartRoute.js'
 import orderRouter from './routes/orderRoute.js'
+import newsletterRouter from './routes/newsletterRoute.js'
+import contactRouter from './routes/contactRoute.js'
+import chatRouter from './routes/chatRoute.js'
 
-// App configuration
+// App configuration setup
 const app = express()
 const port = process.env.PORT || 3000
 connectDB()
@@ -23,7 +26,17 @@ app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
 app.use('/api/cart',cartRouter)
 app.use('/api/orders', orderRouter)
+app.use('/api/newsletter', newsletterRouter)
+app.use('/api/contact', contactRouter)
+app.use('/api/chat', chatRouter)
 
+
+// Upload and other middleware errors come back as JSON like every other API response
+app.use((err, req, res, next) => {
+    console.log(err.message)
+    const message = err.code === 'LIMIT_FILE_SIZE' ? 'File is too large (max 5 MB)' : err.message
+    res.status(400).json({ success: false, message })
+})
 
 app.get('/', (req, res) => {
     res.send("Api Working correctly")
