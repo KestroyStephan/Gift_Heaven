@@ -2,6 +2,8 @@ import crypto from 'crypto'
 import orderModel from '../models/orderModel.js'
 import userModel from '../models/userModel.js';
 import productModel from '../models/productModel.js';
+import messageModel from '../models/messageModel.js'
+import chatModel from '../models/chatModel.js'
 import Stripe from 'stripe';
 import Razorpay from 'razorpay';
 import { currency, deliveryCharge, orderStatuses, frontendUrl } from '../config/store.js'
@@ -347,9 +349,34 @@ const orderStats = async (req, res) => {
             else if (order.status !== 'Cancelled') pendingPayments += order.amount
         }
 
+        // Sales for each of the last 30 days, best sellers and categories (cancelled orders don't count)
+        const DAY = 24 * 60 * 60 * 1000
+        const today = new Date(); today.setHours(0, 0, 0, 0)
+        const start = today.getTime() - 29 * DAY
+        const daily = Array.from({ length: 30 }, (_, i) => ({ day: new Date(start + i * DAY).toISOString().slice(0, 10), sales: 0, orders: 0 }))
+        const products = {}, byCategory = {}
+        for (const order of orders) {
+            if (order.status === 'Cancelled') continue
+            const index = Math.floor((order.date - start) / DAY)
+            if (index >= 0 && index < 30) { daily[index].sales += order.amount; daily[index].orders += 1 }
+            for (const item of order.items) {
+                const key = String(item._id)
+                products[key] = products[key] || { _id: key, name: item.name, image: item.image?.[0] || '', category: item.category, quantity: 0, sales: 0 }
+                products[key].quantity += item.quantity
+                products[key].sales += item.price * item.quantity
+                byCategory[item.category] = (byCategory[item.category] || 0) + item.price * item.quantity
+            }
+        }
+        const topProducts = Object.values(products).sort((a, b) => b.sales - a.sales).slice(0, 5)
+
+        const [unreadMessages, unreadChats] = await Promise.all([
+            messageModel.countDocuments({ read: false }),
+            chatModel.countDocuments({ status: 'open', unreadAdmin: { $gt: 0 } }),
+        ])
+
         res.json({
             success: true,
-            stats: { totalOrders: orders.length, revenue, pendingPayments, totalProducts, totalUsers, byStatus, byMethod },
+            stats: { totalOrders: orders.length, revenue, pendingPayments, totalProducts, totalUsers, byStatus, byMethod, daily, topProducts, byCategory, unreadMessages, unreadChats },
             recentOrders: orders.sort((a, b) => b.date - a.date).slice(0, 5)
         })
     } catch (error) {
