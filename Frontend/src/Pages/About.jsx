@@ -1,49 +1,67 @@
 import React from 'react'
-import Title from '../Components/Title'
-import {assets} from '../assets/assets'
+import { Link } from 'react-router-dom'
 import NewsletterBox from '../Components/NewsletterBox'
+import Icon from '../Components/Icons'
+import { LogoMark } from '../Components/Logo'
 
-const About = () => {  
+const values = [
+  { icon: 'gift', title: 'Thoughtfully curated', text: 'Every chocolate bucket, bouquet and keepsake is chosen to feel personal — never generic.' },
+  { icon: 'heart', title: 'Hand-packed with care', text: 'Each order is wrapped by hand in our boutique, with a hand-lettered note from you.' },
+  { icon: 'truck', title: 'Delivered on time', text: 'Careful local delivery and live order tracking, so the moment lands exactly when it should.' },
+]
+
+const About = () => {
   return (
     <div>
-      <div className='text-2xl text-center pt-8 border-t'>
-        <Title text1={'ABOUT'} text2={'US'} />
-      </div>
-
-      <div className='my-10 flex flex-col md:flex-row gap-16'>
-        <img className='w-full md:max-w-[450px]' src={assets.about_img} alt="" />
-        <div className='flex flex-col justify-center gap-6 md:w-2/4 text-gray-700'>
-            <p>Amora Gifts began with a simple belief: the best gifts are the ones that make someone feel truly seen. We curate romantic gifts, anniversary keepsakes, and thoughtful surprises for the people who matter most — partners, spouses, and sweethearts near and far.</p>
-            <p>From personalised keepsakes to classic roses-and-chocolates combos, every item in our collection is chosen to help you say "I love you" in your own way. Browse, customise, and check out online with secure payment, then let us handle fast, careful delivery so your gift arrives exactly when it should.</p>
-            <b className='text-rose-950'>Our Mission</b>
-            <p>To make it effortless to celebrate love — anniversaries, proposals, date nights, and every ordinary day worth making extraordinary — with gifts that feel personal, not generic.</p>
+      <section className='shell grid lg:grid-cols-2 gap-12 items-center pt-14 pb-20'>
+        <div className='flex flex-col gap-6'>
+          <p className='eyebrow'>Our story</p>
+          <h1 className='font-display font-semibold text-[2.75rem] sm:text-[4rem] leading-[1.04]'>
+            Gifts that make someone feel <span className='italic text-berry'>truly seen</span>.
+          </h1>
+          <p className='text-lg text-mauve leading-relaxed'>
+            Surprise Heaven began with a simple belief: the best gifts are the ones chosen with care.
+            We curate chocolate hampers, bouquets and keepsakes for birthdays, anniversaries and every
+            surprise worth celebrating.
+          </p>
+          <p className='text-mauve leading-relaxed'>
+            Browse online, pay securely or on delivery, and let us handle the wrapping, the note and
+            the journey to their door.
+          </p>
+          <Link to='/collection' className='btn-primary self-start mt-2'>Explore the collection <Icon name='arrow' size={18} /></Link>
         </div>
-      </div>
-
-      <div className='text-xl py-4'>
-        <Title text1={'WHY'} text2={'CHOOSE US'} />
-      </div>
-
-      <div className='flex flex-col md:flex-row text-sm mb-20'>
-        <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5'>
-            <b>Thoughtfully Curated:</b>
-            <p className='text-gray-700'>Every gift in our collection is hand-picked for romance — from anniversary keepsakes to sweet everyday surprises — so you can find something that truly fits your special someone.</p>
+        <div className='rounded-[32px] bg-blush aspect-[4/3.4] flex flex-col items-center justify-center gap-6 p-10 text-center'>
+          <LogoMark size={120} />
+          <p className='font-display italic text-3xl text-berry-dark max-w-sm leading-snug'>“Little boxes of big feelings.”</p>
         </div>
+      </section>
 
-        <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5'>
-            <b>Made for Milestones:</b>
-            <p className='text-gray-700'>Anniversaries, Valentine's Day, proposals, or just because — browse by occasion, personalise your gift, and check out securely in just a few clicks.</p>
+      <section className='bg-white py-20'>
+        <div className='shell'>
+          <h2 className='font-display font-semibold text-[2rem] sm:text-[2.6rem] mb-10'>Why choose <span className='italic text-berry'>Surprise Heaven</span></h2>
+          <div className='grid md:grid-cols-3 gap-6'>
+            {values.map(value => (
+              <div key={value.title} className='rounded-[24px] border border-line p-8 flex flex-col gap-4'>
+                <span className='w-12 h-12 rounded-full bg-rose-50 text-berry flex items-center justify-center'><Icon name={value.icon} size={22} /></span>
+                <h3 className='font-bold text-lg'>{value.title}</h3>
+                <p className='text-mauve leading-relaxed'>{value.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5'>
-            <b>Delivered with Care:</b>
-            <p className='text-gray-700'>Fast, discreet delivery and a support team that's always ready to help you get the timing — and the moment — just right.</p>
+      <section className='shell pt-20'>
+        <div className='rounded-[28px] bg-ink text-[#F6E9EE] px-8 py-12 sm:px-14 flex flex-col md:flex-row md:items-center justify-between gap-6'>
+          <div>
+            <p className='eyebrow !text-gold-light mb-2'>Our mission</p>
+            <p className='font-display text-3xl sm:text-4xl text-white leading-tight max-w-2xl'>To make it effortless to celebrate the people you love — beautifully, and on time.</p>
+          </div>
+          <Link to='/contact' className='btn-primary !bg-white !text-ink hover:!bg-rose-50 shrink-0'>Talk to us</Link>
         </div>
-
-      </div>
+      </section>
 
       <NewsletterBox />
-      
     </div>
   )
 }
