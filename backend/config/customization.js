@@ -54,10 +54,16 @@ export const cakeOptions = {
     timeSlots: ['9 am – 12 pm', '12 pm – 3 pm', '3 pm – 6 pm', '6 pm – 9 pm'],
 }
 
-export const limits = { name: 40, message: 200, printText: 60 }
+export const limits = { name: 40, message: 200, printText: 60, albumTitle: 60, albumQuotes: 500, albumPhotos: 40 }
+
+// Build-your-own surprise box: style -> how many gifts fit inside (the cake travels alongside)
+export const boxStyles = { 'Classic Kraft Box': 6, 'Luxe Heart Box': 8, 'Wooden Hamper Crate': 14 }
+export const boxLeadDays = 2
+// Handmade photo albums need an extra day for printing and paper-cutting
+export const albumLeadDays = 3
 
 // What a product offers when the admin hasn't chosen
-export const defaultCustomization = { name: true, message: true, ribbon: true, wrap: true, addOns: true, photo: false, print: false, cake: false, engrave: false }
+export const defaultCustomization = { name: true, message: true, ribbon: true, wrap: true, addOns: true, photo: false, print: false, cake: false, engrave: false, album: false, box: false }
 
 export const recipientOptions = ['kids', 'teens', 'her', 'him', 'couples', 'elders', 'baby']
 
@@ -70,6 +76,15 @@ export const priceForSize = (product, size) => {
 }
 
 const isoDay = (date) => date.toISOString().slice(0, 10)
+
+export const earliestDay = (days) => {
+    const d = new Date()
+    d.setDate(d.getDate() + days)
+    return isoDay(d)
+}
+
+// Only files uploaded through our own Cloudinary account
+export const isOwnUpload = (url) => typeof url === 'string' && url.startsWith(`https://res.cloudinary.com/${process.env.CLOUDINARY_NAME}/`)
 
 // Validate a customer's choices against what the product allows.
 // Returns { custom, extras } with only known values, or throws.
@@ -132,8 +147,7 @@ export const cleanCustomization = (input, product) => {
         if (input.eggless) { custom.eggless = true; extras += cakeOptions.eggless.price }
         if (input.cakeMessage) custom.cakeMessage = String(input.cakeMessage).trim().slice(0, cakeOptions.messageLimit)
 
-        const earliest = new Date(); earliest.setDate(earliest.getDate() + cakeOptions.leadDays)
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(String(input.deliveryDate)) || input.deliveryDate < isoDay(earliest)) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(String(input.deliveryDate)) || input.deliveryDate < earliestDay(cakeOptions.leadDays)) {
             throw new Error(`Cakes need at least ${cakeOptions.leadDays} days' notice — please pick a later delivery date`)
         }
         custom.deliveryDate = input.deliveryDate
@@ -143,10 +157,35 @@ export const cleanCustomization = (input, product) => {
         }
     }
 
+    // Handmade photo album: customer photos, a title and love quotes to paper-cut
+    if (allowed.album) {
+        const photos = Array.isArray(input.photos) ? input.photos.filter(Boolean) : []
+        if (photos.length === 0) throw new Error(`Please upload at least one photo for the ${product.name}`)
+        if (photos.length > limits.albumPhotos) throw new Error(`Up to ${limits.albumPhotos} photos per album`)
+        if (!photos.every(isOwnUpload)) throw new Error('Invalid album photo')
+        custom.photos = photos
+        if (input.albumTitle) custom.albumTitle = String(input.albumTitle).trim().slice(0, limits.albumTitle)
+        if (input.albumQuotes) custom.albumQuotes = String(input.albumQuotes).trim().slice(0, limits.albumQuotes)
+    }
+
+    // Surprise box: delivery details here; the gifts inside are priced in utils/box.js
+    if (allowed.box) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(String(input.deliveryDate)) || input.deliveryDate < earliestDay(boxLeadDays)) {
+            throw new Error(`Surprise boxes need at least ${boxLeadDays} days' notice — please pick a later delivery date`)
+        }
+        custom.deliveryDate = input.deliveryDate
+        if (input.timeSlot) {
+            if (!cakeOptions.timeSlots.includes(input.timeSlot)) throw new Error('Unknown delivery time')
+            custom.timeSlot = input.timeSlot
+        }
+        if (input.surprise) custom.surprise = true
+        if (!Array.isArray(input.boxItems) || input.boxItems.length === 0) throw new Error('Please add at least one gift to the box')
+        custom.boxItems = input.boxItems
+    }
+
     if (allowed.photo && input.photo) {
         // Only photos uploaded through our own Cloudinary account
-        const prefix = `https://res.cloudinary.com/${process.env.CLOUDINARY_NAME}/`
-        if (typeof input.photo !== 'string' || !input.photo.startsWith(prefix)) throw new Error('Invalid photo')
+        if (!isOwnUpload(input.photo)) throw new Error('Invalid photo')
         custom.photo = input.photo
         if (allowed.cake) extras += cakeOptions.photoPrint.price
     }
@@ -169,5 +208,15 @@ export const describeCustomization = (custom) => {
     if (custom.wrap) lines.push(`Wrapping: ${wrapOptions.find(w => w.id === custom.wrap)?.name || custom.wrap}`)
     if (custom.addOns?.length) lines.push(`Add-ons: ${custom.addOns.map(id => addOns.find(a => a.id === id)?.name || id).join(', ')}`)
     if (custom.photo) lines.push('Customer photo attached')
+    if (custom.photos?.length) lines.push(`Album: ${custom.photos.length} photos${custom.albumTitle ? ` · “${custom.albumTitle}”` : ''}`)
+    if (custom.albumQuotes) lines.push(`Quotes to paper-cut: “${custom.albumQuotes}”`)
+    if (custom.boxItems?.length) {
+        lines.push(`Box contents (${custom.boxItems.reduce((n, i) => n + i.quantity, 0)} items):`)
+        for (const item of custom.boxItems) {
+            lines.push(`  • ${item.name} (${item.size}) × ${item.quantity}`)
+            for (const sub of describeCustomization(item.custom)) lines.push(`      ${sub}`)
+        }
+    }
+    if (custom.surprise) lines.push('SURPRISE: call the sender, not the recipient')
     return lines
 }

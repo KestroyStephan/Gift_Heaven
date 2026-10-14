@@ -6,7 +6,8 @@ import Stripe from 'stripe';
 import Razorpay from 'razorpay';
 import { currency, deliveryCharge, orderStatuses, frontendUrl } from '../config/store.js'
 import { notifyOrder } from '../utils/notify.js'
-import { cleanCustomization, priceForSize } from '../config/customization.js'
+import { cleanCustomization, customizationOf, priceForSize } from '../config/customization.js'
+import { priceBox } from '../utils/box.js'
 
 
 //Gate way Initialization (lazy, so the server still starts when a key is missing)
@@ -36,17 +37,23 @@ const buildOrder = async ({ userId, items, address }, paymentMethod) => {
     }
 
     const products = await productModel.find({ _id: { $in: items.map(item => item._id) } })
-    const orderItems = items.map(item => {
+    const orderItems = await Promise.all(items.map(async item => {
         const product = products.find(p => String(p._id) === String(item._id))
         const quantity = Math.floor(Number(item.quantity))
         if (!product) throw new Error('A product in your cart is no longer available')
         if (!quantity || quantity < 1) throw new Error('Invalid quantity for ' + product.name)
         if (product.sizes.length && !product.sizes.includes(item.size)) throw new Error('Invalid size for ' + product.name)
-        const { custom, extras } = cleanCustomization(item.custom, product)
+        let { custom, extras } = cleanCustomization(item.custom, product)
+        // Surprise boxes add the price of every gift packed inside
+        if (customizationOf(product).box) {
+            const boxed = await priceBox(custom, item.size)
+            custom = boxed.custom
+            extras += boxed.extras
+        }
         const { customization, sizePrices, ...productData } = product.toObject()
         const basePrice = priceForSize(product, item.size)
         return { ...productData, basePrice, extras, price: basePrice + extras, custom, size: item.size, quantity }
-    })
+    }))
 
     // Keep only known address fields; the gift note is optional
     const cleanAddress = Object.fromEntries(requiredAddressFields.map(field => [field, String(address[field]).trim()]))

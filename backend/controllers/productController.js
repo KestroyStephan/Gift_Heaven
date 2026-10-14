@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import { v2 as cloudinary } from "cloudinary"
 import productModel from "../models/productModel.js"
-import { wrapOptions, ribbonColors, addOns, limits, defaultCustomization, printColours, cakeOptions, recipientOptions } from "../config/customization.js"
+import { wrapOptions, ribbonColors, addOns, limits, defaultCustomization, printColours, cakeOptions, recipientOptions, boxStyles, boxLeadDays, albumLeadDays } from "../config/customization.js"
 
 // Keep only the known on/off switches
 const parseCustomization = (value) => {
@@ -31,7 +31,7 @@ const parseRecipients = (value) => {
 
 // Personalisation options shown on the product page
 const customizationOptions = (req, res) => {
-    res.json({ success: true, options: { wrapOptions, ribbonColors, addOns, limits, defaultCustomization, printColours, cakeOptions, recipientOptions } })
+    res.json({ success: true, options: { wrapOptions, ribbonColors, addOns, limits, defaultCustomization, printColours, cakeOptions, recipientOptions, boxStyles, boxLeadDays, albumLeadDays } })
 }
 
 // Customer photo for a personalised gift
