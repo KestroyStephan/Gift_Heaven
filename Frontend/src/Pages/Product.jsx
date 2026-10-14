@@ -5,7 +5,7 @@ import RelatedProducts from '../Components/RelatedProducts';
 import Icon from '../Components/Icons';
 import { prettify } from '../Components/ProductItem';
 import GiftCustomizer, { emptyCustom, compactCustom, missingChoices } from '../Components/GiftCustomizer';
-import { priceOf } from '../Context/ShopContext';
+import { priceOf, available, stockLabel } from '../Context/ShopContext';
 import { toast } from 'react-toastify';
 
 const sizeLabels = { S: 'Small', M: 'Medium', L: 'Large' }
@@ -43,11 +43,15 @@ const Product = () => {
     )
   }
 
+  const maxQty = available(productData)
+  const stock = stockLabel(productData)
   const finalCustom = compactCustom(custom)
   const extras = extrasOf(finalCustom)
   const unitPrice = priceOf(productData, size)
 
   const addGift = async () => {
+    if (maxQty <= 0) return toast.error('Sorry, this gift is sold out')
+    if (quantity > maxQty) return toast.error(`Only ${maxQty} left`)
     if (!size) return addToCart(productData._id, size)
     const missing = missingChoices(productData, custom, customOptions)
     if (missing) {
@@ -100,6 +104,10 @@ const Product = () => {
             <p className='text-2xl font-semibold'>{!size && productData.sizePrices ? 'From ' : ''}{currency}{(size ? unitPrice : Math.min(...productData.sizes.map(s => priceOf(productData, s)))).toLocaleString('en-LK')}
               {extras > 0 && <span className='ml-2 text-base font-medium text-mauve'>+ {currency}{extras.toLocaleString('en-LK')} personalisation</span>}
             </p>
+            <p className={`flex items-center gap-2 text-sm font-semibold ${!stock ? 'text-violet-800' : stock.tone === 'out' ? 'text-rose-700' : stock.tone === 'low' ? 'text-amber-700' : 'text-emerald-700'}`}>
+              <span className='w-2 h-2 rounded-full bg-current'></span>
+              {!stock ? 'Made to order for you' : stock.tone === 'in' ? 'In stock — ready to gift' : stock.tone === 'low' ? `Hurry, only ${productData.stock} left` : 'Sold out — check back soon'}
+            </p>
           </div>
 
           <p className='text-mauve leading-relaxed text-[16px] whitespace-pre-line'>{productData.description}</p>
@@ -126,11 +134,15 @@ const Product = () => {
             <div className='flex items-center h-[3.25rem] rounded-full border-[1.5px] border-rose-300 bg-white'>
               <button onClick={()=>setQuantity(q => Math.max(1, q - 1))} aria-label='Decrease quantity' className='w-12 h-full flex items-center justify-center cursor-pointer'><Icon name='minus' size={18} /></button>
               <span aria-live='polite' className='w-8 text-center font-bold'>{quantity}</span>
-              <button onClick={()=>setQuantity(q => q + 1)} aria-label='Increase quantity' className='w-12 h-full flex items-center justify-center cursor-pointer'><Icon name='plus' size={18} /></button>
+              <button onClick={()=>setQuantity(q => Math.min(maxQty, q + 1))} disabled={quantity >= maxQty} aria-label='Increase quantity' className='w-12 h-full flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-default'><Icon name='plus' size={18} /></button>
             </div>
+            {maxQty <= 0 ? (
+              <button disabled className='btn-primary flex-1 min-w-[220px] !bg-stone-400 !cursor-not-allowed'>Sold out</button>
+            ) : (
             <button onClick={addGift} className='btn-primary flex-1 min-w-[220px]'>
               <Icon name='bag' size={18} /> Add to bag · {currency}{((unitPrice + extras) * quantity).toLocaleString('en-LK')}
             </button>
+            )}
           </div>
           </>}
 

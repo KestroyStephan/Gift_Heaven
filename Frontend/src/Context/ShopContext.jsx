@@ -25,6 +25,15 @@ export const fromPrice = (product) => {
     return prices.length ? Math.min(...prices) : product?.price || 0
 }
 
+// How many a customer can buy (Infinity for made-to-order gifts)
+export const available = (product) => product?.trackStock ? Math.max(0, product.stock || 0) : Infinity
+export const stockLabel = (product) => {
+    if (!product?.trackStock) return null
+    if (product.stock <= 0) return { text: 'Sold out', tone: 'out' }
+    if (product.stock <= (product.lowStock ?? 5)) return { text: `Only ${product.stock} left`, tone: 'low' }
+    return { text: 'In stock', tone: 'in' }
+}
+
 const readStorage = (key) => {
     try { return JSON.parse(localStorage.getItem(key)) || {} } catch { return {} }
 }

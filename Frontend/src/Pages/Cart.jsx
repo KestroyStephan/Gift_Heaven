@@ -55,12 +55,13 @@ const Cart = () => {
                       <CustomSummary custom={custom} />
                     </div>
                     <p className='font-semibold whitespace-nowrap'>{currency}{(unit * quantity).toLocaleString('en-LK')}</p>
+                    {product.trackStock && quantity > product.stock && <p className='text-xs font-semibold text-rose-700'>{product.stock ? `Only ${product.stock} left — please reduce` : 'Sold out — please remove'}</p>}
                   </div>
                   <div className='flex items-center justify-between mt-auto'>
                     <div className='flex items-center h-10 rounded-full border border-rose-300 bg-white'>
                       <button onClick={()=>quantity > 1 && updateQuantity(product._id,key,quantity - 1)} disabled={quantity <= 1} aria-label='Decrease quantity' className='w-10 h-full flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-default'><Icon name='minus' size={16} /></button>
                       <span className='w-7 text-center text-sm font-bold'>{quantity}</span>
-                      <button onClick={()=>updateQuantity(product._id,key,quantity + 1)} aria-label='Increase quantity' className='w-10 h-full flex items-center justify-center cursor-pointer'><Icon name='plus' size={16} /></button>
+                      <button onClick={()=>updateQuantity(product._id,key,quantity + 1)} disabled={product.trackStock && quantity >= product.stock} aria-label='Increase quantity' className='w-10 h-full flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-default'><Icon name='plus' size={16} /></button>
                     </div>
                     <button onClick={()=>updateQuantity(product._id,key,0)} className='flex items-center gap-1.5 text-sm text-muted hover:text-berry cursor-pointer'>
                       <Icon name='trash' size={16} /> Remove

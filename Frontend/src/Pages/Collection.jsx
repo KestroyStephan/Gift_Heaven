@@ -29,6 +29,7 @@ const Collection = () => {
   const [recipient, setRecipient] = useState([]);
   const [brand, setBrand] = useState([]);
   const [budget, setBudget] = useState(null);
+  const [inStockOnly, setInStockOnly] = useState(false);
   const [sortType, setSortType] = useState('relevant')
 
   // Links like /collection?sub=BirthdayGift preselect a filter
@@ -80,6 +81,10 @@ const Collection = () => {
       productsCopy = productsCopy.filter(item => brand.includes(item.brand))
     }
 
+    if (inStockOnly) {
+      productsCopy = productsCopy.filter(item => !item.trackStock || item.stock > 0)
+    }
+
     if (budget) {
       productsCopy = productsCopy.filter(item => { const price = fromPrice(item); return (!budget.min || price >= budget.min) && (!budget.max || price < budget.max) })
     }
@@ -88,7 +93,7 @@ const Collection = () => {
     if (sortType === 'high-low') productsCopy.sort((a,b)=>(b.price - a.price))
 
     return productsCopy
-  }, [products, search, showSearch, category, subCategory, recipient, brand, budget, sortType])
+  }, [products, search, showSearch, category, subCategory, recipient, brand, budget, inStockOnly, sortType])
 
   const activeFilters = category.length + subCategory.length + recipient.length + brand.length + (budget ? 1 : 0)
   const department = departments.find(d => d.slug === searchParams.get('dept'))
@@ -120,6 +125,10 @@ const Collection = () => {
       <div className='flex flex-col md:flex-row gap-10'>
         {/* Filter Options */}
         <aside className={`md:w-56 shrink-0 flex-col gap-8 ${showFilter ? 'flex' : 'hidden'} md:flex`}>
+          <label className='flex items-center gap-3 text-[15px] text-ink font-semibold cursor-pointer'>
+            <input type='checkbox' className='w-4 h-4 accent-berry' checked={inStockOnly} onChange={() => setInStockOnly(v => !v)} />
+            Hide sold-out gifts
+          </label>
           {recipients.length > 0 && <FilterGroup title='GIFT FOR' options={recipients} selected={recipient} onToggle={toggle(setRecipient)} names={recipientNames} />}
           {budget && (
             <p className='flex items-center justify-between gap-2 text-sm bg-rose-50 rounded-2xl px-4 py-3'><span><b>Budget:</b> {budgetLabel}</span><button onClick={() => setBudget(null)} aria-label='Remove budget filter' className='cursor-pointer text-berry'><Icon name='close' size={16} /></button></p>

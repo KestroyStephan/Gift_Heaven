@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { ShopContext } from '../Context/ShopContext'
 import {Link} from 'react-router-dom'
-import { fromPrice } from '../Context/ShopContext'
+import { fromPrice, stockLabel } from '../Context/ShopContext'
 
 // Display names for the category / occasion values stored on products
 export const catalogNames = {
@@ -29,13 +29,16 @@ const ProductItem = ({id,image,name,price,category,bestseller,sizePrices,brand})
 
     const isBox = name === 'Build-Your-Own Surprise Box'
 
-    const {currency, brandOf} = useContext(ShopContext)
+    const {currency, brandOf, products} = useContext(ShopContext)
+    const stock = stockLabel(products.find(p => p._id === id))
     const brandName = brandOf(brand)?.name
 
   return (
     <Link className='group flex flex-col gap-3 text-ink' to={isBox ? '/build-a-box' : `/product/${id}`}>
         <div className='relative overflow-hidden rounded-[22px] bg-blush aspect-square'>
             {image?.[0] && <img className='absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105' src={image[0]} alt={name} loading='lazy' />}
+            {stock?.tone === 'out' && <span className='absolute inset-0 bg-white/55 flex items-center justify-center'><span className='bg-ink text-white text-xs font-bold tracking-[0.12em] px-3.5 py-2 rounded-full'>SOLD OUT</span></span>}
+            {stock?.tone === 'low' && <span className='absolute bottom-3 left-3 bg-amber-100 text-amber-900 text-[11px] font-bold px-2.5 py-1.5 rounded-xl'>{stock.text.toUpperCase()}</span>}
             {bestseller && <span className='absolute top-3 left-3 bg-white text-berry text-[11px] font-bold tracking-[0.08em] px-2.5 py-1.5 rounded-xl'>BEST SELLER</span>}
             <span className='absolute bottom-3 right-3 bg-white/95 text-ink text-xs font-bold px-3 py-2 rounded-full opacity-0 translate-y-2 transition group-hover:opacity-100 group-hover:translate-y-0'>View gift</span>
         </div>

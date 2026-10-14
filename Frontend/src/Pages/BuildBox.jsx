@@ -71,8 +71,10 @@ const BuildBox = () => {
     }), [products, filter, query])
 
     // ---------- gifts
+    const inBox = (id) => draft.items.filter(i => i._id === id).reduce((s, i) => s + i.quantity, 0)
     const addGift = (product) => {
         const size = sizes[product._id] || product.sizes[0]
+        if (product.trackStock && inBox(product._id) >= product.stock) return toast.info(product.stock ? `Only ${product.stock} left of ${product.name}` : `${product.name} is sold out`)
         if (giftCount >= capacity) return toast.info(`The ${draft.style} is full — choose a bigger box or remove a gift`)
         const existing = draft.items.find(i => i._id === product._id && i.size === size)
         set({ items: existing
@@ -82,6 +84,8 @@ const BuildBox = () => {
     const changeQty = (index, delta) => {
         const items = draft.items.map((item, i) => i === index ? { ...item, quantity: item.quantity + delta } : item).filter(i => i.quantity > 0)
         if (delta > 0 && giftCount >= capacity) return toast.info('The box is full')
+        const product = products.find(p => p._id === draft.items[index]._id)
+        if (delta > 0 && product?.trackStock && inBox(product._id) >= product.stock) return toast.info(`Only ${product.stock} left of ${product.name}`)
         set({ items })
     }
 
@@ -229,7 +233,9 @@ const BuildBox = () => {
                                             )}
                                             <div className='flex items-center justify-between mt-auto'>
                                                 <span className='text-sm font-semibold'>{money(priceOf(p, size))}</span>
-                                                <button type='button' onClick={() => addGift(p)} aria-label={`Add ${p.name} to the box`} className='w-10 h-10 rounded-full bg-berry text-white flex items-center justify-center cursor-pointer hover:bg-berry-dark'><Icon name='plus' size={18} /></button>
+                                                {p.trackStock && p.stock <= 0
+                                                    ? <span className='text-xs font-bold text-rose-700'>Sold out</span>
+                                                    : <button type='button' onClick={() => addGift(p)} aria-label={`Add ${p.name} to the box`} className='w-10 h-10 rounded-full bg-berry text-white flex items-center justify-center cursor-pointer hover:bg-berry-dark'><Icon name='plus' size={18} /></button>}
                                             </div>
                                         </div>
                                     </div>
