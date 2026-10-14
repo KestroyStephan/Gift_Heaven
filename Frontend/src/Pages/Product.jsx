@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import {useParams, Link} from 'react-router-dom';
 import {ShopContext} from '../Context/ShopContext';
 import RelatedProducts from '../Components/RelatedProducts';
+import Reviews from '../Components/Reviews';
+import { Stars } from '../Components/Stars';
 import Icon from '../Components/Icons';
 import { prettify } from '../Components/ProductItem';
 import GiftCustomizer, { emptyCustom, compactCustom, missingChoices } from '../Components/GiftCustomizer';
@@ -104,6 +106,10 @@ const Product = () => {
             )}
             <p className='eyebrow'>{prettify(productData.category)} · {prettify(productData.subCategory)}</p>
             <h1 className='font-display font-semibold text-[2.6rem] sm:text-[3.4rem] leading-[1.03]'>{productData.name}</h1>
+            <a href='#reviews' className='self-start flex items-center gap-2 text-sm text-mauve hover:text-berry'>
+              <Stars value={productData.ratingAvg || 0} size={17} />
+              {productData.ratingCount ? <><b className='text-ink'>{productData.ratingAvg.toFixed(1)}</b> · {productData.ratingCount} review{productData.ratingCount === 1 ? '' : 's'}</> : 'No reviews yet'}
+            </a>
             <p className='text-2xl font-semibold'>{!size && productData.sizePrices ? 'From ' : ''}{currency}{(size ? unitPrice : Math.min(...productData.sizes.map(s => priceOf(productData, s)))).toLocaleString('en-LK')}
               {deal && <s className='ml-3 text-lg font-medium text-muted'>{currency}{listPrice.toLocaleString('en-LK')}</s>}
               {extras > 0 && <span className='ml-2 text-base font-medium text-mauve'>+ {currency}{extras.toLocaleString('en-LK')} personalisation</span>}
@@ -178,6 +184,8 @@ const Product = () => {
           </div>
         </div>
       </div>
+
+      <Reviews product={productData} />
 
       <RelatedProducts category={productData.category} subCategory={productData.subCategory} currentId={productData._id} />
     </div>

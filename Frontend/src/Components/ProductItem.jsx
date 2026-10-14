@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { ShopContext } from '../Context/ShopContext'
 import {Link} from 'react-router-dom'
 import { fromPrice, fromListPrice, stockLabel, offerOf } from '../Context/ShopContext'
+import { Stars } from './Stars'
 
 // Display names for the category / occasion values stored on products
 export const catalogNames = {
@@ -50,6 +51,7 @@ const ProductItem = ({id,image,name,price,category,bestseller,sizePrices,brand})
         <div className='flex flex-col gap-1'>
             {(brandName || category) && <p className='text-xs font-semibold text-muted'>{brandName ? <span className='text-berry'>{brandName}</span> : null}{brandName && category ? ' · ' : ''}{category ? prettify(category) : ''}</p>}
             <p className='font-bold leading-snug group-hover:text-berry'>{name}</p>
+            {product?.ratingCount > 0 && <p className='flex items-center gap-1.5 text-xs text-muted'><Stars value={product.ratingAvg} size={13} /><b className='text-ink'>{product.ratingAvg.toFixed(1)}</b>({product.ratingCount})</p>}
             <p className='text-[15px] flex flex-wrap items-baseline gap-x-2'>
                 <span className={deal ? 'font-bold text-berry' : ''}>{sizePrices ? 'From ' : ''}{currency}{sale.toLocaleString('en-LK')}</span>
                 {deal && <s className='text-sm text-muted'>{currency}{was.toLocaleString('en-LK')}</s>}

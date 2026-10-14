@@ -30,6 +30,7 @@ const Collection = () => {
   const [brand, setBrand] = useState([]);
   const [budget, setBudget] = useState(null);
   const [inStockOnly, setInStockOnly] = useState(false);
+  const [fourStar, setFourStar] = useState(false);
   const [sortType, setSortType] = useState('relevant')
 
   // Links like /collection?sub=BirthdayGift preselect a filter
@@ -81,6 +82,10 @@ const Collection = () => {
       productsCopy = productsCopy.filter(item => brand.includes(item.brand))
     }
 
+    if (fourStar) {
+      productsCopy = productsCopy.filter(item => item.ratingAvg >= 4)
+    }
+
     if (inStockOnly) {
       productsCopy = productsCopy.filter(item => !item.trackStock || item.stock > 0)
     }
@@ -89,11 +94,12 @@ const Collection = () => {
       productsCopy = productsCopy.filter(item => { const price = fromPrice(item); return (!budget.min || price >= budget.min) && (!budget.max || price < budget.max) })
     }
 
+    if (sortType === 'rating') productsCopy.sort((a,b)=>(b.ratingAvg - a.ratingAvg) || (b.ratingCount - a.ratingCount))
     if (sortType === 'low-high') productsCopy.sort((a,b)=>(a.price - b.price))
     if (sortType === 'high-low') productsCopy.sort((a,b)=>(b.price - a.price))
 
     return productsCopy
-  }, [products, search, showSearch, category, subCategory, recipient, brand, budget, inStockOnly, sortType])
+  }, [products, search, showSearch, category, subCategory, recipient, brand, budget, inStockOnly, fourStar, sortType])
 
   const activeFilters = category.length + subCategory.length + recipient.length + brand.length + (budget ? 1 : 0)
   const department = departments.find(d => d.slug === searchParams.get('dept'))
@@ -115,6 +121,7 @@ const Collection = () => {
             <span className='sr-only sm:not-sr-only text-mauve'>Sort by</span>
             <select value={sortType} onChange={(e)=>setSortType(e.target.value)} className='h-11 px-4 rounded-full border border-rose-300 bg-white font-semibold cursor-pointer'>
                <option value="relevant">Newest</option>
+               <option value="rating">Top rated</option>
                <option value="low-high">Price: low to high</option>
                <option value="high-low">Price: high to low</option>
             </select>
@@ -128,6 +135,10 @@ const Collection = () => {
           <label className='flex items-center gap-3 text-[15px] text-ink font-semibold cursor-pointer'>
             <input type='checkbox' className='w-4 h-4 accent-berry' checked={inStockOnly} onChange={() => setInStockOnly(v => !v)} />
             Hide sold-out gifts
+          </label>
+          <label className='flex items-center gap-3 text-[15px] text-ink font-semibold cursor-pointer -mt-4'>
+            <input type='checkbox' className='w-4 h-4 accent-berry' checked={fourStar} onChange={() => setFourStar(v => !v)} />
+            Rated 4★ & up
           </label>
           {recipients.length > 0 && <FilterGroup title='GIFT FOR' options={recipients} selected={recipient} onToggle={toggle(setRecipient)} names={recipientNames} />}
           {budget && (

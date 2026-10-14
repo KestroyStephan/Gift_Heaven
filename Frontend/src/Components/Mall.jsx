@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import axios from 'axios'
+import { Stars } from './Stars'
 import { Link, NavLink, useSearchParams, useLocation } from 'react-router-dom'
 import { ShopContext, fromPrice } from '../Context/ShopContext'
 import Title from './Title'
@@ -212,6 +214,39 @@ export const DealsStrip = () => {
                     <div className='flex flex-col gap-3'>
                         {publicCoupons.slice(0, 2).map(c => <CouponTicket key={c.code} coupon={c} compact />)}
                     </div>
+                </div>
+            </div>
+        </section>
+    )
+}
+
+// Recent 4–5 star reviews from verified customers (hidden until there are some)
+export const CustomerLove = () => {
+    const { backendUrl } = useContext(ShopContext)
+    const [reviews, setReviews] = useState([])
+    useEffect(() => {
+        axios.get(backendUrl + '/api/review/highlights').then(({ data }) => data.success && setReviews(data.reviews)).catch(() => {})
+    }, [])
+    if (!reviews.length) return null
+    return (
+        <section className='bg-white border-y border-line py-16'>
+            <div className='shell'>
+                <Title eyebrow='Verified customer reviews' text1='What customers' text2='say' className='mb-8' />
+                <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-5'>
+                    {reviews.slice(0, 6).map(r => (
+                        <Link key={r._id} to={`/product/${r.product._id}#reviews`} className='rounded-[24px] bg-shell border border-line p-6 flex flex-col gap-3 hover:border-rose-300'>
+                            <Stars value={r.rating} size={18} />
+                            {r.title && <p className='font-bold text-ink'>{r.title}</p>}
+                            <p className='text-[15px] text-mauve leading-relaxed line-clamp-4'>“{r.comment}”</p>
+                            <span className='mt-auto pt-2 flex items-center gap-3 text-sm'>
+                                {r.product.image && <img src={r.product.image} alt='' loading='lazy' className='w-10 h-10 rounded-xl object-cover' />}
+                                <span className='min-w-0'>
+                                    <span className='block font-semibold text-ink'>{r.name} <span className='text-[#2F5A37] text-xs font-semibold'>✓ Verified</span></span>
+                                    <span className='block text-xs text-muted truncate'>{r.product.name}</span>
+                                </span>
+                            </span>
+                        </Link>
+                    ))}
                 </div>
             </div>
         </section>

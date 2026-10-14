@@ -38,6 +38,14 @@ const Orders = () => {
     }
   }
 
+  // Delivered gifts the customer hasn't reviewed yet
+  const [toReview, setToReview] = useState([])
+  useEffect(() => {
+    if (!token) return
+    axios.post(backendUrl + '/api/review/to-review', {}, { headers: { token } })
+      .then(({ data }) => data.success && setToReview(data.pending)).catch(() => {})
+  }, [token])
+
   useEffect(()=>{
     if (!token && !localStorage.getItem('token')) navigate('/login?redirect=/orders')
     loadOrderData()
@@ -84,6 +92,9 @@ const Orders = () => {
                           <p>Size: {item.size}</p>
                         </div>
                         <CustomSummary custom={item.custom} />
+                        {order.status === 'Delivered' && toReview.includes(String(item._id)) && (
+                          <Link to={`/product/${item._id}#write-review`} className='inline-flex items-center gap-1.5 mt-2 px-3.5 py-1.5 rounded-full bg-rose-50 text-berry text-sm font-bold hover:bg-rose-100'>★ Rate this gift</Link>
+                        )}
                       </div>
                     </div>
 

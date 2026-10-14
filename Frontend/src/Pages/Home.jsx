@@ -6,7 +6,7 @@ import LatestCollection from '../Components/LatestCollection'
 import BestSeller from '../Components/BestSeller'
 import OurPolicy from '../Components/OurPolicy'
 import NewsletterBox from '../Components/NewsletterBox'
-import { ShopByDepartment, BrandStrip, BudgetDeals, BrandSpotlight, DealsStrip } from '../Components/Mall'
+import { ShopByDepartment, BrandStrip, BudgetDeals, BrandSpotlight, DealsStrip, CustomerLove } from '../Components/Mall'
 
 const Home = () => {
   return (
@@ -24,6 +24,7 @@ const Home = () => {
       <BestSeller />
       <BrandSpotlight index={2} />
       <Festivals />
+      <CustomerLove />
       <OurPolicy />
       <LatestCollection/>
       <NewsletterBox />
