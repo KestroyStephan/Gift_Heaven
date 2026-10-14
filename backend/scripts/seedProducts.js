@@ -10,6 +10,8 @@ import path from 'path'
 import mongoose from 'mongoose'
 import { v2 as cloudinary } from 'cloudinary'
 import productModel from '../models/productModel.js'
+import brandModel from '../models/brandModel.js'
+import { brands, brandFor } from './catalogBrands.js'
 import { drawProduct } from './productArt.js'
 import { photosFor } from './productPhotos.js'
 import { extraProducts } from './catalogExtra.js'
@@ -196,6 +198,20 @@ for (const [index, p] of products.entries()) {
 for (const [name, recipients] of Object.entries(recipientsByName)) {
     await productModel.updateOne({ name, $or: [{ recipients: { $exists: false } }, { recipients: { $size: 0 } }] }, { recipients })
 }
+
+// Brands: add any that are missing, then give unbranded products their brand (admin choices are kept)
+for (const brand of brands) {
+    if (!(await brandModel.exists({ slug: brand.slug }))) {
+        await brandModel.create(brand)
+        console.log('brand added:', brand.name)
+    }
+}
+let branded = 0
+for (const product of await productModel.find({ $or: [{ brand: { $exists: false } }, { brand: '' }] })) {
+    await productModel.updateOne({ _id: product._id }, { brand: brandFor(product) })
+    branded++
+}
+console.log(`${branded} product(s) given a brand`)
 
 console.log(`Done - ${added} product(s) added`)
 await mongoose.disconnect()
