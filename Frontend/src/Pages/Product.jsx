@@ -1,101 +1,156 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {useParams} from 'react-router-dom';
+import {useParams, Link} from 'react-router-dom';
 import {ShopContext} from '../Context/ShopContext';
-import { assets } from '../assets/assets';
 import RelatedProducts from '../Components/RelatedProducts';
+import Icon from '../Components/Icons';
+import { prettify } from '../Components/ProductItem';
+import GiftCustomizer, { emptyCustom, compactCustom, missingChoices } from '../Components/GiftCustomizer';
+import { priceOf } from '../Context/ShopContext';
+import { toast } from 'react-toastify';
+
+const sizeLabels = { S: 'Small', M: 'Medium', L: 'Large' }
 
 const Product = () => {
 
   const {productId} = useParams();
-  const {products,currency, addToCart} = useContext(ShopContext);
+  const {products,currency, addToCart, productsLoading, extrasOf, customOptions} = useContext(ShopContext);
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState('');
   const [size,setSize] = useState('');
-
-  const fetchProductData = async ()=>{
-    products.map((item)=>{
-      if(item._id === productId){
-        setProductData(item)
-        setImage(item.image[0])
-        return null;
-      }
-    })
-
-  }
+  const [quantity, setQuantity] = useState(1);
+  const [custom, setCustom] = useState(emptyCustom);
 
   useEffect(()=>{
-    fetchProductData();
-  },[productId])
+    const item = products.find((product)=>product._id === productId)
+    if (item) {
+      setProductData(item)
+      setImage(item.image[0])
+      setSize(item.sizes.length === 1 ? item.sizes[0] : '')
+      setQuantity(1)
+      setCustom(emptyCustom)
+    } else {
+      setProductData(false)
+    }
+  },[productId, products])
 
-  return productData ? (
-    <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
-     
-      {/*-----------------product Data------------------------*/}
-      <div className='flex gap-12 sm:gap-12 flex-col sm:flex-row'>
-       
-        {/* ----------product Images----------------- */}
-        <div className='flex flex-1 flex-col-reverse gap-3 sm:flex-row'>
-          <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full '>
-            {
-              productData.image.map((item,index)=>(
-                <img onClick={()=>setImage(item)} src={item} key={index} className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer' alt="" />
-              ))
-            }
+  if (!productData) {
+    return productsLoading ? <div className='min-h-[50vh]'></div> : (
+      <div className='py-24 text-center flex flex-col items-center gap-4'>
+        <p className='font-display text-4xl font-semibold'>Gift not found</p>
+        <p className='text-mauve'>It may have been removed from our collection.</p>
+        <Link to='/collection' className='btn-primary mt-2'>Browse gifts</Link>
+      </div>
+    )
+  }
+
+  const finalCustom = compactCustom(custom)
+  const extras = extrasOf(finalCustom)
+  const unitPrice = priceOf(productData, size)
+
+  const addGift = async () => {
+    if (!size) return addToCart(productData._id, size)
+    const missing = missingChoices(productData, custom, customOptions)
+    if (missing) {
+      toast.error(missing)
+      return document.getElementById('customize-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+    await addToCart(productData._id, size, quantity, finalCustom)
+    setCustom(emptyCustom)
+    setQuantity(1)
+  }
+
+  return (
+    <div className='pt-6'>
+
+      <nav aria-label='Breadcrumb' className='flex flex-wrap gap-2 text-sm text-muted mb-8'>
+        <Link to='/' className='hover:text-berry'>Home</Link><span aria-hidden='true'>/</span>
+        <Link to={`/collection?category=${productData.category}`} className='hover:text-berry'>{prettify(productData.category)}</Link><span aria-hidden='true'>/</span>
+        <span className='text-ink font-semibold'>{productData.name}</span>
+      </nav>
+
+      <div className='grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-14'>
+
+        {/* Gallery */}
+        <div className='flex flex-col gap-4'>
+          <div className='rounded-[28px] overflow-hidden bg-blush aspect-square'>
+            <img className='w-full h-full object-cover' src={image} alt={productData.name} />
           </div>
-          <div className='w-full sm:w-[80%]'>
-                <img className='w-full h-auto' src={image} alt="" />
-          </div>
+          {productData.image.length > 1 && (
+            <div className='grid grid-cols-4 gap-3'>
+              {productData.image.map((item,index)=>(
+                <button key={index} onClick={()=>setImage(item)} aria-label={`Show photo ${index + 1}`} aria-pressed={item === image}
+                  className={`rounded-2xl overflow-hidden aspect-square border-2 cursor-pointer ${item === image ? 'border-ink' : 'border-transparent hover:border-rose-300'}`}>
+                  <img src={item} className='w-full h-full object-cover' alt='' />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/*--------------------product information-------------------------- */}
-        <div className='flex-1'>
-            <h1 className='font-medium text-2xl mt-2'>
-              {productData.name}
-            </h1>
-            <div className='flex items-center gap-1 mt-2'>
-                <img src={assets.star_icon} alt="" className="w-3 5" />
-                <img src={assets.star_icon} alt="" className="w-3 5" />
-                <img src={assets.star_icon} alt="" className="w-3 5" />
-                <img src={assets.star_icon} alt="" className="w-3 5" />
-                <img src={assets.star_dull_icon} alt="" className="w-3 5" />
-                <p className='pl-2'>(152)</p>
+        {/* Details */}
+        <div className='flex flex-col gap-7'>
+          <div className='flex flex-col gap-3'>
+            <p className='eyebrow'>{prettify(productData.category)} · {prettify(productData.subCategory)}</p>
+            <h1 className='font-display font-semibold text-[2.6rem] sm:text-[3.4rem] leading-[1.03]'>{productData.name}</h1>
+            <p className='text-2xl font-semibold'>{!size && productData.sizePrices ? 'From ' : ''}{currency}{(size ? unitPrice : Math.min(...productData.sizes.map(s => priceOf(productData, s)))).toFixed(2)}
+              {extras > 0 && <span className='ml-2 text-base font-medium text-mauve'>+ {currency}{extras.toFixed(2)} personalisation</span>}
+            </p>
+          </div>
+
+          <p className='text-mauve leading-relaxed text-[16px] whitespace-pre-line'>{productData.description}</p>
+
+          <fieldset>
+            <legend className='font-bold text-sm mb-3'>Size {size && <span className='font-medium text-muted'>— {sizeLabels[size] || size}</span>}</legend>
+            <div className='flex flex-wrap gap-2.5'>
+              {productData.sizes.map((item)=>(
+                <button key={item} onClick={()=>setSize(item)} aria-pressed={item === size}
+                  className={`min-w-[5.5rem] min-h-12 py-1.5 px-4 rounded-2xl text-sm font-semibold cursor-pointer ${item === size ? 'border-2 border-berry bg-rose-50 text-berry-dark' : 'border-[1.5px] border-rose-300 bg-white hover:border-ink'}`}>
+                  {sizeLabels[item] || item}
+                  {productData.sizePrices && <span className='block text-xs font-medium text-muted'>{currency}{priceOf(productData, item).toFixed(2)}</span>}
+                </button>
+              ))}
             </div>
-            <p className='mt-5 text-3xl font-medium'>{currency}{productData.price}</p>
-            <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
-            <div className='flex flex-col gap-4 my-8'>
-              <p>Select Size:</p>
-              <div className='flex gap-2'>
-                {productData.sizes.map((item,index)=>(
-                  <button onClick={()=>setSize(item)} className={`border py-2 px-4 bg-rose-50 ${item === size ? 'border-orange-500':''}`} key={index}>{item}</button>
-                ))}
-              </div>
+          </fieldset>
+
+          <GiftCustomizer product={productData} value={custom} onChange={setCustom} />
+
+          <div className='flex flex-wrap gap-3'>
+            <div className='flex items-center h-[3.25rem] rounded-full border-[1.5px] border-rose-300 bg-white'>
+              <button onClick={()=>setQuantity(q => Math.max(1, q - 1))} aria-label='Decrease quantity' className='w-12 h-full flex items-center justify-center cursor-pointer'><Icon name='minus' size={18} /></button>
+              <span aria-live='polite' className='w-8 text-center font-bold'>{quantity}</span>
+              <button onClick={()=>setQuantity(q => q + 1)} aria-label='Increase quantity' className='w-12 h-full flex items-center justify-center cursor-pointer'><Icon name='plus' size={18} /></button>
             </div>
-            <button onClick={()=>addToCart(productData._id,size)} className='bg-rose-600 text-white px-8 py-3 text-sm active:bg-rose-600'>ADD TO CART</button>
-            <hr className='mt-8 sm:w-4/5' />
-            <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
-                <p>100% Original Product.</p>
-                <p>Cash on delivery is available on this product.</p>
-                <p>Easy return and Exchange policy within 7 days.</p>
-            </div>
+            <button onClick={addGift} className='btn-primary flex-1 min-w-[220px]'>
+              <Icon name='bag' size={18} /> Add to bag · {currency}{((unitPrice + extras) * quantity).toFixed(2)}
+            </button>
+          </div>
+
+          <ul className='grid sm:grid-cols-3 gap-4 p-5 bg-white border border-line rounded-[20px] text-sm text-mauve'>
+            <li className='flex gap-3 items-start'><Icon name='truck' className='text-berry shrink-0' />Same-day delivery in Colombo</li>
+            <li className='flex gap-3 items-start'><Icon name='lock' className='text-berry shrink-0' />Secure payment or cash on delivery</li>
+            <li className='flex gap-3 items-start'><Icon name='refresh' className='text-berry shrink-0' />Easy exchange within 7 days</li>
+          </ul>
+
+          <div className='border-t border-line'>
+            <details className='border-b border-line py-5 group' open>
+              <summary className='font-bold cursor-pointer flex justify-between items-center list-none'>Gift note<Icon name='chevron' size={18} className='transition group-open:rotate-90' /></summary>
+              <p className='mt-3 text-[15px] text-mauve leading-relaxed'>Use “Make it yours” above to add the recipient's name and a message — we hand-letter it on a card tucked inside the gift, free of charge.</p>
+            </details>
+            <details className='border-b border-line py-5 group'>
+              <summary className='font-bold cursor-pointer flex justify-between items-center list-none'>Delivery &amp; tracking<Icon name='chevron' size={18} className='transition group-open:rotate-90' /></summary>
+              <p className='mt-3 text-[15px] text-mauve leading-relaxed'>Follow every step from packing to delivered in My Orders, with email and SMS updates along the way.</p>
+            </details>
+            <details className='border-b border-line py-5 group'>
+              <summary className='font-bold cursor-pointer flex justify-between items-center list-none'>Exchanges<Icon name='chevron' size={18} className='transition group-open:rotate-90' /></summary>
+              <p className='mt-3 text-[15px] text-mauve leading-relaxed'>Something not right? Contact us within 7 days of delivery and we'll make it right.</p>
+            </details>
+          </div>
         </div>
       </div>
 
-      {/* --------------------------Review Section-------------------------- */}
-      <div className='mt-20'>
-        <div className='flex'>
-            <b className='border px-5 py-3 text-sm'>Description</b>
-            <p className='border px-5 py-3 text-sm'>Reviews(106)</p>
-        </div>
-        <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
-          <p>A thoughtfully chosen gift for someone you love, made to fit anniversaries, date nights, or any day worth celebrating. Browse, compare, and check out securely with fast, careful delivery.</p>
-          <p>With detailed descriptions and true-to-life photos, you can shop with confidence from the comfort of home. Regular offers, new arrivals, and personalised touches make every gift feel special.</p>
-        </div>
-      </div>
-
-      {/* -------------------display related products-------------------- */}
-        <RelatedProducts category={productData.category} subCategory={productData.subCategory} />       
+      <RelatedProducts category={productData.category} subCategory={productData.subCategory} currentId={productData._id} />
     </div>
-  ): <div className='opacity-0'></div>
+  )
 }
 
 export default Product
