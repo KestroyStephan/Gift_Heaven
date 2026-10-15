@@ -1,6 +1,6 @@
 import express from 'express'
 
-import {placeOrder, placeOrderStripe, placeOrderRazorpay, verifyRazorpay, cancelPendingOrder, allOrders, userOrders, singleOrder, updateStatus, verifyStripe, orderStats, salesReport} from '../controllers/orderController.js'
+import {placeOrder, placeOrderStripe, placeOrderRazorpay, verifyRazorpay, cancelPendingOrder, allOrders, userOrders, singleOrder, updateStatus, verifyStripe, orderStats, salesReport, trackOrder} from '../controllers/orderController.js'
 import adminAuth from '../middleware/adminAuth.js'
 import authUser from '../middleware/auth.js'
 
@@ -20,6 +20,9 @@ orderRouter.post('/place',authUser, placeOrder)
 orderRouter.post('/stripe',authUser, placeOrderStripe)
 orderRouter.post('/razorpay',authUser, placeOrderRazorpay)
 orderRouter.post('/cancel',authUser, cancelPendingOrder)
+
+// Public delivery tracking (order number + email or phone)
+orderRouter.post('/track', trackOrder)
 
 //User Features
 orderRouter.post('/userorders', authUser, userOrders)

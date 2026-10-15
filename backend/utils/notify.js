@@ -89,7 +89,7 @@ const itemsTable = (order) => `
 export const notifyOrder = async (order, event) => {
     const { email, phone, firstName } = order.address || {}
     const id = shortId(order)
-    const trackUrl = `${frontendUrl}/orders`
+    const trackUrl = `${frontendUrl}/track?order=${shortId(order)}`
 
     let subject, intro, sms
     if (event === 'status') {

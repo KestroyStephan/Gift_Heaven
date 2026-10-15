@@ -36,12 +36,16 @@ const Orders = ({ token }) => {
   }
 
 
-  const statusHandler = async (event, orderId) =>{
+  // optional note per order, shown to the customer on their tracking timeline
+  const [notes, setNotes] = useState({})
+
+  const statusHandler = async (event, orderId, status = event.target.value) =>{
     try {
       
-      const response = await axios.post(backendUrl + '/api/orders/status', {orderId, status:event.target.value}, {headers:{token}})
+      const response = await axios.post(backendUrl + '/api/orders/status', {orderId, status, note: notes[orderId] || ''}, {headers:{token}})
       if (response.data.success) {
         toast.success(response.data.message)
+        setNotes(prev => ({ ...prev, [orderId]: '' }))
         await fetchAllOrders()
       } else {
         toast.error(response.data.message)
@@ -106,6 +110,20 @@ const Orders = ({ token }) => {
                   {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
+              <form onSubmit={(e) => { e.preventDefault(); statusHandler(null, order._id, order.status) }} className='flex flex-wrap items-center gap-2 px-5 pt-4'>
+                <label className='relative flex-1 min-w-[240px]'>
+                  <span className='sr-only'>Delivery note for order {orderNo(order._id)}</span>
+                  <Icon name='truck' size={16} className='absolute left-3 top-1/2 -translate-y-1/2 text-mauve' />
+                  <input value={notes[order._id] || ''} onChange={(e) => setNotes(prev => ({ ...prev, [order._id]: e.target.value }))} maxLength={200}
+                    placeholder='Note for the customer, e.g. "With rider Kasun · 077 123 4567" — sent with the next status change' className='field !pl-9 !py-1.5 text-sm' />
+                </label>
+                <button disabled={!notes[order._id]?.trim()} className='btn-ghost px-4 py-1.5 text-sm disabled:opacity-40 disabled:cursor-not-allowed'>Add to "{order.status}"</button>
+              </form>
+              {(order.statusHistory || []).some(h => h.note) && (
+                <ul className='px-5 pt-2 flex flex-wrap gap-2 text-xs'>
+                  {order.statusHistory.filter(h => h.note).map((h, i) => <li key={i} className='px-2.5 py-1 rounded-full bg-pink-50 text-pink-700'><b>{h.status}:</b> {h.note}</li>)}
+                </ul>
+              )}
               <div className='grid lg:grid-cols-[2fr_1fr_0.8fr] gap-6 p-5'>
                 <div>
                   <p className='table-head mb-2'>Items ({order.items.length})</p>

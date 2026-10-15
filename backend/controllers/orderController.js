@@ -300,6 +300,39 @@ const cancelPendingOrder = async (req, res) => {
     }
 }
 
+// Anyone with the order number and the checkout email or phone can follow a gift's delivery
+const trackOrder = async (req, res) => {
+    try {
+        const orderNo = String(req.body.orderNo || '').trim().replace(/^#/, '').toLowerCase()
+        const contact = String(req.body.contact || '').trim().toLowerCase()
+        if (!/^[a-f0-9]{8}$/.test(orderNo) || contact.length < 5) return res.json({ success: false, message: 'Enter your 8-character order number and the email or phone used at checkout' })
+        const digits = contact.replace(/\D/g, '')
+        const candidates = await orderModel.find({
+            ...visibleOrdersFilter,
+            $expr: { $eq: [{ $substrCP: [{ $toString: '$_id' }, 16, 8] }, orderNo] },
+        }).lean()
+        const order = candidates.find(o => {
+            const email = String(o.address?.email || '').toLowerCase()
+            const phone = String(o.address?.phone || '').replace(/\D/g, '')
+            return email === contact || (digits.length >= 7 && phone.endsWith(digits.slice(-9)))
+        })
+        if (!order) return res.json({ success: false, message: "We couldn't find an order with those details" })
+        const scheduled = order.items.flatMap(i => [i.custom, ...(i.custom?.boxItems || []).map(b => b.custom)]).find(c => c?.deliveryDate)
+        res.json({
+            success: true,
+            order: {
+                orderNo: orderNo.toUpperCase(), status: order.status, statusHistory: order.statusHistory, date: order.date,
+                itemCount: order.items.reduce((s, i) => s + i.quantity, 0), city: order.address?.city,
+                deliveryDate: scheduled?.deliveryDate, timeSlot: scheduled?.timeSlot,
+                surprise: order.items.some(i => i.custom?.surprise),
+            },
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
 // Customers never see what a gift costs us
 const forCustomer = (order) => {
     const data = order.toObject()
@@ -381,16 +414,28 @@ const updateStatus = async (req, res) => {
 
         const { orderId, status } = req.body
         if (!orderStatuses.includes(status)) return res.json({ success: false, message: 'Invalid status' })
+        // optional note shown to the customer on the tracking timeline, e.g. "With rider Kasun, 077 123 4567"
+        const note = String(req.body.note || '').trim().slice(0, 200)
 
         const order = await orderModel.findById(orderId)
         if (!order) return res.json({ success: false, message: 'Order not found' })
+
+        // Same status again: only add a note if one was given, never a duplicate step or repeat email/SMS
+        if (status === order.status) {
+            if (!note) return res.json({ success: true, message: `Already "${status}"` })
+            const history = [...(order.statusHistory || [])]
+            if (history.length) history[history.length - 1] = { ...history[history.length - 1], note }
+            order.statusHistory = history
+            await order.save()
+            return res.json({ success: true, message: 'Delivery note added' })
+        }
 
         // Cancelling puts the stock back; reopening a cancelled order takes it again
         if (status === 'Cancelled' && order.status !== 'Cancelled') { await releaseStock(order, 'Order cancelled'); await releaseCoupon(order) }
         if (status !== 'Cancelled' && order.status === 'Cancelled') { await reserveStock(order); await reserveCoupon(order, { force: true }) }
 
         order.status = status
-        order.statusHistory = [...(order.statusHistory || []), { status, date: Date.now() }]
+        order.statusHistory = [...(order.statusHistory || []), { status, date: Date.now(), ...(note ? { note } : {}) }]
         // Cash on delivery is collected when the parcel is delivered
         if (status === 'Delivered' && order.paymentMethod === 'COD') order.payment = true
         await order.save()
@@ -548,4 +593,4 @@ const salesReport = async (req, res) => {
     }
 }
 
-export { salesReport, verifyStripe, placeOrder, placeOrderStripe, placeOrderRazorpay, verifyRazorpay, cancelPendingOrder, allOrders, userOrders, singleOrder, updateStatus, orderStats }
+export { trackOrder, salesReport, verifyStripe, placeOrder, placeOrderStripe, placeOrderRazorpay, verifyRazorpay, cancelPendingOrder, allOrders, userOrders, singleOrder, updateStatus, orderStats }

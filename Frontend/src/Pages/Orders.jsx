@@ -4,6 +4,7 @@ import { ShopContext } from '../Context/ShopContext'
 import Title from '../Components/Title';
 import OrderTracker from '../Components/OrderTracker';
 import CustomSummary from '../Components/CustomSummary';
+import Icon from '../Components/Icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -13,7 +14,8 @@ const Orders = () => {
 
   const [orders, setOrders] = useState([])
   const [loaded, setLoaded] = useState(false)
-  const [tracking, setTracking] = useState(null)
+  // which order cards have their tracker open (orders on their way start open)
+  const [toggled, setToggled] = useState({})
 
   const loadOrderData = async ()=>{
     try {
@@ -51,78 +53,85 @@ const Orders = () => {
     loadOrderData()
   },[token])
 
-  const trackOrder = async (orderId) => {
-    if (tracking === orderId) return setTracking(null)
-    await loadOrderData()
-    setTracking(orderId)
+  const trackOrder = async (orderId, isOpen) => {
+    setToggled(prev => ({ ...prev, [orderId]: !isOpen }))
+    if (!isOpen) await loadOrderData()
   }
 
-  return (
-    <div className='border-t pt-16'>
+  // Refresh every minute while a gift is still on its way
+  useEffect(() => {
+    if (!orders.some(o => !['Delivered', 'Cancelled'].includes(o.status))) return
+    const id = setInterval(loadOrderData, 60000)
+    return () => clearInterval(id)
+  }, [orders, token])
 
-      <div className='text-2xl'>
-        <Title text1={'MY'} text2={'ORDERS'} />
+  const statusTone = (status) => status === 'Cancelled' ? 'bg-stone-100 text-stone-600' : status === 'Delivered' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-berry'
+  const active = (order) => !['Delivered', 'Cancelled'].includes(order.status)
+
+  return (
+    <div className='pt-10 pb-16'>
+      <div className='flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6 mb-8'>
+        <div>
+          <Title as='h1' eyebrow='Track & manage' text1='My' text2='orders' />
+          <p className='text-mauve -mt-1'>Gifts on their way show live tracking. Need to share it? Use the order number on the <Link to='/track' className='font-semibold text-berry underline underline-offset-4'>tracking page</Link>.</p>
+        </div>
       </div>
 
       {loaded && orders.length === 0 && (
-        <div className='text-center py-16 text-gray-500'>
-          <p>You haven't placed any orders yet.</p>
-          <Link to='/collection' className='inline-block mt-4 bg-rose-600 text-white px-8 py-3 text-sm'>START SHOPPING</Link>
+        <div className='rounded-[28px] border border-dashed border-rose-300 bg-white py-16 px-6 text-center flex flex-col items-center gap-3'>
+          <Icon name='bag' size={34} className='text-berry' />
+          <p className='font-display text-3xl font-semibold'>No orders yet</p>
+          <p className='text-mauve text-sm'>When you send a gift, you can follow it here from packing to the doorstep.</p>
+          <Link to='/collection' className='btn-primary mt-2'>Start shopping</Link>
         </div>
       )}
 
-      <div className='' >
-        {
-          orders.map((order)=>(
-            <div key={order._id} className='border-t border-b py-4 text-gray-700'>
-              <div className='flex flex-wrap justify-between gap-2 text-xs text-gray-500 mb-2'>
-                <p>Order <b className='text-gray-700'>#{String(order._id).slice(-8).toUpperCase()}</b> · {new Date(order.date).toDateString()}</p>
-                <p>Total: <b className='text-gray-700'>{currency}{order.amount.toLocaleString('en-LK')}</b>{order.discount > 0 && <span className='text-[#2F5A37]'> (saved {currency}{order.discount.toLocaleString('en-LK')} with {order.couponCode})</span>} · {order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod} · <span className={order.payment ? 'text-green-600' : 'text-amber-600'}>{order.payment ? 'Paid' : 'Payment pending'}</span></p>
-              </div>
+      <div className='flex flex-col gap-6'>
+        {orders.map(order => {
+          const open = toggled[order._id] ?? active(order)
+          return (
+            <article key={order._id} className='rounded-[28px] bg-white border border-line overflow-hidden shadow-[0_20px_50px_-36px_rgba(107,25,64,.45)]'>
+              <header className='flex flex-wrap items-center gap-x-4 gap-y-2 px-5 sm:px-6 py-4 bg-[#FFF6FA] border-b border-line'>
+                <span className='font-mono font-bold text-ink'>#{String(order._id).slice(-8).toUpperCase()}</span>
+                <span className='text-sm text-muted'>{new Date(order.date).toLocaleDateString('en-LK', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${statusTone(order.status)}`}>{order.status}</span>
+                <span className='flex-1'></span>
+                <span className='text-sm'>
+                  <b className='text-ink'>{currency}{order.amount.toLocaleString('en-LK')}</b>
+                  <span className='text-muted'> · {order.paymentMethod === 'COD' ? 'Cash on delivery' : order.paymentMethod} · </span>
+                  <span className={order.payment ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'}>{order.payment ? 'Paid' : 'Payment pending'}</span>
+                </span>
+              </header>
 
-              {order.items.map((item,index)=>(
-                <div key={index} className='py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
-                    <div className='flex items-start gap-6 text-sm'>
-                      <img src={item.image[0]} className='w-16 sm:w-20' alt={item.name} />
-                      <div>
-                        <p className='sm:text-base font-medium'>{item.name}</p>
-                        <div className='flex items-center gap-3 mt-1 text-base text-gray-700'>
-                          <p >{currency}{Number(item.price).toLocaleString('en-LK')}</p>
-                          <p>Quantity: {item.quantity}</p>
-                          <p>Size: {item.size}</p>
-                        </div>
-                        <CustomSummary custom={item.custom} />
-                        {order.status === 'Delivered' && toReview.includes(String(item._id)) && (
-                          <Link to={`/product/${item._id}#write-review`} className='inline-flex items-center gap-1.5 mt-2 px-3.5 py-1.5 rounded-full bg-rose-50 text-berry text-sm font-bold hover:bg-rose-100'>★ Rate this gift</Link>
-                        )}
-                      </div>
+              {open && <div className='px-5 sm:px-6 pt-6 pb-2'><OrderTracker order={order} /></div>}
+
+              <ul className='px-5 sm:px-6 py-3 divide-y divide-line'>
+                {order.items.map((item, index) => (
+                  <li key={index} className='py-3 flex items-start gap-4 text-sm'>
+                    <img src={item.image[0]} className='w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-line' alt={item.name} />
+                    <div className='flex-1 min-w-0'>
+                      <p className='sm:text-base font-bold text-ink'>{item.name}</p>
+                      <p className='text-muted mt-0.5'>{currency}{Number(item.price).toLocaleString('en-LK')} · Qty {item.quantity} · {item.size}</p>
+                      {order.discount > 0 && index === 0 && <p className='text-xs text-[#2F5A37] mt-0.5'>Saved {currency}{order.discount.toLocaleString('en-LK')} with {order.couponCode}</p>}
+                      <CustomSummary custom={item.custom} />
+                      {order.status === 'Delivered' && toReview.includes(String(item._id)) && (
+                        <Link to={`/product/${item._id}#write-review`} className='inline-flex items-center gap-1.5 mt-2 px-3.5 py-1.5 rounded-full bg-rose-50 text-berry text-sm font-bold hover:bg-rose-100'>★ Rate this gift</Link>
+                      )}
                     </div>
+                  </li>
+                ))}
+              </ul>
 
-                    {index === 0 && (
-                      <div className='md:w-1/2 flex justify-between'>
-                          <div className='flex items-center gap-2'>
-                              <p className={`min-w-2 h-2 rounded-full ${order.status === 'Cancelled' ? 'bg-red-500' : order.status === 'Delivered' ? 'bg-green-500' : 'bg-amber-400'}`}></p>
-                              <p className='text-sm md:text-base'>{order.status}</p>
-                          </div>
-
-                          <button onClick={()=>trackOrder(order._id)} className='border px-4 py-2 text-sm font-medium rounded-sm cursor-pointer hover:bg-rose-50'>
-                            {tracking === order._id ? 'Hide Tracking' : 'Track Order'}
-                          </button>
-                      </div>
-                    )}
-                </div>
-              ))}
-
-              {tracking === order._id && (
-                <div className='mt-3 p-4 bg-rose-50/50 border border-rose-100'>
-                  <OrderTracker order={order} />
-                </div>
-              )}
-            </div>
-          ))
-        }
+              <footer className='flex flex-wrap gap-2 px-5 sm:px-6 pb-5'>
+                <button onClick={() => trackOrder(order._id, open)} aria-expanded={open} className='btn-outline !h-10 !px-4 text-sm'>
+                  <Icon name='truck' size={16} />{open ? 'Hide tracking' : 'Track order'}
+                </button>
+                <Link to={`/order-success/${order._id}`} className='btn-outline !h-10 !px-4 text-sm'>Order details</Link>
+              </footer>
+            </article>
+          )
+        })}
       </div>
-
     </div>
   )
 }

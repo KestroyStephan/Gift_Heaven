@@ -14,7 +14,7 @@ const columns = [
   },
   {
     title: 'Help', links: [
-      ['/orders', 'Track an order'], ['/wishlist', 'My wishlist'], ['/contact', 'Contact us'],
+      ['/track', 'Track your gift'], ['/wishlist', 'My wishlist'], ['/contact', 'Contact us'],
       ['/contact#faq', 'Delivery & returns'], ['/gift-guide', 'Gift guide'], ['/about', 'About us'],
     ]
   },

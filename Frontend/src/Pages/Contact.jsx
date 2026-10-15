@@ -12,7 +12,7 @@ const channels = [
 ]
 
 const faqs = [
-  { q: 'How do I track my order?', a: 'Log in and open My Orders, then select Track Order to see each step from packing to delivery. We also send email and SMS updates.' },
+  { q: 'How do I track my order?', a: 'Open Track your gift (in the footer) and enter your order number with the email or phone you used — no login needed. When logged in, My Orders shows the same live tracking for every order. We also send an email and SMS at each step.' },
   { q: 'Which payment methods do you accept?', a: 'Cards through Stripe or Razorpay, and cash on delivery.' },
   { q: 'Can I add a personal note?', a: 'Yes — add a gift message at checkout and we hand-letter it on a card inside the box, free of charge.' },
   { q: 'What is your exchange policy?', a: 'If something is not right, contact us within 7 days of delivery and we will arrange an exchange.' },

@@ -25,9 +25,11 @@ import BuildBox from './Pages/BuildBox'
 import Brands from './Pages/Brands'
 import Brand from './Pages/Brand'
 import Offers from './Pages/Offers'
+import Track from './Pages/Track'
 import Wishlist, { SharedWishlist } from './Pages/Wishlist'
 import ChatWidget from './Components/ChatWidget'
 import useReveal from './Components/useReveal'
+import ErrorBoundary from './Components/ErrorBoundary'
 
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
@@ -56,6 +58,7 @@ const App = () => {
       <Navbar />
       <Searchbar />
       <main className={`flex-1 ${fullBleed.includes(pathname) ? '' : 'shell w-full'}`}>
+        <ErrorBoundary resetKey={pathname}>
         <Routes>
 
           <Route path='/' element={<Home />} />
@@ -66,6 +69,7 @@ const App = () => {
           <Route path='/build-a-box' element={<BuildBox />} />
           <Route path='/brands' element={<Brands />} />
           <Route path='/offers' element={<Offers />} />
+          <Route path='/track' element={<Track />} />
           <Route path='/wishlist' element={<Wishlist />} />
           <Route path='/wishlist/shared/:shareId' element={<SharedWishlist />} />
           <Route path='/brand/:slug' element={<Brand />} />
@@ -83,6 +87,7 @@ const App = () => {
           <Route path='*' element={<NotFound />} />
 
         </Routes>
+        </ErrorBoundary>
       </main>
       <Footer />
       <ChatWidget />
