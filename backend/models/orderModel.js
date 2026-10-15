@@ -20,6 +20,8 @@ const orderSchema = new mongoose.Schema({
     deliveryFee: { type: Number },
     couponCode: { type: String },
     couponCounted: { type: Boolean, default: false },
+    // live map: rider link token, rider name/phone, latest GPS point and route trail
+    liveTracking: { type: Object },
     date :{type:Number, required:true}
 })
 

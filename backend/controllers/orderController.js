@@ -10,6 +10,7 @@ import { currency, deliveryCharge, orderStatuses, frontendUrl } from '../config/
 import { notifyOrder } from '../utils/notify.js'
 import { cleanCustomization, customizationOf, priceForSize } from '../config/customization.js'
 import { priceBox } from '../utils/box.js'
+import { publicLive } from './deliveryController.js'
 import { reserveStock, releaseStock, unitCostOf } from '../utils/stock.js'
 import { runningOffers, salePrice, evaluateCoupon, reserveCoupon, releaseCoupon } from '../utils/promo.js'
 import brandModel from '../models/brandModel.js'
@@ -325,6 +326,7 @@ const trackOrder = async (req, res) => {
                 itemCount: order.items.reduce((s, i) => s + i.quantity, 0), city: order.address?.city,
                 deliveryDate: scheduled?.deliveryDate, timeSlot: scheduled?.timeSlot,
                 surprise: order.items.some(i => i.custom?.surprise),
+                live: publicLive(order.liveTracking),
             },
         })
     } catch (error) {
@@ -342,6 +344,8 @@ const forCustomer = (order) => {
     }))
     delete data.stockReserved
     delete data.couponCounted
+    data.live = publicLive(data.liveTracking, { withPhone: true })
+    delete data.liveTracking
     return data
 }
 
@@ -436,6 +440,11 @@ const updateStatus = async (req, res) => {
 
         order.status = status
         order.statusHistory = [...(order.statusHistory || []), { status, date: Date.now(), ...(note ? { note } : {}) }]
+        // Leaving "Out for delivery" ends the live map and forgets the route
+        if (order.liveTracking?.active && status !== 'Out for delivery') {
+            order.liveTracking = { ...order.liveTracking, active: false, trail: [], last: null }
+            order.markModified('liveTracking')
+        }
         // Cash on delivery is collected when the parcel is delivered
         if (status === 'Delivered' && order.paymentMethod === 'COD') order.payment = true
         await order.save()
