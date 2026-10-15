@@ -63,7 +63,7 @@ const Track = () => {
             <span className='flex-1'></span>
             <span className={`px-3 py-1 rounded-full text-xs font-bold ${result.status === 'Cancelled' ? 'bg-stone-100 text-stone-600' : result.status === 'Delivered' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-berry'}`}>{result.status}</span>
           </header>
-          <div className='p-6'><OrderTracker order={result} /></div>
+          <div className='p-6'><OrderTracker order={result} loadLive={async () => (await axios.post(backendUrl + '/api/orders/track', { orderNo, contact })).data.order?.live} /></div>
           <footer className='px-6 pb-6 flex flex-wrap gap-2 text-sm'>
             <button onClick={() => openChat(`Order #${result.orderNo}`)} className='btn-outline !h-10 !px-4 text-sm'>Ask about this order</button>
             {token && <Link to='/orders' className='btn-outline !h-10 !px-4 text-sm'>My orders</Link>}

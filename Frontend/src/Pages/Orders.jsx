@@ -103,7 +103,7 @@ const Orders = () => {
                 </span>
               </header>
 
-              {open && <div className='px-5 sm:px-6 pt-6 pb-2'><OrderTracker order={order} /></div>}
+              {open && <div className='px-5 sm:px-6 pt-6 pb-2'><OrderTracker order={order} loadLive={async () => (await axios.post(backendUrl + '/api/orders/single', { orderId: order._id }, { headers: { token } })).data.order?.live} /></div>}
 
               <ul className='px-5 sm:px-6 py-3 divide-y divide-line'>
                 {order.items.map((item, index) => (

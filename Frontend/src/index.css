@@ -208,3 +208,15 @@ textarea.field { height: auto; padding: 0.75rem 1rem; }
 @layer components {
 .eyebrow.eyebrow-dark { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); color: #FFD1E5; }
 }
+
+/* Live delivery map: the rider marker */
+.rider-pin { position: relative; width: 46px; height: 46px; }
+.rider-pulse { position: absolute; inset: 0; border-radius: 999px; background: rgba(232, 79, 147, .28); animation: riderPulse 1.8s ease-out infinite; }
+.rider-dot {
+  position: absolute; inset: 7px; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+  background: #fff; border: 3px solid #E84F93; font-size: 17px; line-height: 1;
+  box-shadow: 0 6px 16px -4px rgba(184, 45, 110, .6);
+}
+@keyframes riderPulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .rider-pulse { animation: none; } }
+.leaflet-container { font-family: var(--font-sans); }

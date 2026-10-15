@@ -1,5 +1,6 @@
 import React from 'react'
 import Icon from './Icons'
+import LiveMap from './LiveMap'
 
 const steps = [
     { status: 'Order Placed', label: 'Order placed', text: "We've received your order", icon: 'check' },
@@ -22,7 +23,7 @@ export const scheduledDelivery = (order) => {
 }
 
 // Delivery progress: a step bar on wide screens and a timeline on phones, with times and notes
-const OrderTracker = ({ order }) => {
+const OrderTracker = ({ order, loadLive }) => {
     const history = order.statusHistory || []
     const lastFor = (status) => [...history].reverse().find(h => h.status === status)
     const scheduled = scheduledDelivery(order)
@@ -53,6 +54,8 @@ const OrderTracker = ({ order }) => {
                     {scheduled.surprise && <span className='text-berry font-semibold'>· Surprise delivery — we'll call you, not the recipient</span>}
                 </div>
             )}
+
+            {order.status === 'Out for delivery' && order.live?.active && <LiveMap initial={order.live} load={loadLive} />}
 
             {/* Wide screens: horizontal steps with a filling line */}
             <ol className='hidden sm:grid grid-cols-5 relative'>

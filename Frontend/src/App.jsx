@@ -26,6 +26,7 @@ import Brands from './Pages/Brands'
 import Brand from './Pages/Brand'
 import Offers from './Pages/Offers'
 import Track from './Pages/Track'
+import Rider from './Pages/Rider'
 import Wishlist, { SharedWishlist } from './Pages/Wishlist'
 import ChatWidget from './Components/ChatWidget'
 import useReveal from './Components/useReveal'
@@ -70,6 +71,7 @@ const App = () => {
           <Route path='/brands' element={<Brands />} />
           <Route path='/offers' element={<Offers />} />
           <Route path='/track' element={<Track />} />
+          <Route path='/rider/:token' element={<Rider />} />
           <Route path='/wishlist' element={<Wishlist />} />
           <Route path='/wishlist/shared/:shareId' element={<SharedWishlist />} />
           <Route path='/brand/:slug' element={<Brand />} />

@@ -5,6 +5,7 @@ import axios from 'axios'
 import { backendUrl, currency } from '../App'
 import { toast } from 'react-toastify'
 import { Icon, PageHeader, StatusBadge, Empty, orderNo } from '../components/ui'
+import LiveDelivery from '../components/LiveDelivery'
 
 const statuses = ['Order Placed', 'Packing', 'Shipped', 'Out for delivery', 'Delivered', 'Cancelled']
 
@@ -110,6 +111,7 @@ const Orders = ({ token }) => {
                   {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
+              <LiveDelivery order={order} token={token} onChanged={fetchAllOrders} />
               <form onSubmit={(e) => { e.preventDefault(); statusHandler(null, order._id, order.status) }} className='flex flex-wrap items-center gap-2 px-5 pt-4'>
                 <label className='relative flex-1 min-w-[240px]'>
                   <span className='sr-only'>Delivery note for order {orderNo(order._id)}</span>
