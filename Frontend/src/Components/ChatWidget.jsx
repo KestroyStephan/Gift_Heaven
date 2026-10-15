@@ -169,7 +169,7 @@ const ChatWidget = () => {
                     </header>
 
                     {!conversation ? (
-                        <form onSubmit={start} className='flex-1 overflow-y-auto p-5 flex flex-col gap-3'>
+                        <form onSubmit={start} className='flex-1 min-h-0 overflow-y-auto p-5 flex flex-col gap-3 [&>*]:shrink-0'>
                             <p className='text-sm text-mauve'>Tell us what you'd like to create. You can send reference photos once the chat starts.</p>
                             <div className='flex flex-wrap gap-2'>
                                 {chatTopics.map(topic => (
