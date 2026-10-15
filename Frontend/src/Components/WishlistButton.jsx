@@ -10,7 +10,7 @@ const WishlistButton = ({ productId, name = 'this gift', variant = 'icon', class
     const onClick = (e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(productId) }
     const heart = (size) => (
         <svg width={size} height={size} viewBox='0 0 24 24' aria-hidden='true'>
-            <path d={HEART} fill={saved ? '#A3214F' : 'none'} stroke={saved ? '#A3214F' : 'currentColor'} strokeWidth='1.8' strokeLinejoin='round' />
+            <path d={HEART} fill={saved ? '#E84F93' : 'none'} stroke={saved ? '#E84F93' : 'currentColor'} strokeWidth='1.8' strokeLinejoin='round' />
         </svg>
     )
 

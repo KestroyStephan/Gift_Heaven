@@ -38,7 +38,7 @@ const Kpi = ({ label, value, now, before, note, invert }) => {
 }
 
 const series = [
-  { key: 'sales', label: 'Sales', colour: '#A3214F' },
+  { key: 'sales', label: 'Sales', colour: '#E84F93' },
   { key: 'income', label: 'Income received', colour: '#059669' },
   { key: 'profit', label: 'Gross profit', colour: '#C9973B' },
 ]

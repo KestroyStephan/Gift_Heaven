@@ -54,7 +54,7 @@ const About = () => {
       <section className='shell pt-20'>
         <div className='rounded-[28px] bg-ink text-[#F6E9EE] px-8 py-12 sm:px-14 flex flex-col md:flex-row md:items-center justify-between gap-6'>
           <div>
-            <p className='eyebrow !text-gold-light mb-2'>Our mission</p>
+            <p className='eyebrow eyebrow-dark mb-2'>Our mission</p>
             <p className='font-display text-3xl sm:text-4xl text-white leading-tight max-w-2xl'>To make it effortless to celebrate the people you love — beautifully, and on time.</p>
           </div>
           <Link to='/contact' className='btn-primary !bg-white !text-ink hover:!bg-rose-50 shrink-0'>Talk to us</Link>

@@ -5,7 +5,7 @@ import { backendUrl } from '../App'
 import { Icon, PageHeader, Empty, BrandMark, useBrands } from '../components/ui'
 
 const storeUrl = import.meta.env.VITE_STORE_URL || 'http://localhost:5173'
-const blank = { name: '', tagline: '', description: '', colour: '#A3214F', featured: false }
+const blank = { name: '', tagline: '', description: '', colour: '#E84F93', featured: false }
 
 // Add / edit form in a modal
 const BrandForm = ({ brand, token, onClose, onSaved }) => {

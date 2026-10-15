@@ -162,7 +162,7 @@ const ChatWidget = () => {
                     className='fixed z-50 inset-0 sm:inset-auto sm:bottom-5 sm:right-5 sm:w-[380px] sm:h-[600px] sm:max-h-[calc(100vh-40px)] bg-white sm:rounded-[24px] shadow-2xl border border-line flex flex-col overflow-hidden'>
                     <header className='bg-ink text-white px-5 py-4 flex items-start justify-between gap-3'>
                         <div>
-                            <p className='font-display text-2xl leading-tight'>Create it <span className='italic text-[#F2B8C9]'>with us</span></p>
+                            <p className='font-display text-2xl leading-tight'>Create it <span className='italic text-[#FFB3D4]'>with us</span></p>
                             <p className='text-xs text-[#D9C6CE] mt-1'>Custom frames, printing, cakes & event gifts. We usually reply within a few hours.</p>
                         </div>
                         <button onClick={closeChat} aria-label='Close chat' className='w-10 h-10 shrink-0 rounded-full hover:bg-white/10 flex items-center justify-center cursor-pointer'><Icon name='close' /></button>

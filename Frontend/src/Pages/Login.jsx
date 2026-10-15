@@ -88,7 +88,7 @@ const Login = () => {
       <div className='hidden lg:flex rounded-[32px] bg-ink text-[#F6E9EE] p-12 flex-col justify-between'>
         <Logo size={64} light />
         <div>
-          <p className='font-display text-5xl text-white leading-tight'>Every surprise <span className='italic text-[#F2B8C9]'>starts here</span>.</p>
+          <p className='font-display text-5xl text-white leading-tight'>Every surprise <span className='italic text-[#FFB3D4]'>starts here</span>.</p>
           <ul className='mt-8 flex flex-col gap-3 text-[#D9C6CE]'>
             {['Track every order to the door', 'Save your bag across devices', 'Member-only offers'].map(item => (
               <li key={item} className='flex items-center gap-3'><Icon name='check' size={18} className='text-gold-light' strokeWidth={2.2} />{item}</li>

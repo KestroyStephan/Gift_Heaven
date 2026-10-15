@@ -40,17 +40,17 @@ const ProductItem = ({id,image,name,price,category,bestseller,sizePrices,brand})
     const brandName = brandOf(brand)?.name
 
   return (
-    <Link className='group flex flex-col gap-3 text-ink' to={isBox ? '/build-a-box' : `/product/${id}`}>
-        <div className='relative overflow-hidden rounded-[22px] bg-blush aspect-square'>
+    <Link className='group flex flex-col gap-3 text-ink bg-white rounded-[26px] border border-line p-2.5 pb-4 card-lift sr sr-up' to={isBox ? '/build-a-box' : `/product/${id}`}>
+        <div className='relative overflow-hidden rounded-[20px] bg-blush aspect-square'>
             {image?.[0] && <img className='absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105' src={image[0]} alt={name} loading='lazy' />}
             {stock?.tone === 'out' && <span className='absolute inset-0 bg-white/55 flex items-center justify-center'><span className='bg-ink text-white text-xs font-bold tracking-[0.12em] px-3.5 py-2 rounded-full'>SOLD OUT</span></span>}
             {stock?.tone === 'low' && <span className='absolute bottom-3 left-3 bg-amber-100 text-amber-900 text-[11px] font-bold px-2.5 py-1.5 rounded-xl'>{stock.text.toUpperCase()}</span>}
             <WishlistButton productId={id} name={name} className='absolute top-3 right-3 z-10' />
-            {deal && <span className='absolute top-14 right-3 bg-berry text-white text-[11px] font-bold px-2.5 py-1.5 rounded-xl'>{deal.type === 'percent' ? `−${deal.value}%` : `Rs. ${deal.value} off`}</span>}
+            {deal && <span className='absolute top-14 right-3 bg-gradient-to-br from-berry to-berry-dark text-white text-[11px] font-bold px-2.5 py-1.5 rounded-xl shadow-[0_6px_16px_-6px_rgba(210,58,127,.9)]'>{deal.type === 'percent' ? `−${deal.value}%` : `Rs. ${deal.value} off`}</span>}
             {bestseller && <span className='absolute top-3 left-3 bg-white text-berry text-[11px] font-bold tracking-[0.08em] px-2.5 py-1.5 rounded-xl'>BEST SELLER</span>}
-            <span className='absolute bottom-3 right-3 bg-white/95 text-ink text-xs font-bold px-3 py-2 rounded-full opacity-0 translate-y-2 transition group-hover:opacity-100 group-hover:translate-y-0'>View gift</span>
+            <span className='absolute bottom-3 right-3 bg-berry text-white text-xs font-bold px-3.5 py-2 rounded-full opacity-0 translate-y-2 transition duration-300 group-hover:opacity-100 group-hover:translate-y-0 shadow-[0_8px_18px_-6px_rgba(210,58,127,.8)]'>View gift →</span>
         </div>
-        <div className='flex flex-col gap-1'>
+        <div className='flex flex-col gap-1 px-2'>
             {(brandName || category) && <p className='text-xs font-semibold text-muted'>{brandName ? <span className='text-berry'>{brandName}</span> : null}{brandName && category ? ' · ' : ''}{category ? prettify(category) : ''}</p>}
             <p className='font-bold leading-snug group-hover:text-berry'>{name}</p>
             {product?.ratingCount > 0 && <p className='flex items-center gap-1.5 text-xs text-muted'><Stars value={product.ratingAvg} size={13} /><b className='text-ink'>{product.ratingAvg.toFixed(1)}</b>({product.ratingCount})</p>}

@@ -267,7 +267,7 @@ const GiftCustomizer = ({ product, value, onChange }) => {
 
                     {allowed.message && (
                         <div aria-label='Card preview' className='relative rounded-2xl bg-shell border border-line p-5 min-h-[11rem] flex flex-col justify-center text-center overflow-hidden'>
-                            <span className='absolute left-0 right-0 top-6 h-2' style={{ background: ribbon?.hex || '#A3214F' }}></span>
+                            <span className='absolute left-0 right-0 top-6 h-2' style={{ background: ribbon?.hex || '#E84F93' }}></span>
                             <span className='text-[11px] font-bold tracking-[0.16em] text-muted mt-6'>CARD PREVIEW</span>
                             <p className='font-display italic text-2xl text-berry-dark mt-2 break-words'>{value.name ? `Dear ${value.name},` : 'Dear …,'}</p>
                             <p className='font-display italic text-lg text-ink leading-snug mt-1 break-words'>{value.message || 'Your message appears here.'}</p>

@@ -51,9 +51,9 @@ const Contact = () => {
     <div>
       <section className='bg-ink text-[#F6E9EE] pt-16 pb-28'>
         <div className='shell flex flex-col gap-4'>
-          <p className='eyebrow !text-gold-light'>Contact us</p>
+          <p className='eyebrow eyebrow-dark'>Contact us</p>
           <h1 className='font-display font-semibold text-white text-[2.75rem] sm:text-[4rem] leading-[1.04] max-w-3xl'>
-            We'd love to help you plan the <span className='italic text-[#F2B8C9]'>perfect surprise</span>.
+            We'd love to help you plan the <span className='italic text-[#FFB3D4]'>perfect surprise</span>.
           </h1>
           <p className='text-lg text-[#D9C6CE] max-w-2xl leading-relaxed'>Questions about an order, a custom hamper or corporate gifting — send us a message and we'll get back to you.</p>
           <button onClick={() => openChat()} className='btn-primary !bg-white !text-ink self-start mt-2'><Icon name='mail' size={18} /> Start a live chat</button>

@@ -53,8 +53,8 @@ const SalesChart = ({ daily }) => {
       <svg viewBox={`0 0 ${W} ${H}`} className='w-full h-auto' onMouseLeave={() => setHover(null)} role='img' aria-label='Sales over the last 30 days'>
         <defs>
           <linearGradient id='salesFill' x1='0' x2='0' y1='0' y2='1'>
-            <stop offset='0%' stopColor='#A3214F' stopOpacity='.28' />
-            <stop offset='100%' stopColor='#A3214F' stopOpacity='0' />
+            <stop offset='0%' stopColor='#E84F93' stopOpacity='.28' />
+            <stop offset='100%' stopColor='#E84F93' stopOpacity='0' />
           </linearGradient>
         </defs>
         {[0, 1, 2, 3, 4].map(i => (
@@ -65,9 +65,9 @@ const SalesChart = ({ daily }) => {
         ))}
         {daily.map((d, i) => i % 5 === 4 || i === 0 ? <text key={d.day} x={x(i)} y={H - 8} textAnchor='middle' fontSize='11' fill='#9A8590'>{day(d.day)}</text> : null)}
         <path d={area} fill='url(#salesFill)' />
-        <path d={line} fill='none' stroke='#A3214F' strokeWidth='2.5' strokeLinejoin='round' strokeLinecap='round' />
+        <path d={line} fill='none' stroke='#E84F93' strokeWidth='2.5' strokeLinejoin='round' strokeLinecap='round' />
         {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={H - P.b} stroke='#C9973B' strokeDasharray='4 4' />}
-        {hover !== null && <circle cx={x(hover)} cy={y(daily[hover].sales)} r='5' fill='#fff' stroke='#A3214F' strokeWidth='2.5' />}
+        {hover !== null && <circle cx={x(hover)} cy={y(daily[hover].sales)} r='5' fill='#fff' stroke='#E84F93' strokeWidth='2.5' />}
         {daily.map((d, i) => (
           <rect key={d.day} x={x(i) - (W - P.l - P.r) / daily.length / 2} y={P.t} width={(W - P.l - P.r) / daily.length} height={H - P.t - P.b}
             fill='transparent' onMouseEnter={() => setHover(i)} />

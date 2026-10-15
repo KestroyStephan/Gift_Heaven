@@ -12,7 +12,7 @@ const Logo = ({ size = 44, light = false, showName = true }) => (
     <LogoMark size={size} />
     {showName && (
       <span className='flex flex-col leading-none'>
-        <span className={`font-display italic font-semibold ${light ? 'text-[#F2B8C9]' : 'text-berry'}`} style={{ fontSize: size * 0.56 }}>Surprise</span>
+        <span className={`font-display italic font-semibold ${light ? 'text-[#FFB3D4]' : 'text-berry'}`} style={{ fontSize: size * 0.56 }}>Surprise</span>
         <span className={`font-bold tracking-[0.42em] mt-[3px] ${light ? 'text-white' : 'text-ink'}`} style={{ fontSize: Math.max(10, size * 0.22) }}>HEAVEN</span>
       </span>
     )}

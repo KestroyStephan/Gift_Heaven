@@ -91,9 +91,9 @@ export const ShopByDepartment = () => {
             </div>
             <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4'>
                 {tiles.map((d, i) => (
-                    <Link key={d.slug} to={departmentLink(d)} className={`group relative overflow-hidden rounded-[22px] bg-ink ${i < 2 ? 'md:col-span-2 lg:col-span-1' : ''} aspect-[4/5] md:aspect-auto md:h-64 lg:h-auto lg:aspect-[4/5]`}>
+                    <Link key={d.slug} to={departmentLink(d)} className={`group relative overflow-hidden rounded-[24px] bg-ink card-lift sr sr-up sr-d${(i % 5) + 1} ${i < 2 ? 'md:col-span-2 lg:col-span-1' : ''} aspect-[4/5] md:aspect-auto md:h-64 lg:h-auto lg:aspect-[4/5]`}>
                         {d.cover && <img src={d.cover} alt='' loading='lazy' className='absolute inset-0 w-full h-full object-cover opacity-90 transition duration-500 group-hover:scale-105' />}
-                        <span className='absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/15 to-transparent'></span>
+                        <span className='absolute inset-0 bg-gradient-to-t from-[#3A1029]/90 via-[#3A1029]/15 to-transparent'></span>
                         <span className='absolute left-4 right-4 bottom-4 text-white'>
                             <span className='block font-display text-[1.45rem] leading-tight font-semibold'>{d.name}</span>
                             <span className='flex items-center gap-1 text-xs text-white/75 mt-1'>{d.count} gifts <Icon name='arrow' size={13} className='transition group-hover:translate-x-1' /></span>
@@ -120,7 +120,7 @@ export const BrandStrip = () => {
                 </div>
                 <div className='flex gap-4 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 snap-x'>
                     {visible.map(b => (
-                        <Link key={b.slug} to={`/brand/${b.slug}`} className='group snap-start shrink-0 w-44 sm:w-48 rounded-[22px] border border-line bg-shell hover:border-transparent hover:shadow-[0_12px_30px_-14px_rgba(43,27,36,.35)] transition flex flex-col overflow-hidden'>
+                        <Link key={b.slug} to={`/brand/${b.slug}`} className='group snap-start shrink-0 w-44 sm:w-48 rounded-[22px] border border-line bg-shell card-lift flex flex-col overflow-hidden'>
                             <span className='h-24 flex items-center justify-center px-4' style={{ background: `${b.colour}12` }}>
                                 <BrandMark brand={b} className='text-[1.55rem] max-h-16' />
                             </span>
@@ -146,7 +146,7 @@ export const BudgetDeals = () => {
                 {budgets.map(b => {
                     const items = products.filter(p => { const price = fromPrice(p); return (!b.min || price >= b.min) && (!b.max || price < b.max) })
                     return (
-                        <Link key={b.label} to={budgetLink(b)} className={`group rounded-[22px] ${b.tint} p-5 sm:p-6 flex flex-col gap-4 hover:-translate-y-0.5 transition`}>
+                        <Link key={b.label} to={budgetLink(b)} className={`group rounded-[24px] ${b.tint} border border-line p-5 sm:p-6 flex flex-col gap-4 card-lift sr sr-up`}>
                             <span className='flex -space-x-3'>
                                 {items.slice(0, 3).map(p => <img key={p._id} src={p.image[0]} alt='' loading='lazy' className='w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-[3px] border-white' />)}
                             </span>
@@ -174,7 +174,7 @@ export const BrandSpotlight = ({ index = 0 }) => {
     return (
         <section className='shell py-12'>
             <div className='grid lg:grid-cols-[340px_minmax(0,1fr)] gap-6 items-stretch'>
-                <Link to={`/brand/${brand.slug}`} className='group relative overflow-hidden rounded-[28px] p-8 flex flex-col justify-between min-h-[280px] text-white' style={{ background: `linear-gradient(150deg, ${brand.colour}, #2B1B24)` }}>
+                <Link to={`/brand/${brand.slug}`} className='group relative overflow-hidden rounded-[28px] p-8 flex flex-col justify-between min-h-[280px] text-white glow-card sr sr-right' style={{ background: `linear-gradient(150deg, ${brand.colour}, #2B1B24)` }}>
                     <span className='text-[11px] font-bold tracking-[0.2em] uppercase text-white/70'>Brand spotlight</span>
                     <span>
                         <BrandMark brand={brand} light className='block text-left text-[2.6rem] max-h-20' />
@@ -196,7 +196,8 @@ export const DealsStrip = () => {
     if (!offers.length && !publicCoupons.length) return null
     return (
         <section className='shell py-10'>
-            <div className='rounded-[32px] bg-white border border-line p-6 sm:p-8'>
+            <div className='relative overflow-hidden rounded-[32px] bg-white border border-line p-6 sm:p-8 shadow-[0_24px_60px_-34px_rgba(184,45,110,.45)]'>
+                <span aria-hidden='true' className='pointer-events-none absolute -top-20 -right-20 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(232,79,147,.16),transparent_70%)]'></span>
                 <div className='flex flex-wrap items-end justify-between gap-4 mb-6'>
                     <Title eyebrow='Deals this week' text1='Offers &' text2='coupons' className='!mb-0' />
                     <Link to='/offers' className='font-bold text-sm text-berry flex items-center gap-1'>All offers <Icon name='arrow' size={16} /></Link>
@@ -204,7 +205,8 @@ export const DealsStrip = () => {
                 <div className='grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-5'>
                     <div className='grid sm:grid-cols-3 gap-3'>
                         {offers.slice(0, 3).map((o, i) => (
-                            <Link key={o._id} to='/offers' className={`rounded-[22px] p-5 text-white flex flex-col justify-between min-h-[150px] ${['bg-berry', 'bg-ink', 'bg-[#8C5A1E]'][i % 3]}`}>
+                            <Link key={o._id} to='/offers' className={`relative overflow-hidden rounded-[22px] p-5 text-white flex flex-col justify-between min-h-[150px] card-lift sr sr-scale sr-d${i + 1} ${['bg-gradient-to-br from-berry to-berry-dark', 'bg-gradient-to-br from-ink to-[#5A2340]', 'bg-gradient-to-br from-[#B82D6E] to-[#6B1940]'][i % 3]}`}>
+                                <span aria-hidden='true' className='absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/15 animate-pulse-soft'></span>
                                 <span className='text-[11px] font-bold tracking-[0.16em] uppercase text-white/70'>{o.badge || 'Offer'}</span>
                                 <span className='font-display text-[2rem] leading-none font-semibold'>{offerText(o)}</span>
                                 <span className='text-xs text-white/80'>{o.name}</span>
@@ -234,7 +236,7 @@ export const CustomerLove = () => {
                 <Title eyebrow='Verified customer reviews' text1='What customers' text2='say' className='mb-8' />
                 <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-5'>
                     {reviews.slice(0, 6).map(r => (
-                        <Link key={r._id} to={`/product/${r.product._id}#reviews`} className='rounded-[24px] bg-shell border border-line p-6 flex flex-col gap-3 hover:border-rose-300'>
+                        <Link key={r._id} to={`/product/${r.product._id}#reviews`} className='rounded-[24px] bg-shell border border-line p-6 flex flex-col gap-3 card-lift sr sr-up'>
                             <Stars value={r.rating} size={18} />
                             {r.title && <p className='font-bold text-ink'>{r.title}</p>}
                             <p className='text-[15px] text-mauve leading-relaxed line-clamp-4'>“{r.comment}”</p>

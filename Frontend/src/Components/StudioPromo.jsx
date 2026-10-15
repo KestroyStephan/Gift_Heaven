@@ -20,8 +20,8 @@ const StudioPromo = () => {
 
     return (
         <section className='shell py-16 grid md:grid-cols-2 xl:grid-cols-4 gap-5'>
-            {tiles.map(tile => (
-                <Link key={tile.to} to={tile.to} className={`group rounded-[28px] overflow-hidden ${tile.tint} grid grid-cols-[1fr_42%] min-h-[230px]`}>
+            {tiles.map((tile, i) => (
+                <Link key={tile.to} to={tile.to} className={`group rounded-[28px] overflow-hidden ${tile.tint} grid grid-cols-[1fr_42%] min-h-[230px] border border-line card-lift sr sr-up sr-d${i + 1}`}>
                     <span className='p-6 flex flex-col gap-2'>
                         <span className='eyebrow'>{tile.eyebrow}</span>
                         <span className='font-display text-3xl font-semibold leading-tight'>{tile.title}</span>
@@ -33,10 +33,11 @@ const StudioPromo = () => {
                     </span>
                 </Link>
             ))}
-            <button onClick={() => openChat()} className='text-left rounded-[28px] bg-ink text-[#F6E9EE] p-6 flex flex-col gap-2 min-h-[230px] cursor-pointer hover:bg-black'>
-                <span className='eyebrow !text-gold-light'>Live chat</span>
+            <button onClick={() => openChat()} className='relative overflow-hidden text-left rounded-[28px] bg-gradient-to-br from-berry via-[#C2337A] to-[#7E1F4E] text-white p-6 flex flex-col gap-2 min-h-[230px] cursor-pointer card-lift sr sr-up sr-d4'>
+                <span aria-hidden='true' className='absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white/15 animate-pulse-soft'></span>
+                <span className='eyebrow eyebrow-dark'>Live chat</span>
                 <span className='font-display text-3xl text-white leading-tight'>Create something one-of-a-kind</span>
-                <span className='text-sm text-[#D9C6CE]'>Send us your photos and ideas — party return gifts, themed cakes, matching outfits or a surprise we haven't thought of yet.</span>
+                <span className='text-sm text-white/85'>Send us your photos and ideas — party return gifts, themed cakes, matching outfits or a surprise we haven't thought of yet.</span>
                 <span className='mt-auto text-sm font-bold text-white flex items-center gap-1'>Chat with a designer <Icon name='arrow' size={16} /></span>
             </button>
         </section>

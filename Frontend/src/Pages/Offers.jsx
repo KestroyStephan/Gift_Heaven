@@ -58,8 +58,8 @@ const Offers = () => {
       {offers.length > 0 && (
         <section className='grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-14'>
           {offers.map((o, i) => (
-            <Link key={o._id} to={linkFor(o)} className={`group relative overflow-hidden rounded-[28px] p-7 min-h-[200px] flex flex-col justify-between text-white ${['bg-berry', 'bg-ink', 'bg-[#8C5A1E]'][i % 3]}`}>
-              <span className='absolute -right-8 -top-8 w-36 h-36 rounded-full bg-white/10'></span>
+            <Link key={o._id} to={linkFor(o)} className={`group relative overflow-hidden rounded-[28px] p-7 min-h-[200px] flex flex-col justify-between text-white card-lift sr sr-up sr-d${i + 1} ${['bg-gradient-to-br from-berry to-berry-dark', 'bg-gradient-to-br from-ink to-[#5A2340]', 'bg-gradient-to-br from-[#B82D6E] to-[#6B1940]'][i % 3]}`}>
+              <span className='absolute -right-8 -top-8 w-36 h-36 rounded-full bg-white/15 animate-pulse-soft'></span>
               <span className='relative text-[11px] font-bold tracking-[0.2em] uppercase text-white/70'>{o.badge || 'Offer'}</span>
               <span className='relative'>
                 <span className='block font-display text-[2.6rem] leading-none font-semibold'>{offerText(o)}</span>

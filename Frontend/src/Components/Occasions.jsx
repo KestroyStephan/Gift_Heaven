@@ -94,7 +94,7 @@ export const ShopByRecipient = () => {
                 {recipientTiles.map(tile => {
                     const cover = covers[tile.key]
                     return (
-                        <Link key={tile.key} to={`/collection?for=${tile.key}`} className='group flex flex-col gap-3'>
+                        <Link key={tile.key} to={`/collection?for=${tile.key}`} className='group flex flex-col gap-3 sr sr-up'>
                             <span className={`relative overflow-hidden rounded-[22px] aspect-[4/5] ${tile.tint}`}>
                                 {cover && <img src={cover} alt='' className='absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105' />}
                             </span>
@@ -128,11 +128,11 @@ export const Festivals = () => {
                 {festivals.map(festival => {
                     const item = products.find(p => p.subCategory === festival.key)
                     return (
-                        <Link key={festival.key} to={`/collection?sub=${festival.key}`} className='group relative overflow-hidden rounded-[22px] aspect-[3/4] bg-ink flex items-end'>
+                        <Link key={festival.key} to={`/collection?sub=${festival.key}`} className='group relative overflow-hidden rounded-[22px] aspect-[3/4] bg-ink flex items-end card-lift sr sr-up'>
                             {item && <img src={item.image[0]} alt='' className='absolute inset-0 w-full h-full object-cover opacity-80 transition duration-500 group-hover:scale-105' />}
                             <span className='absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent'></span>
                             <span className='relative p-4 text-white'>
-                                <span className='block text-[11px] font-bold tracking-[0.14em] text-gold-light uppercase'>{festival.note}</span>
+                                <span className='block text-[11px] font-bold tracking-[0.14em] text-[#FFD1E5] uppercase'>{festival.note}</span>
                                 <span className='block font-display text-2xl leading-tight mt-1'>{prettify(festival.key)}</span>
                             </span>
                         </Link>
@@ -186,12 +186,12 @@ const Occasions = () => {
                         const items = products.filter(p => p.subCategory === occasion.key)
                         const cover = items[0]?.image?.[0]
                         return (
-                            <Link key={occasion.key} to={`/collection?sub=${occasion.key}`} className='group flex flex-col gap-3'>
+                            <Link key={occasion.key} to={`/collection?sub=${occasion.key}`} className='group flex flex-col gap-3 sr sr-up'>
                                 <span className={`relative overflow-hidden rounded-[22px] aspect-[4/3] ${occasion.tint}`}>
                                     {cover && <img src={cover} alt='' className='absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105' />}
                                 </span>
-                                <span className='flex items-center justify-between gap-2'>
-                                    <span className='font-display text-[1.4rem] sm:text-[1.65rem] font-semibold group-hover:text-berry'>{prettify(occasion.key)}</span>
+                                <span className='flex flex-wrap items-baseline justify-between gap-x-2'>
+                                    <span className='min-w-0 font-display text-[1.4rem] sm:text-[1.65rem] font-semibold leading-tight group-hover:text-berry'>{prettify(occasion.key)}</span>
                                     <span className='text-sm text-muted whitespace-nowrap'>{items.length} {items.length === 1 ? 'gift' : 'gifts'}</span>
                                 </span>
                             </Link>
