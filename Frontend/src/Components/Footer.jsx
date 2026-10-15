@@ -1,55 +1,88 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { ShopContext } from '../Context/ShopContext'
 import Logo from './Logo'
 import Icon from './Icons'
+import { departments, departmentLink } from './Mall'
+
+const columns = [
+  {
+    title: 'Shop', links: [
+      ['/collection', 'All gifts'], ['/offers', 'Offers & coupons'], ['/brands', 'Brands A–Z'],
+      ['/build-a-box', 'Build a surprise box'], ['/cakes', 'Cake studio'], ['/custom-studio', 'Custom printing'],
+    ]
+  },
+  {
+    title: 'Help', links: [
+      ['/orders', 'Track an order'], ['/wishlist', 'My wishlist'], ['/contact', 'Contact us'],
+      ['/contact#faq', 'Delivery & returns'], ['/gift-guide', 'Gift guide'], ['/about', 'About us'],
+    ]
+  },
+]
 
 const Footer = () => {
+  const { openChat } = useContext(ShopContext)
+
   return (
-    <footer className='bg-ink text-[#D9C6CE] mt-24'>
-      <div className='shell py-16 grid gap-12 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1.4fr]'>
-        <div className='flex flex-col gap-5 max-w-sm'>
-          <Logo size={56} light />
-          <p className='text-sm leading-relaxed'>
-            Curated gifts and chocolate hampers, hand-packed in our boutique and delivered with care —
-            so every surprise arrives exactly as you imagined it.
-          </p>
+    <footer className='relative overflow-hidden mt-24 bg-[#FFF3F8] border-t border-line'>
+      {/* thin gradient strip and a soft glow */}
+      <span aria-hidden='true' className='absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-rose-400 via-brand to-berry-dark'></span>
+      <span aria-hidden='true' className='pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[radial-gradient(circle,rgba(232,79,147,.22),transparent_70%)] blur-3xl'></span>
+      <span aria-hidden='true' className='pointer-events-none absolute bottom-10 -left-24 w-80 h-80 rounded-full bg-[radial-gradient(circle,rgba(239,123,174,.18),transparent_70%)] blur-3xl'></span>
+
+      <div className='shell relative pt-16 pb-6'>
+        <div className='grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr]'>
+          <div className='flex flex-col gap-5 max-w-sm sr sr-up'>
+            <Logo size={60} />
+            <p className='text-sm leading-relaxed text-mauve'>
+              Curated gifts, cakes and keepsake hampers — hand-packed in our boutique and delivered with care,
+              so every surprise arrives exactly as you imagined it.
+            </p>
+            <span className='self-start inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white/80 px-4 py-2 text-xs font-bold tracking-[0.14em] text-berry'>
+              <span className='w-2 h-2 rounded-full bg-brand animate-pulse'></span>SAME-DAY DELIVERY · COLOMBO
+            </span>
+          </div>
+
+          {columns.map((col, i) => (
+            <div key={col.title} className={`flex flex-col gap-3 text-sm sr sr-up sr-d${i + 1}`}>
+              <p className='text-xs font-extrabold tracking-[0.2em] text-ink mb-1 uppercase'>{col.title}</p>
+              {col.links.map(([to, label]) => (
+                <Link key={to} to={to} className='group self-start text-mauve hover:text-berry transition flex items-center gap-1.5'>
+                  <span className='w-0 h-[2px] bg-brand rounded-full transition-all duration-300 group-hover:w-3'></span>{label}
+                </Link>
+              ))}
+            </div>
+          ))}
+
+          <div className='flex flex-col gap-3 text-sm sr sr-up sr-d3'>
+            <p className='text-xs font-extrabold tracking-[0.2em] text-ink mb-1 uppercase'>Get in touch</p>
+            <a href='tel:+94775549857' className='flex items-center gap-3 text-mauve hover:text-berry'><span className='w-9 h-9 rounded-full bg-white border border-rose-200 text-berry flex items-center justify-center'><Icon name='phone' size={16} /></span>(+94) 77-554-9857</a>
+            <a href='mailto:hello@surpriseheaven.com' className='flex items-center gap-3 text-mauve hover:text-berry'><span className='w-9 h-9 rounded-full bg-white border border-rose-200 text-berry flex items-center justify-center'><Icon name='mail' size={16} /></span>hello@surpriseheaven.com</a>
+            <p className='flex items-center gap-3 text-mauve'><span className='w-9 h-9 rounded-full bg-white border border-rose-200 text-berry flex items-center justify-center shrink-0'><Icon name='pin' size={16} /></span>6700 Main Road, PillayarKovil Road</p>
+            <button onClick={() => openChat()} className='btn-primary !h-11 !px-5 self-start mt-2 text-sm'>Chat with us</button>
+          </div>
         </div>
 
-        <div className='flex flex-col gap-3 text-sm'>
-          <p className='text-white font-bold tracking-[0.12em] text-xs mb-1'>SHOP</p>
-          <Link to='/collection' className='hover:text-white'>All gifts</Link>
-          <Link to='/collection?category=ChocolateBucket' className='hover:text-white'>Chocolate buckets</Link>
-          <Link to='/collection?category=Bouquet' className='hover:text-white'>Bouquets</Link>
-          <Link to='/collection?category=GiftHamper' className='hover:text-white'>Gift hampers</Link>
-          <Link to='/collection?for=her' className='hover:text-white'>Gifts for her</Link>
-          <Link to='/collection?for=him' className='hover:text-white'>Gifts for him</Link>
-          <Link to='/collection?for=kids' className='hover:text-white'>Kids & toys</Link>
-          <Link to='/cakes' className='hover:text-white'>Cakes</Link>
-          <Link to='/custom-studio' className='hover:text-white'>Custom printing</Link>
+        {/* Departments, separated like a store directory */}
+        <div className='mt-14 pt-6 border-t border-line flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] font-semibold'>
+          <span className='text-xs font-extrabold tracking-[0.2em] text-ink mr-2'>DEPARTMENTS</span>
+          {departments.map((d, i) => (
+            <React.Fragment key={d.slug}>
+              {i > 0 && <span className='text-rose-300 text-[10px]' aria-hidden='true'>◆</span>}
+              <Link to={departmentLink(d)} className='text-mauve hover:text-berry'>{d.name}</Link>
+            </React.Fragment>
+          ))}
         </div>
 
-        <div className='flex flex-col gap-3 text-sm'>
-          <p className='text-white font-bold tracking-[0.12em] text-xs mb-1'>HELP</p>
-          <Link to='/orders' className='hover:text-white'>Track an order</Link>
-          <Link to='/contact' className='hover:text-white'>Contact us</Link>
-          <Link to='/contact#faq' className='hover:text-white'>Delivery &amp; returns</Link>
-          <Link to='/gift-guide' className='hover:text-white'>Gift guide</Link>
-          <Link to='/about' className='hover:text-white'>About us</Link>
+        <div className='mt-8 flex flex-wrap justify-between gap-3 text-xs text-muted'>
+          <p>© {new Date().getFullYear()} SURPRISE HEAVEN. ALL RIGHTS RESERVED.</p>
+          <p className='tracking-wide'>SECURE PAYMENTS · STRIPE · RAZORPAY · CASH ON DELIVERY</p>
         </div>
 
-        <div className='flex flex-col gap-3 text-sm'>
-          <p className='text-white font-bold tracking-[0.12em] text-xs mb-1'>GET IN TOUCH</p>
-          <a href='tel:+94775549857' className='flex items-center gap-3 hover:text-white'><Icon name='phone' size={18} className='text-gold-light' />(+94) 77-554-9857</a>
-          <a href='mailto:hello@surpriseheaven.com' className='flex items-center gap-3 hover:text-white'><Icon name='mail' size={18} className='text-gold-light' />hello@surpriseheaven.com</a>
-          <p className='flex items-start gap-3'><Icon name='pin' size={18} className='text-gold-light shrink-0 mt-0.5' />6700 Main Road, PillayarKovil Road</p>
-        </div>
-      </div>
-
-      <div className='border-t border-white/10'>
-        <div className='shell py-6 flex flex-wrap justify-between gap-3 text-xs'>
-          <p>© {new Date().getFullYear()} Surprise Heaven. All rights reserved.</p>
-          <p>Secure payments · Stripe · Razorpay · Cash on delivery</p>
-        </div>
+        {/* Big outline wordmark */}
+        <p aria-hidden='true' className='select-none pointer-events-none mt-6 -mb-6 text-center font-display italic font-semibold leading-none text-[16vw] lg:text-[11rem] text-transparent [-webkit-text-stroke:1.5px_rgba(232,79,147,.35)] whitespace-nowrap'>
+          Surprise Heaven
+        </p>
       </div>
     </footer>
   )

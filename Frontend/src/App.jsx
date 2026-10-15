@@ -27,6 +27,7 @@ import Brand from './Pages/Brand'
 import Offers from './Pages/Offers'
 import Wishlist, { SharedWishlist } from './Pages/Wishlist'
 import ChatWidget from './Components/ChatWidget'
+import useReveal from './Components/useReveal'
 
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
@@ -47,6 +48,7 @@ const App = () => {
   const { pathname } = useLocation()
 
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  useReveal(pathname)
 
   return (
     <div className='min-h-screen flex flex-col'>

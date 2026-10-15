@@ -2,41 +2,50 @@
 
 @import "tailwindcss";
 
-/* Surprise Heaven brand tokens.
-   The rose / pink scales are remapped to the brand berry so every
-   existing `rose-*` utility follows the palette. */
+/* Surprise Heaven brand tokens — pink theme (#E84F93).
+   `brand` is the signature pink for accents, glows and large type.
+   `berry` is the same pink a shade deeper, used wherever small text or
+   white-on-pink buttons need readable contrast (4.5:1).
+   The rose / pink scales follow the palette so every `rose-*` utility matches. */
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
 
-  --color-berry: #A3214F;
-  --color-berry-dark: #7E1A3D;
+  --color-brand: #E84F93;
+  --color-berry: #D23A7F;
+  --color-berry-dark: #B82D6E;
   --color-ink: #2B1B24;
   --color-mauve: #5E4853;
   --color-muted: #6B5560;
   --color-gold: #C9973B;
-  --color-gold-light: #E7C987;
-  --color-blush: #F3D9DE;
-  --color-shell: #FFF8F4;
-  --color-line: #F0DCE0;
-  --color-cream: #F5E6CC;
-  --color-lilac: #E8E0EE;
-  --color-sage: #E2ECE3;
+  --color-gold-light: #F7C9DE;
+  --color-blush: #FFE4EF;
+  --color-shell: #FFF8FB;
+  --color-line: #F8DCE9;
+  --color-cream: #FFF1E6;
+  --color-lilac: #F1E6F6;
+  --color-sage: #E8F3EC;
 
-  --color-rose-50: #FBEFF2;
-  --color-rose-100: #F6DEE4;
-  --color-rose-200: #F0DCE0;
-  --color-rose-300: #E4C9D0;
-  --color-rose-400: #D58BA2;
-  --color-rose-500: #B93463;
-  --color-rose-600: #A3214F;
-  --color-rose-700: #8C1C44;
-  --color-rose-800: #7E1A3D;
-  --color-rose-900: #5C1330;
+  --color-rose-50: #FFF0F6;
+  --color-rose-100: #FFE1EE;
+  --color-rose-200: #FDCDE2;
+  --color-rose-300: #F7AACB;
+  --color-rose-400: #EF7BAE;
+  --color-rose-500: #E84F93;
+  --color-rose-600: #D23A7F;
+  --color-rose-700: #B82D6E;
+  --color-rose-800: #9A2459;
+  --color-rose-900: #6B1940;
   --color-rose-950: #2B1B24;
 
-  --color-pink-50: #FBEFF2;
-  --color-pink-100: #F6DEE4;
+  --color-pink-50: #FFF0F6;
+  --color-pink-100: #FFE1EE;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 8s ease-in-out 1.2s infinite;
+  --animate-pulse-soft: pulseSoft 6s ease-in-out infinite;
+  --animate-ticker: ticker 38s linear infinite;
+  --animate-hero-in: heroIn .9s cubic-bezier(.22, 1, .36, 1) both;
 }
 
 html { scroll-behavior: smooth; }
@@ -47,6 +56,8 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
+
+::selection { background: var(--color-rose-200); color: var(--color-ink); }
 
 /* Legacy heading class now uses the display face */
 .prata-regular {
@@ -65,17 +76,39 @@ body {
 input, select, textarea { font-family: inherit; }
 input:focus-visible, select:focus-visible, textarea:focus-visible,
 button:focus-visible, a:focus-visible {
-  outline: 2px solid var(--color-berry);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
-/* Active nav link underline */
-.nav-link.active { color: var(--color-berry); }
-.nav-link.active::after {
-  content: ""; display: block; height: 2px; margin-top: 4px;
-  background: var(--color-berry); border-radius: 2px;
+@layer components {
+/* ---------- Header ---------- */
+/* Uppercase links with an underline that grows in */
+.nav-link {
+  position: relative; font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--color-ink); transition: color .3s; white-space: nowrap;
 }
+.nav-link::after {
+  content: ""; position: absolute; left: 0; bottom: -6px; height: 2px; width: 0; border-radius: 2px;
+  background: linear-gradient(90deg, var(--color-brand), var(--color-berry-dark)); transition: width .35s cubic-bezier(.22, 1, .36, 1);
+}
+.nav-link:hover, .nav-link.active { color: var(--color-berry); }
+.nav-link:hover::after, .nav-link.active::after { width: 100%; }
 
+.icon-btn {
+  width: 2.75rem; height: 2.75rem; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+  color: var(--color-ink); border: 1px solid var(--color-rose-200); background: rgba(255, 255, 255, .7);
+  transition: border-color .3s, box-shadow .3s, transform .3s; cursor: pointer; position: relative;
+}
+.icon-btn:hover { border-color: var(--color-brand); box-shadow: 0 6px 18px -6px rgba(232, 79, 147, .55); transform: translateY(-1px); }
+
+.glass-header {
+  background: rgba(255, 248, 251, .72);
+  backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  transition: box-shadow .5s, background .5s;
+}
+.glass-header.is-scrolled { background: rgba(255, 248, 251, .9); box-shadow: 0 10px 30px -18px rgba(184, 45, 110, .45); }
+
+/* ---------- Fields & buttons ---------- */
 .field {
   width: 100%;
   height: 3rem;
@@ -85,31 +118,93 @@ button:focus-visible, a:focus-visible {
   background: #fff;
   color: var(--color-ink);
   font-size: 0.95rem;
+  transition: border-color .2s, box-shadow .2s;
 }
+.field:focus { border-color: var(--color-brand); box-shadow: 0 0 0 4px rgba(232, 79, 147, .14); outline: none; }
 textarea.field { height: auto; padding: 0.75rem 1rem; }
 
 .btn-primary {
+  position: relative; overflow: hidden; isolation: isolate;
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
   height: 3.25rem; padding: 0 1.75rem; border-radius: 999px;
   background: var(--color-berry); color: #fff; font-weight: 700; font-size: .95rem;
-  transition: background .2s; cursor: pointer;
+  box-shadow: 0 10px 24px -12px rgba(210, 58, 127, .8);
+  transition: background .25s, box-shadow .3s, transform .3s; cursor: pointer;
 }
-.btn-primary:hover { background: var(--color-berry-dark); }
-.btn-primary:disabled { opacity: .6; cursor: wait; }
+/* light sweep across the button on hover */
+.btn-primary::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; transform: translateX(-120%);
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .28) 50%, transparent 70%);
+  transition: transform .7s cubic-bezier(.22, 1, .36, 1);
+}
+.btn-primary:hover { background: var(--color-berry-dark); transform: translateY(-2px); box-shadow: 0 16px 30px -12px rgba(232, 79, 147, .75); }
+.btn-primary:hover::before { transform: translateX(120%); }
+.btn-primary:disabled { opacity: .6; cursor: wait; transform: none; }
 
 .btn-outline {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
   height: 3.25rem; padding: 0 1.75rem; border-radius: 999px;
-  border: 1.5px solid var(--color-ink); color: var(--color-ink); font-weight: 700; font-size: .95rem;
-  transition: background .2s, color .2s; cursor: pointer;
+  border: 1.5px solid var(--color-rose-300); background: rgba(255, 255, 255, .75); color: var(--color-ink); font-weight: 700; font-size: .95rem;
+  transition: border-color .25s, color .25s, transform .3s, box-shadow .3s; cursor: pointer;
 }
-.btn-outline:hover { background: var(--color-ink); color: #fff; }
+.btn-outline:hover { border-color: var(--color-brand); color: var(--color-berry); transform: translateY(-2px); box-shadow: 0 12px 26px -16px rgba(232, 79, 147, .7); }
 
+/* Pill label above section headings: ● SECTION NAME */
 .eyebrow {
-  font-size: .8rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: .6rem; align-self: flex-start;
+  padding: .45rem 1rem; border-radius: 999px;
+  background: var(--color-rose-50); border: 1px solid var(--color-rose-200);
+  font-size: .72rem; font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
   color: var(--color-berry);
+}
+.eyebrow::before {
+  content: ""; width: .45rem; height: .45rem; border-radius: 999px; flex-shrink: 0;
+  background: var(--color-brand); box-shadow: 0 0 0 3px rgba(232, 79, 147, .18);
+}
+
+/* Cards that lift with a soft pink glow */
+.card-lift { transition: transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s, border-color .45s; }
+.card-lift:hover { transform: translateY(-6px); border-color: var(--color-rose-300); box-shadow: 0 24px 50px -24px rgba(184, 45, 110, .45), 0 0 40px -18px rgba(232, 79, 147, .5); }
+
+.glow-card { box-shadow: 0 32px 80px -24px rgba(107, 25, 64, .35), 0 0 60px -10px rgba(232, 79, 147, .22); }
+
+}
+
+/* ---------- Scroll reveal ---------- */
+/* Only hidden once JavaScript has switched reveals on, so nothing is lost without it */
+.reveal-on .sr { opacity: 0; transition: opacity .8s cubic-bezier(.22, 1, .36, 1), transform .8s cubic-bezier(.22, 1, .36, 1); will-change: opacity, transform; }
+.reveal-on .sr-up { transform: translateY(36px); }
+.reveal-on .sr-left { transform: translateX(48px); }
+.reveal-on .sr-right { transform: translateX(-48px); }
+.reveal-on .sr-scale { transform: scale(.94); }
+.reveal-on .sr.sr-in { opacity: 1; transform: none; }
+.sr-d1 { transition-delay: .08s !important; }
+.sr-d2 { transition-delay: .18s !important; }
+.sr-d3 { transition-delay: .28s !important; }
+.sr-d4 { transition-delay: .38s !important; }
+.sr-d5 { transition-delay: .48s !important; }
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes pulseSoft { 0%, 100% { opacity: .55; transform: scale(1); } 50% { opacity: .95; transform: scale(1.06); } }
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@keyframes heroIn { 0% { opacity: 0; transform: translateY(24px); } 100% { opacity: 1; transform: none; } }
+@keyframes glowPulse { 0%, 100% { box-shadow: 0 0 14px rgba(232, 79, 147, .35); } 50% { box-shadow: 0 0 30px rgba(232, 79, 147, .7); } }
+
+.glow-pulse { animation: glowPulse 3s ease-in-out infinite; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal-on .sr { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .animate-float, .animate-float-slow, .animate-pulse-soft, .animate-ticker, .animate-hero-in, .glow-pulse { animation: none !important; }
+  .card-lift:hover, .btn-primary:hover, .btn-outline:hover, .icon-btn:hover { transform: none; }
 }
 
 /* Horizontal strips that scroll without a visible bar */
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Eyebrow on dark bands */
+@layer components {
+.eyebrow.eyebrow-dark { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); color: #FFD1E5; }
+}
