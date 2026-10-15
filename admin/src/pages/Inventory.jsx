@@ -107,7 +107,7 @@ const StockForm = ({ product, token, onClose, onSaved }) => {
           <label className='label'>Low stock alert at<input type='number' min='0' value={form.lowStock} onChange={(e) => setForm(prev => ({ ...prev, lowStock: e.target.value }))} className='field font-normal' disabled={!form.trackStock} /></label>
           <label className='label'>Cost price (Rs.)<input type='number' min='0' step='0.01' value={form.costPrice} onChange={(e) => setForm(prev => ({ ...prev, costPrice: e.target.value }))} className='field font-normal' /></label>
         </div>
-        <p className='text-xs text-mauve -mt-2'>Selling price {money(product.price)}{margin !== null && <> · margin <b className={margin < 20 ? 'text-rose-700' : 'text-emerald-700'}>{margin}%</b></>}. Bigger sizes use the same margin.</p>
+        <p className='text-xs text-mauve -mt-2'>Selling price {money(product.price)}{margin !== null && <> · margin <b className={margin < 20 ? 'text-muted' : 'text-berry'}>{margin}%</b></>}. Bigger sizes use the same margin.</p>
 
         <button disabled={saving} className='btn-dark py-3'>{saving ? 'Saving…' : 'Save'}</button>
 
@@ -117,7 +117,7 @@ const StockForm = ({ product, token, onClose, onSaved }) => {
             <ul className='divide-y divide-line text-sm max-h-56 overflow-y-auto'>
               {history.map(m => (
                 <li key={m._id} className='py-2 flex items-center gap-3'>
-                  <b className={`w-12 text-right ${m.change > 0 ? 'text-emerald-700' : 'text-rose-700'}`}>{m.change > 0 ? '+' : ''}{m.change}</b>
+                  <b className={`w-12 text-right ${m.change > 0 ? 'text-berry' : 'text-muted'}`}>{m.change > 0 ? '+' : ''}{m.change}</b>
                   <span className='flex-1 min-w-0'>{reasons[m.reason]}{m.orderId ? ` · order #${m.orderId.slice(-8).toUpperCase()}` : ''}{m.note ? ` · ${m.note}` : ''}</span>
                   <span className='text-xs text-mauve whitespace-nowrap'>{when(m.date)} · left {m.stockAfter}</span>
                 </li>
@@ -185,10 +185,10 @@ const Inventory = ({ token }) => {
       </PageHeader>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6'>
-        <Summary icon='box' tint='bg-sky-50 text-sky-700' label='Units in stock' value={summary.units.toLocaleString('en-LK')} note={`across ${summary.tracked} products`} />
-        <Summary icon='wallet' tint='bg-pink-50 text-berry' label='Stock value (cost)' value={money(summary.costValue)} note={`${money(summary.retailValue)} at selling price`} />
-        <Summary icon='revenue' tint='bg-emerald-50 text-emerald-700' label='Potential profit' value={money(summary.retailValue - summary.costValue)} note='if all stock sells at full price' />
-        <Summary icon='alert' tint='bg-amber-50 text-amber-700' label='Needs restocking' value={`${summary.low + summary.out}`} note={`${summary.low} low · ${summary.out} out of stock`} />
+        <Summary icon='box' tint='bg-gradient-to-br from-rose-50 to-rose-100 text-berry' label='Units in stock' value={summary.units.toLocaleString('en-LK')} note={`across ${summary.tracked} products`} />
+        <Summary icon='wallet' tint='bg-gradient-to-br from-rose-100 to-rose-200 text-rose-800' label='Stock value (cost)' value={money(summary.costValue)} note={`${money(summary.retailValue)} at selling price`} />
+        <Summary icon='revenue' tint='bg-gradient-to-br from-rose-400 to-berry text-white shadow-[0_8px_18px_-8px_rgba(210,58,127,.8)]' label='Potential profit' value={money(summary.retailValue - summary.costValue)} note='if all stock sells at full price' />
+        <Summary icon='alert' tint='bg-gradient-to-br from-berry-dark to-rose-900 text-white shadow-[0_8px_18px_-8px_rgba(107,25,64,.8)]' label='Needs restocking' value={`${summary.low + summary.out}`} note={`${summary.low} low · ${summary.out} out of stock`} />
       </div>
 
       <div className='grid 2xl:grid-cols-[minmax(0,1fr)_320px] gap-5 items-start'>
@@ -241,8 +241,8 @@ const Inventory = ({ token }) => {
                       <td className='px-3 py-3 text-right'>
                         {p.trackStock ? (
                           <span className='inline-flex flex-col items-end'>
-                            <b className={`text-base ${p.stock <= 0 ? 'text-rose-700' : p.stock <= p.lowStock ? 'text-amber-700' : 'text-ink'}`}>{p.stock}</b>
-                            <span className='w-16 h-1.5 rounded-full bg-pink-50 mt-1'><span className={`block h-1.5 rounded-full ${p.stock <= p.lowStock ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(100, (p.stock / Math.max(1, p.lowStock * 4)) * 100)}%` }}></span></span>
+                            <b className={`text-base ${p.stock <= 0 ? 'text-muted line-through' : p.stock <= p.lowStock ? 'text-berry' : 'text-ink'}`}>{p.stock}</b>
+                            <span className='w-16 h-1.5 rounded-full bg-pink-50 mt-1'><span className={`block h-1.5 rounded-full ${p.stock <= p.lowStock ? 'bg-rose-300' : 'bg-gradient-to-r from-brand to-berry-dark'}`} style={{ width: `${Math.min(100, (p.stock / Math.max(1, p.lowStock * 4)) * 100)}%` }}></span></span>
                           </span>
                         ) : <span className='text-xs text-mauve'>—</span>}
                       </td>
@@ -266,7 +266,7 @@ const Inventory = ({ token }) => {
             <ul className='flex flex-col divide-y divide-line text-sm max-h-80 2xl:max-h-[70vh] overflow-y-auto -mx-1 px-1'>
               {moves.map(m => (
                 <li key={m._id} className='py-2.5 flex gap-3'>
-                  <b className={`w-10 shrink-0 text-right ${m.change > 0 ? 'text-emerald-700' : 'text-rose-700'}`}>{m.change > 0 ? '+' : ''}{m.change}</b>
+                  <b className={`w-10 shrink-0 text-right ${m.change > 0 ? 'text-berry' : 'text-muted'}`}>{m.change > 0 ? '+' : ''}{m.change}</b>
                   <span className='min-w-0'>
                     <span className='block text-ink font-medium truncate'>{m.productName}</span>
                     <span className='block text-xs text-mauve'>{reasons[m.reason]} · {when(m.date)}</span>

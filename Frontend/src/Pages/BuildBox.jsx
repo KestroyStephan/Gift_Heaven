@@ -200,7 +200,7 @@ const BuildBox = () => {
                     {/* 2. Gifts */}
                     <Step number='2' title='Fill it with gifts' hint={`${giftCount} of ${capacity} spaces used`}>
                         <div className='h-2 rounded-full bg-rose-100 overflow-hidden'>
-                            <div className={`h-full ${giftCount > capacity ? 'bg-red-600' : 'bg-berry'}`} style={{ width: `${Math.min(100, (giftCount / capacity) * 100)}%` }}></div>
+                            <div className={`h-full ${giftCount > capacity ? 'bg-[repeating-linear-gradient(45deg,#9A2459_0_6px,#E84F93_6px_12px)]' : 'bg-gradient-to-r from-brand to-berry-dark'}`} style={{ width: `${Math.min(100, (giftCount / capacity) * 100)}%` }}></div>
                         </div>
                         <label className='flex items-center gap-3 h-12 px-4 rounded-full border border-rose-300 bg-white'>
                             <Icon name='search' size={18} className='text-muted' />

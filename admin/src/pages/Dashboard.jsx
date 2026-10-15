@@ -3,7 +3,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
 import { backendUrl, currency, categories } from '../App'
-import { Icon, PageHeader, StatusBadge, statusColours, orderNo } from '../components/ui'
+import { Icon, PageHeader, StatusBadge, PayBadge, statusColours, orderNo } from '../components/ui'
 
 const money = (n) => `${currency}${Math.round(n || 0).toLocaleString('en-LK')}`
 const short = (n) => n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${Math.round(n / 1e3)}k` : String(Math.round(n))
@@ -17,7 +17,7 @@ const trendOf = (daily, key) => {
 }
 
 const Trend = ({ value }) => (
-  <span className={`inline-flex items-center gap-0.5 text-xs font-bold px-2 py-0.5 rounded-full ${value >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+  <span className={`inline-flex items-center gap-0.5 text-xs font-extrabold px-2.5 py-1 rounded-full ${value >= 0 ? 'bg-gradient-to-r from-berry to-berry-dark text-white shadow-[0_6px_14px_-6px_rgba(210,58,127,.8)]' : 'bg-[#F6EEF2] text-muted'}`}>
     {value >= 0 ? '▲' : '▼'} {Math.abs(value)}%
   </span>
 )
@@ -161,16 +161,16 @@ const Dashboard = ({ token }) => {
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5'>
-        <StatCard icon='revenue' tint='bg-pink-50 text-berry' label='Revenue (paid)' value={money(stats.revenue)} note={`${money(stats.pendingPayments)} awaiting payment`} trend={trendOf(daily, 'sales')} />
-        <StatCard icon='orders' tint='bg-amber-50 text-amber-700' label='Orders' value={stats.totalOrders.toLocaleString('en-LK')} note={`${orders30} in the last 30 days`} trend={trendOf(daily, 'orders')} />
-        <StatCard icon='wallet' tint='bg-emerald-50 text-emerald-700' label='Average order' value={money(orders30 ? sales30 / orders30 : 0)} note='Last 30 days' />
-        <StatCard icon='users' tint='bg-sky-50 text-sky-700' label='Customers' value={stats.totalUsers.toLocaleString('en-LK')} note={`${stats.totalProducts} products in the catalogue`} />
+        <StatCard icon='revenue' tint='bg-gradient-to-br from-rose-400 to-berry text-white shadow-[0_8px_18px_-8px_rgba(210,58,127,.8)]' label='Revenue (paid)' value={money(stats.revenue)} note={`${money(stats.pendingPayments)} awaiting payment`} trend={trendOf(daily, 'sales')} />
+        <StatCard icon='orders' tint='bg-gradient-to-br from-rose-100 to-rose-200 text-rose-800' label='Orders' value={stats.totalOrders.toLocaleString('en-LK')} note={`${orders30} in the last 30 days`} trend={trendOf(daily, 'orders')} />
+        <StatCard icon='wallet' tint='bg-gradient-to-br from-rose-50 to-rose-100 text-berry' label='Average order' value={money(orders30 ? sales30 / orders30 : 0)} note='Last 30 days' />
+        <StatCard icon='users' tint='bg-gradient-to-br from-berry-dark to-rose-900 text-white shadow-[0_8px_18px_-8px_rgba(107,25,64,.8)]' label='Customers' value={stats.totalUsers.toLocaleString('en-LK')} note={`${stats.totalProducts} products in the catalogue`} />
       </div>
 
       {stats.lowStock?.length > 0 && (
-        <div className='card p-5 border-amber-200 bg-gradient-to-r from-amber-50/80 to-white'>
+        <div className='card p-5 !border-rose-300 border-dashed bg-gradient-to-r from-rose-50 to-white'>
           <div className='flex flex-wrap items-center justify-between gap-3 mb-4'>
-            <p className='card-title flex items-center gap-2'><span className='text-amber-600'><Icon name='alert' size={19} /></span>{stats.stockAlerts} product{stats.stockAlerts === 1 ? ' needs' : 's need'} restocking{stats.outOfStock ? ` · ${stats.outOfStock} sold out` : ''}</p>
+            <p className='card-title flex items-center gap-2'><span className='w-8 h-8 rounded-full bg-gradient-to-br from-brand to-berry-dark text-white flex items-center justify-center'><Icon name='alert' size={16} /></span>{stats.stockAlerts} product{stats.stockAlerts === 1 ? ' needs' : 's need'} restocking{stats.outOfStock ? ` · ${stats.outOfStock} sold out` : ''}</p>
             <Link to='/inventory' className='text-sm font-semibold text-berry flex items-center gap-1'>Open inventory <Icon name='chevron' size={15} /></Link>
           </div>
           <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-3'>
@@ -178,7 +178,7 @@ const Dashboard = ({ token }) => {
               <div key={p._id} className='flex items-center gap-3 bg-white rounded-2xl border border-line p-2.5'>
                 {p.image ? <img src={p.image} alt='' className='w-10 h-10 rounded-xl object-cover' /> : <span className='w-10 h-10 rounded-xl bg-pink-50'></span>}
                 <span className='flex-1 min-w-0 text-sm font-medium text-ink truncate'>{p.name}</span>
-                <b className={`text-sm px-2.5 py-1 rounded-full ${p.stock <= 0 ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-800'}`}>{p.stock <= 0 ? 'Sold out' : `${p.stock} left`}</b>
+                <span className={p.stock <= 0 ? 'st st-off' : 'st st-warn'}>{p.stock <= 0 ? 'Sold out' : `${p.stock} left`}</span>
               </div>
             ))}
           </div>
@@ -259,7 +259,7 @@ const Dashboard = ({ token }) => {
             {Object.entries(stats.byMethod).map(([method, count]) => (
               <div key={method} className='text-sm'>
                 <div className='flex justify-between mb-1.5'><span>{methodName[method] || method}</span><b className='text-ink'>{count} · {Math.round((count / methodTotal) * 100)}%</b></div>
-                <div className='h-2 rounded-full bg-amber-50'><div className='h-2 rounded-full bg-gold' style={{ width: `${(count / methodTotal) * 100}%` }}></div></div>
+                <div className='h-2 rounded-full bg-rose-50'><div className='h-2 rounded-full bg-gradient-to-r from-rose-300 to-brand' style={{ width: `${(count / methodTotal) * 100}%` }}></div></div>
               </div>
             ))}
           </div>
@@ -312,7 +312,7 @@ const Dashboard = ({ token }) => {
                       </span>
                     </td>
                     <td className='px-3 py-3.5 whitespace-nowrap'>{new Date(order.date).toLocaleDateString('en-LK', { day: 'numeric', month: 'short' })}</td>
-                    <td className='px-3 py-3.5 whitespace-nowrap'>{order.paymentMethod} · <span className={order.payment ? 'text-emerald-700' : 'text-amber-700'}>{order.payment ? 'Paid' : 'Pending'}</span></td>
+                    <td className='px-3 py-3.5 whitespace-nowrap'><span className='flex items-center gap-2'>{order.paymentMethod}<PayBadge paid={order.payment} cancelled={order.status === 'Cancelled'} label={order.payment ? 'Paid' : 'Pending'} /></span></td>
                     <td className='px-3 py-3.5'><StatusBadge status={order.status} /></td>
                     <td className='px-6 py-3.5 text-right font-bold text-ink whitespace-nowrap'>{money(order.amount)}</td>
                   </tr>

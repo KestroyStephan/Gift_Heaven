@@ -4,7 +4,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { backendUrl, currency } from '../App'
 import { toast } from 'react-toastify'
-import { Icon, PageHeader, StatusBadge, Empty, orderNo } from '../components/ui'
+import { Icon, PageHeader, StatusBadge, PayBadge, Empty, orderNo } from '../components/ui'
 import LiveDelivery from '../components/LiveDelivery'
 
 const statuses = ['Order Placed', 'Packing', 'Shipped', 'Out for delivery', 'Delivered', 'Cancelled']
@@ -170,7 +170,7 @@ const Orders = ({ token }) => {
                             </span>
                           )}
                           {item.custom.boxItems && item.custom.deliveryDate && <span className='text-pink-700 font-semibold'>Deliver box: {item.custom.deliveryDate}{item.custom.timeSlot ? `, ${item.custom.timeSlot}` : ''}</span>}
-                          {item.custom.surprise && <span className='font-bold text-red-700'>SURPRISE — call the customer, not the recipient</span>}
+                          {item.custom.surprise && <span className='st st-active self-start'>SURPRISE — call the customer, not the recipient</span>}
                           {item.custom.photo && <a href={item.custom.photo} target='_blank' rel='noreferrer' className='flex items-center gap-2 text-pink-700 underline'><img src={item.custom.photo} alt='' className='w-10 h-10 object-cover rounded' />Customer photo</a>}
                         </div>
                       )}
@@ -188,9 +188,9 @@ const Orders = ({ token }) => {
                 <div className='flex flex-col gap-1.5'>
                   <p className='table-head mb-1'>Payment</p>
                   <p className='text-ink font-semibold'>{order.paymentMethod === 'COD' ? 'Cash on delivery' : order.paymentMethod}</p>
-                  <p><span className={`px-2.5 py-1 rounded-full text-xs font-bold ${order.payment ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-800'}`}>{order.payment ? 'Paid' : 'Payment pending'}</span></p>
-                  {order.discount > 0 && <p className='mt-2 text-emerald-700'>Coupon <b className='font-mono'>{order.couponCode}</b> −{currency}{order.discount.toLocaleString('en-LK')}</p>}
-                  {order.deliveryFee === 0 && <p className='text-emerald-700'>Free delivery</p>}
+                  <p><PayBadge paid={order.payment} cancelled={order.status === 'Cancelled'} /></p>
+                  {order.discount > 0 && <p className='mt-2 text-berry font-semibold'>Coupon <b className='font-mono'>{order.couponCode}</b> −{currency}{order.discount.toLocaleString('en-LK')}</p>}
+                  {order.deliveryFee === 0 && <p className='text-berry font-semibold'>Free delivery</p>}
                   <p className='mt-2'>Total <b className='text-ink'>{currency}{Number(order.amount).toLocaleString('en-LK')}</b></p>
                 </div>
               </div>

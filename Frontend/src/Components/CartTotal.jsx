@@ -21,23 +21,23 @@ const CartTotal = ({ showCoupon = true }) => {
             <p>{money(currency, subtotal)}</p>
         </div>
         {discount > 0 && (
-            <div className='flex justify-between text-[#2F5A37] font-semibold'>
+            <div className='flex justify-between text-berry font-semibold'>
                 <p>Coupon {couponResult.coupon.code}</p>
                 <p>−{money(currency, discount)}</p>
             </div>
         )}
         <div className='flex justify-between text-mauve'>
             <p>Delivery</p>
-            {shipping === 0 && subtotal > 0 ? <p className='text-[#2F5A37] font-semibold'>Free</p> : <p>{money(currency, shipping)}</p>}
+            {shipping === 0 && subtotal > 0 ? <span className='st st-done'>Free</span> : <p>{money(currency, shipping)}</p>}
         </div>
         <div className='flex justify-between text-mauve'>
             <p>Gift note</p>
-            <p className='text-[#2F5A37] font-semibold'>Free</p>
+            <span className='st st-alt'>Free</span>
         </div>
 
         {showCoupon && subtotal > 0 && (
             couponCode ? (
-                <div className={`flex items-start gap-3 rounded-2xl px-4 py-3 text-sm ${couponResult ? 'bg-[#EAF3EA] text-[#2F5A37]' : 'bg-rose-50 text-berry'}`}>
+                <div className={`flex items-start gap-3 rounded-2xl px-4 py-3 text-sm ${couponResult ? 'bg-gradient-to-r from-berry to-berry-dark text-white shadow-[0_10px_24px_-14px_rgba(210,58,127,.9)]' : 'bg-white text-berry border-[1.5px] border-dashed border-brand'}`}>
                     <Icon name={couponResult ? 'check' : 'close'} size={18} className='mt-0.5 shrink-0' />
                     <span className='flex-1'>
                         <b className='tracking-wide'>{couponCode}</b>
@@ -62,7 +62,7 @@ const CartTotal = ({ showCoupon = true }) => {
             <p>Total</p>
             <p>{money(currency, subtotal - discount + shipping)}</p>
         </div>
-        {discount > 0 && <p className='text-sm text-[#2F5A37] font-semibold text-right -mt-2'>You save {money(currency, discount)}</p>}
+        {discount > 0 && <p className='self-end st st-done -mt-1'>You save {money(currency, discount)}</p>}
     </div>
   )
 }

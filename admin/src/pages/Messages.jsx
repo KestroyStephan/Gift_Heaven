@@ -79,7 +79,7 @@ const Messages = ({ token }) => {
               <div className='flex gap-3 mt-1'>
                 <a href={`mailto:${msg.email}?subject=${encodeURIComponent('Re: ' + msg.topic)}`} className='btn-dark px-5 py-2 text-sm'>Reply by email</a>
                 <button onClick={() => mark(msg._id, false)} className='px-4 py-2 rounded-full border border-line text-sm cursor-pointer'>Mark unread</button>
-                <button onClick={() => remove(msg._id)} className='px-4 py-2 rounded-full text-sm text-red-700 cursor-pointer'>Delete</button>
+                <button onClick={() => remove(msg._id)} className='px-4 py-2 rounded-full text-sm text-berry hover:underline cursor-pointer'>Delete</button>
               </div>
             </div>
           )}

@@ -91,12 +91,12 @@ const Rider = () => {
             </div>
 
             {done ? (
-                <div className='rounded-[24px] bg-emerald-50 border border-emerald-200 p-5 flex items-center gap-3'>
-                    <span className='w-11 h-11 rounded-full bg-emerald-600 text-white flex items-center justify-center'><Icon name='check' size={20} /></span>
-                    <p className='font-bold text-emerald-900'>Delivered. Thank you — location sharing is off.</p>
+                <div className='rounded-[24px] bg-gradient-to-br from-berry to-berry-dark text-white p-5 flex items-center gap-3 shadow-[0_18px_40px_-20px_rgba(210,58,127,.9)]'>
+                    <span className='w-11 h-11 rounded-full bg-white text-berry flex items-center justify-center'><Icon name='check' size={20} /></span>
+                    <p className='font-bold'>Delivered. Thank you — location sharing is off.</p>
                 </div>
             ) : ended ? (
-                <p className='rounded-[24px] bg-stone-100 p-5 text-sm text-stone-700'>The shop has stopped live tracking for this delivery.</p>
+                <p className='rounded-[24px] bg-[#F6EEF2] p-5 text-sm text-mauve'>The shop has stopped live tracking for this delivery.</p>
             ) : (
                 <div className={`rounded-[28px] p-6 flex flex-col gap-4 text-white ${sharing ? 'bg-gradient-to-br from-berry to-berry-dark glow-pulse' : 'bg-gradient-to-br from-berry-dark via-[#9A2459] to-[#5E1238]'}`}>
                     <div className='flex items-center gap-3'>
@@ -135,7 +135,7 @@ const Rider = () => {
                         ))}
                     </ul>
                 </div>
-                {delivery.cashToCollect > 0 && <p className='rounded-xl bg-amber-50 text-amber-900 font-bold px-3 py-2'>Collect cash: {currency}{delivery.cashToCollect.toLocaleString('en-LK')}</p>}
+                {delivery.cashToCollect > 0 && <p className='rounded-xl bg-white border-[1.5px] border-dashed border-brand text-berry font-bold px-3 py-2'>Collect cash: {currency}{delivery.cashToCollect.toLocaleString('en-LK')}</p>}
             </section>
 
             {!done && delivery.status === 'Out for delivery' && (

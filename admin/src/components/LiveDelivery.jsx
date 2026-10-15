@@ -39,7 +39,7 @@ const LiveDelivery = ({ order, token, onChanged }) => {
       {link ? (
         <div className='flex flex-col gap-3'>
           <p className='flex flex-wrap items-center gap-x-2 gap-y-1'>
-            <span className={`w-2 h-2 rounded-full ${live.last && Date.now() - live.last.at < 120000 ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+            <span className={`w-2 h-2 rounded-full ${live.last && Date.now() - live.last.at < 120000 ? 'bg-brand animate-pulse' : 'bg-rose-300'}`}></span>
             <b className='text-ink'>{live.riderName}</b>{live.riderPhone ? ` · ${live.riderPhone}` : ''}
             <span className='text-mauve'>· {live.last ? `last seen ${ago(live.last.at)} (${live.last.lat.toFixed(4)}, ${live.last.lng.toFixed(4)})` : "waiting for the rider's phone"}</span>
           </p>

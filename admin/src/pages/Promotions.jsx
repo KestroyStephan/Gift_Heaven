@@ -12,13 +12,13 @@ const catName = (v) => categories.find(c => c.value === v)?.label || v
 // Running, scheduled, ended or paused
 const statusOf = (p) => {
   const now = Date.now()
-  if (!p.active) return { label: 'Paused', style: 'bg-stone-100 text-stone-600 ring-stone-200' }
-  if (p.startsAt && p.startsAt > now) return { label: 'Scheduled', style: 'bg-sky-50 text-sky-800 ring-sky-200' }
-  if (p.endsAt && p.endsAt <= now) return { label: 'Ended', style: 'bg-stone-100 text-stone-600 ring-stone-200' }
-  if (p.usageLimit && p.usedCount >= p.usageLimit) return { label: 'Used up', style: 'bg-amber-50 text-amber-800 ring-amber-200' }
-  return { label: 'Live', style: 'bg-emerald-50 text-emerald-700 ring-emerald-200' }
+  if (!p.active) return { label: 'Paused', style: 'st st-off' }
+  if (p.startsAt && p.startsAt > now) return { label: 'Scheduled', style: 'st st-new' }
+  if (p.endsAt && p.endsAt <= now) return { label: 'Ended', style: 'st st-off' }
+  if (p.usageLimit && p.usedCount >= p.usageLimit) return { label: 'Used up', style: 'st st-warn' }
+  return { label: 'Live', style: 'st st-active' }
 }
-const Status = ({ promo }) => { const s = statusOf(promo); return <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ring-inset whitespace-nowrap ${s.style}`}>{s.label}</span> }
+const Status = ({ promo }) => { const s = statusOf(promo); return <span className={s.style}>{s.label}</span> }
 const discountText = (p) => p.type === 'delivery' ? 'Free delivery' : p.type === 'percent' ? `${p.value}% off${p.maxDiscount ? ` (max ${money(p.maxDiscount)})` : ''}` : `${money(p.value)} off`
 const window_ = (p) => p.startsAt || p.endsAt ? `${p.startsAt ? shortDate(p.startsAt) : 'Now'} → ${p.endsAt ? shortDate(p.endsAt) : 'no end'}` : 'Always on'
 
@@ -264,7 +264,7 @@ const Promotions = ({ token }) => {
                     <td className='pl-5 pr-3 py-3.5'>
                       <span className='inline-block font-mono font-bold tracking-wider text-berry border-2 border-dashed border-pink-100 rounded-lg px-2 py-0.5'>{c.code}</span>
                       <span className='block text-xs text-mauve mt-1.5 max-w-[16rem]'>{c.description}</span>
-                      {c.showOnSite && <span className='inline-block mt-1 text-[11px] font-semibold text-sky-800'>Shown on site</span>}
+                      {c.showOnSite && <span className='st st-alt mt-1.5'>Shown on site</span>}
                     </td>
                     <td className='px-3 py-3.5'><b className='text-ink'>{discountText(c)}</b><span className='block text-xs text-mauve mt-0.5 max-w-[14rem]'>{limits(c)}</span></td>
                     <td className='px-3 py-3.5 hidden lg:table-cell whitespace-nowrap text-xs'>{window_(c)}</td>

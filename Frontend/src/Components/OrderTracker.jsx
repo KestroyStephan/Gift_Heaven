@@ -12,6 +12,12 @@ const steps = [
 
 const when = (ms) => new Date(ms).toLocaleString('en-LK', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
 
+// Order status badge in the pink status family (see .st-* in index.css)
+export const statusClass = (status) => ({
+    'Order Placed': 'st st-new', 'Packing': 'st st-progress', 'Shipped': 'st st-progress',
+    'Out for delivery': 'st st-active', 'Delivered': 'st st-done', 'Cancelled': 'st st-off',
+}[status] || 'st st-new')
+
 // The scheduled delivery of a cake or surprise box in the order, if any
 export const scheduledDelivery = (order) => {
     if (order.deliveryDate) return { date: order.deliveryDate, slot: order.timeSlot, surprise: order.surprise }
@@ -32,7 +38,7 @@ const OrderTracker = ({ order, loadLive }) => {
         const cancelled = lastFor('Cancelled')
         return (
             <div className='rounded-2xl border border-line bg-white p-5 flex items-start gap-4'>
-                <span className='w-10 h-10 rounded-full bg-stone-100 text-stone-500 flex items-center justify-center shrink-0'><Icon name='close' size={18} /></span>
+                <span className='w-10 h-10 rounded-full bg-[#F6EEF2] text-muted flex items-center justify-center shrink-0'><Icon name='close' size={18} /></span>
                 <div className='text-sm'>
                     <p className='font-bold text-ink'>This order was cancelled{cancelled ? ` on ${when(cancelled.date)}` : ''}.</p>
                     {cancelled?.note && <p className='text-mauve mt-0.5'>{cancelled.note}</p>}

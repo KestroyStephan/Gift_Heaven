@@ -243,7 +243,7 @@ export const CustomerLove = () => {
                             <span className='mt-auto pt-2 flex items-center gap-3 text-sm'>
                                 {r.product.image && <img src={r.product.image} alt='' loading='lazy' className='w-10 h-10 rounded-xl object-cover' />}
                                 <span className='min-w-0'>
-                                    <span className='block font-semibold text-ink'>{r.name} <span className='text-[#2F5A37] text-xs font-semibold'>✓ Verified</span></span>
+                                    <span className='block font-semibold text-ink'>{r.name} <span className='st st-done !text-[10px] !py-0.5 ml-1'>Verified</span></span>
                                     <span className='block text-xs text-muted truncate'>{r.product.name}</span>
                                 </span>
                             </span>

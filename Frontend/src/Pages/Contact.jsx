@@ -77,7 +77,7 @@ const Contact = () => {
         <div className='bg-white border border-line rounded-[28px] p-6 sm:p-10'>
           {sent ? (
             <div className='flex flex-col items-start gap-4 py-10'>
-              <span className='w-14 h-14 rounded-full bg-sage text-[#2F5A37] flex items-center justify-center'><Icon name='check' size={26} strokeWidth={2.4} /></span>
+              <span className='w-14 h-14 rounded-full bg-gradient-to-br from-brand to-berry-dark text-white flex items-center justify-center shadow-[0_10px_24px_-10px_rgba(210,58,127,.9)]'><Icon name='check' size={26} strokeWidth={2.4} /></span>
               <h2 className='font-display text-4xl font-semibold'>Thank you — message sent</h2>
               <p className='text-mauve'>We've emailed you a confirmation and will reply shortly.</p>
               <button onClick={() => setSent(false)} className='btn-outline mt-2'>Send another message</button>

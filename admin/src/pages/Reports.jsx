@@ -30,7 +30,7 @@ const Kpi = ({ label, value, now, before, note, invert }) => {
       <p className='text-[13px] font-semibold text-mauve'>{label}</p>
       <p className='text-[1.6rem] font-bold text-ink tracking-tight mt-1'>{value}</p>
       <p className='text-xs mt-1 flex flex-wrap items-center gap-x-2 gap-y-1'>
-        {before !== undefined && <span className={`font-bold px-2 py-0.5 rounded-full ${good ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>{pct >= 0 ? '▲' : '▼'} {Math.abs(pct)}%</span>}
+        {before !== undefined && <span className={`font-extrabold px-2.5 py-1 rounded-full ${good ? 'bg-gradient-to-r from-berry to-berry-dark text-white' : 'bg-[#F6EEF2] text-muted'}`}>{pct >= 0 ? '▲' : '▼'} {Math.abs(pct)}%</span>}
         <span className='text-mauve'>{note || 'vs previous period'}</span>
       </p>
     </div>
@@ -107,7 +107,7 @@ const BreakdownTable = ({ title, rows, nameOf = (n) => n, showProfit = true }) =
             <div key={r.name} className='text-sm'>
               <div className='flex justify-between gap-3 mb-1.5'>
                 <span className='truncate'>{nameOf(r.name)}</span>
-                <span className='whitespace-nowrap'><b className='text-ink'>{money(r.sales)}</b>{showProfit && r.profit !== undefined && <span className='text-xs text-emerald-700 ml-2'>+{money(r.profit)}</span>}</span>
+                <span className='whitespace-nowrap'><b className='text-ink'>{money(r.sales)}</b>{showProfit && r.profit !== undefined && <span className='text-xs text-berry font-semibold ml-2'>+{money(r.profit)}</span>}</span>
               </div>
               <div className='h-2 rounded-full bg-pink-50'><div className='h-2 rounded-full bg-gradient-to-r from-berry to-pink-400' style={{ width: `${(r.sales / total) * 100}%` }}></div></div>
             </div>
@@ -218,10 +218,10 @@ const Reports = ({ token }) => {
                 ))}
               </dl>
               <div className='mt-3 grid grid-cols-2 gap-3 text-sm'>
-                <div className='rounded-2xl bg-emerald-50 p-3'><p className='text-xs text-emerald-800'>Margin</p><p className='font-bold text-emerald-800 text-lg'>{s.margin}%</p></div>
-                <div className='rounded-2xl bg-amber-50 p-3'><p className='text-xs text-amber-800'>Still to collect</p><p className='font-bold text-amber-800 text-lg'>{money(s.outstanding)}</p></div>
-                <div className='rounded-2xl bg-sky-50 p-3'><p className='text-xs text-sky-800'>Average order</p><p className='font-bold text-sky-800 text-lg'>{money(s.averageOrder)}</p></div>
-                <div className='rounded-2xl bg-stone-100 p-3'><p className='text-xs text-stone-600'>Cancelled</p><p className='font-bold text-stone-700 text-lg'>{s.cancelledOrders} · {money(s.cancelledValue)}</p></div>
+                <div className='rounded-2xl bg-gradient-to-br from-berry to-berry-dark p-3 text-white'><p className='text-xs text-white/85'>Margin</p><p className='font-bold text-lg'>{s.margin}%</p></div>
+                <div className='rounded-2xl bg-white border-[1.5px] border-dashed border-brand p-3'><p className='text-xs text-berry'>Still to collect</p><p className='font-bold text-berry text-lg'>{money(s.outstanding)}</p></div>
+                <div className='rounded-2xl bg-rose-100 p-3'><p className='text-xs text-rose-800'>Average order</p><p className='font-bold text-rose-800 text-lg'>{money(s.averageOrder)}</p></div>
+                <div className='rounded-2xl bg-[#F6EEF2] p-3'><p className='text-xs text-muted'>Cancelled</p><p className='font-bold text-mauve text-lg'>{s.cancelledOrders} · {money(s.cancelledValue)}</p></div>
               </div>
               <p className='text-xs text-mauve mt-3'>{s.units} units sold{s.couponOrders ? ` · ${s.couponOrders} orders used a coupon` : ''}. Offer savings and coupon discounts are already taken off product sales. Income counts paid orders; cash-on-delivery money is received when the order is delivered.</p>
             </div>
@@ -260,7 +260,7 @@ const Reports = ({ token }) => {
                         <td className='px-3 py-3 text-right'>{p.units}</td>
                         <td className='px-3 py-3 text-right font-semibold text-ink whitespace-nowrap'>{money(p.sales)}</td>
                         <td className='px-3 py-3 text-right hidden md:table-cell whitespace-nowrap'>{money(p.cost)}</td>
-                        <td className={`px-3 py-3 text-right font-semibold whitespace-nowrap ${p.profit < 0 ? 'text-rose-700' : 'text-emerald-700'}`}>{money(p.profit)}</td>
+                        <td className={`px-3 py-3 text-right font-semibold whitespace-nowrap ${p.profit < 0 ? 'text-muted' : 'text-berry'}`}>{money(p.profit)}</td>
                         <td className='pl-3 pr-6 py-3 text-right hidden sm:table-cell'>{p.sales ? Math.round((p.profit / p.sales) * 100) : 0}%</td>
                       </tr>
                     ))}

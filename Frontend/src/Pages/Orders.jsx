@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ShopContext } from '../Context/ShopContext'
 import Title from '../Components/Title';
-import OrderTracker from '../Components/OrderTracker';
+import OrderTracker, { statusClass } from '../Components/OrderTracker';
 import CustomSummary from '../Components/CustomSummary';
 import Icon from '../Components/Icons';
 import axios from 'axios';
@@ -65,7 +65,6 @@ const Orders = () => {
     return () => clearInterval(id)
   }, [orders, token])
 
-  const statusTone = (status) => status === 'Cancelled' ? 'bg-stone-100 text-stone-600' : status === 'Delivered' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-berry'
   const active = (order) => !['Delivered', 'Cancelled'].includes(order.status)
 
   return (
@@ -94,12 +93,12 @@ const Orders = () => {
               <header className='flex flex-wrap items-center gap-x-4 gap-y-2 px-5 sm:px-6 py-4 bg-[#FFF6FA] border-b border-line'>
                 <span className='font-mono font-bold text-ink'>#{String(order._id).slice(-8).toUpperCase()}</span>
                 <span className='text-sm text-muted'>{new Date(order.date).toLocaleDateString('en-LK', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${statusTone(order.status)}`}>{order.status}</span>
+                <span className={statusClass(order.status)}>{order.status}</span>
                 <span className='flex-1'></span>
                 <span className='text-sm'>
                   <b className='text-ink'>{currency}{order.amount.toLocaleString('en-LK')}</b>
-                  <span className='text-muted'> · {order.paymentMethod === 'COD' ? 'Cash on delivery' : order.paymentMethod} · </span>
-                  <span className={order.payment ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'}>{order.payment ? 'Paid' : 'Payment pending'}</span>
+                  <span className='text-muted'> · {order.paymentMethod === 'COD' ? 'Cash on delivery' : order.paymentMethod} </span>
+                  {order.status === 'Cancelled' && !order.payment ? <span className='st st-off'>Not charged</span> : <span className={order.payment ? 'st st-done' : 'st st-warn'}>{order.payment ? 'Paid' : 'Payment pending'}</span>}
                 </span>
               </header>
 
@@ -112,7 +111,7 @@ const Orders = () => {
                     <div className='flex-1 min-w-0'>
                       <p className='sm:text-base font-bold text-ink'>{item.name}</p>
                       <p className='text-muted mt-0.5'>{currency}{Number(item.price).toLocaleString('en-LK')} · Qty {item.quantity} · {item.size}</p>
-                      {order.discount > 0 && index === 0 && <p className='text-xs text-[#2F5A37] mt-0.5'>Saved {currency}{order.discount.toLocaleString('en-LK')} with {order.couponCode}</p>}
+                      {order.discount > 0 && index === 0 && <p className='text-xs text-berry font-semibold mt-0.5'>Saved {currency}{order.discount.toLocaleString('en-LK')} with {order.couponCode}</p>}
                       <CustomSummary custom={item.custom} />
                       {order.status === 'Delivered' && toReview.includes(String(item._id)) && (
                         <Link to={`/product/${item._id}#write-review`} className='inline-flex items-center gap-1.5 mt-2 px-3.5 py-1.5 rounded-full bg-rose-50 text-berry text-sm font-bold hover:bg-rose-100'>★ Rate this gift</Link>

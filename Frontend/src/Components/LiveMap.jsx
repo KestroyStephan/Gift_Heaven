@@ -90,11 +90,11 @@ const LiveMap = ({ initial, load }) => {
         <div className='rounded-[24px] overflow-hidden border border-line bg-white shadow-[0_24px_60px_-34px_rgba(107,25,64,.5)]'>
             <div className='flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 bg-[#FFF6FA] border-b border-line text-sm'>
                 <span className='relative flex w-2.5 h-2.5'>
-                    <span className={`absolute inset-0 rounded-full ${stale || !live?.last ? 'bg-amber-400' : 'bg-emerald-500 animate-ping'}`}></span>
-                    <span className={`relative w-2.5 h-2.5 rounded-full ${stale || !live?.last ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
+                    <span className={`absolute inset-0 rounded-full ${stale || !live?.last ? 'bg-rose-200' : 'bg-brand animate-ping'}`}></span>
+                    <span className={`relative w-2.5 h-2.5 rounded-full ${stale || !live?.last ? 'bg-rose-300' : 'bg-brand'}`}></span>
                 </span>
                 <b className='text-ink'>{live?.last ? `${live.riderName || 'Your rider'} is on the way` : `Waiting for ${live?.riderName || 'the rider'}'s location…`}</b>
-                {live?.last && <span className={stale ? 'text-amber-700' : 'text-muted'}>· updated {ago(live.last.at)}{kmh ? ` · ${kmh} km/h` : ''}</span>}
+                {live?.last && <span className={stale ? 'text-berry font-semibold' : 'text-muted'}>· updated {ago(live.last.at)}{kmh ? ` · ${kmh} km/h` : ''}</span>}
                 <span className='flex-1'></span>
                 {live?.riderPhone && <a href={`tel:${live.riderPhone}`} className='inline-flex items-center gap-1.5 font-bold text-berry hover:underline underline-offset-4'><Icon name='phone' size={15} />Call rider</a>}
             </div>
@@ -109,7 +109,7 @@ const LiveMap = ({ initial, load }) => {
                     <button onClick={recenter} className='absolute right-3 bottom-3 z-[400] btn-primary !h-10 !px-4 text-sm'>Re-centre on rider</button>
                 )}
             </div>
-            {stale && <p className='px-4 py-2 text-xs text-amber-800 bg-amber-50 border-t border-amber-100'>The rider's phone hasn't sent a new position for a while — it may be out of signal. The last known position is shown.</p>}
+            {stale && <p className='px-4 py-2 text-xs text-berry bg-rose-50 border-t border-dashed border-rose-300'>The rider's phone hasn't sent a new position for a while — it may be out of signal. The last known position is shown.</p>}
         </div>
     )
 }

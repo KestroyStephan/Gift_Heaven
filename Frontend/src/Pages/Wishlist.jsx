@@ -27,7 +27,7 @@ const SavedCard = ({ product, owner }) => {
       <Link to={link} className='relative overflow-hidden rounded-[22px] bg-blush aspect-square'>
         <img src={product.image[0]} alt={product.name} loading='lazy' className={`absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105 ${soldOut ? 'opacity-60' : ''}`} />
         {owner && <WishlistButton productId={product._id} name={product.name} className='absolute top-3 right-3' />}
-        {stock && stock.tone !== 'in' && <span className={`absolute bottom-3 left-3 text-[11px] font-bold px-2.5 py-1.5 rounded-xl ${stock.tone === 'out' ? 'bg-berry text-white' : 'bg-amber-100 text-amber-900'}`}>{stock.text.toUpperCase()}</span>}
+        {stock && stock.tone !== 'in' && <span className={`absolute bottom-3 left-3 shadow-sm ${stock.tone === 'out' ? 'st st-off' : 'st st-warn'}`}>{stock.text}</span>}
       </Link>
       <div className='flex flex-col gap-1'>
         <p className='text-xs font-semibold text-muted'>{brandOf(product.brand)?.name ? <span className='text-berry'>{brandOf(product.brand).name}</span> : null}{brandOf(product.brand) ? ' · ' : ''}{prettify(product.category)}</p>
@@ -39,7 +39,7 @@ const SavedCard = ({ product, owner }) => {
         </p>
       </div>
       {soldOut ? (
-        <span className='h-11 rounded-full bg-stone-100 text-stone-500 text-sm font-bold flex items-center justify-center'>Sold out</span>
+        <span className='h-11 rounded-full bg-[#F6EEF2] text-muted text-sm font-bold flex items-center justify-center'>Sold out</span>
       ) : needsOptions(product) ? (
         <Link to={link} className='h-11 rounded-full border-[1.5px] border-rose-300 bg-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-rose-50'>Choose options <Icon name='arrow' size={16} /></Link>
       ) : (
@@ -71,7 +71,7 @@ const SharePanel = () => {
         </div>
         <label className='relative inline-flex items-center cursor-pointer shrink-0 mt-1'>
           <input type='checkbox' className='sr-only peer' checked={wishlistShare.shared} onChange={(e) => setWishlistShared(e.target.checked)} aria-label='Share my wishlist' />
-          <span className='w-12 h-7 rounded-full bg-stone-300 peer-checked:bg-berry transition'></span>
+          <span className='w-12 h-7 rounded-full bg-rose-200 peer-checked:bg-gradient-to-r peer-checked:from-brand peer-checked:to-berry-dark transition'></span>
           <span className='absolute left-1 top-1 w-5 h-5 rounded-full bg-white shadow transition peer-checked:translate-x-5'></span>
         </label>
       </div>
@@ -81,7 +81,7 @@ const SharePanel = () => {
             <input readOnly value={link} aria-label='Wishlist link' onFocus={(e) => e.target.select()} className='flex-1 min-w-0 h-11 px-4 rounded-full border border-rose-300 bg-shell text-sm' />
             <button onClick={copy} className='h-11 px-5 rounded-full bg-berry text-white text-sm font-bold cursor-pointer'>Copy</button>
           </div>
-          <a href={`https://wa.me/?text=${encodeURIComponent(`My Surprise Heaven wishlist 🎁 ${link}`)}`} target='_blank' rel='noreferrer' className='self-start text-sm font-bold text-[#2F5A37] hover:underline underline-offset-4'>Share on WhatsApp ↗</a>
+          <a href={`https://wa.me/?text=${encodeURIComponent(`My Surprise Heaven wishlist 🎁 ${link}`)}`} target='_blank' rel='noreferrer' className='self-start text-sm font-bold text-berry hover:underline underline-offset-4'>Share on WhatsApp ↗</a>
         </div>
       )}
     </div>

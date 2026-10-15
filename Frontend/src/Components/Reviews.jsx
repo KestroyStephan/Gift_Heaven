@@ -91,7 +91,7 @@ const ReviewCard = ({ review, onHelpful, mine }) => (
         </div>
         <p className='text-sm text-muted flex flex-wrap items-center gap-x-2'>
             <span className='font-semibold text-ink'>{review.name}</span>
-            {review.verified && <span className='flex items-center gap-1 text-[#2F5A37] font-semibold'><Icon name='check' size={14} strokeWidth={2.4} />Verified purchase</span>}
+            {review.verified && <span className='st st-done'>Verified purchase</span>}
             <span>· {when(review.date)}{review.edited ? ' · edited' : ''}</span>
             {mine && <span className='px-2 py-0.5 rounded-full bg-rose-50 text-berry text-xs font-bold'>Your review</span>}
         </p>
@@ -208,7 +208,7 @@ const Reviews = ({ product }) => {
                         <div className='flex flex-wrap gap-2'>
                             <button onClick={() => setEditing(true)} className='btn-outline !py-2.5 text-sm'>Edit your review</button>
                             <button onClick={removeMine} className='text-sm font-semibold text-muted hover:text-berry cursor-pointer px-2'>Delete</button>
-                            {mine.review.status === 'hidden' && <p className='w-full text-xs text-amber-700'>Your review is hidden by our team.</p>}
+                            {mine.review.status === 'hidden' && <p className='w-full'><span className='st st-off'>Your review is hidden by our team</span></p>}
                         </div>
                     ) : mine?.canReview ? (
                         <a href='#write-review' className='btn-primary self-start'><Icon name='star' size={18} /> Write a review</a>

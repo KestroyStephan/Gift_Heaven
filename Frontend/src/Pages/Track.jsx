@@ -4,7 +4,7 @@ import axios from 'axios'
 import { ShopContext } from '../Context/ShopContext'
 import Title from '../Components/Title'
 import Icon from '../Components/Icons'
-import OrderTracker from '../Components/OrderTracker'
+import OrderTracker, { statusClass } from '../Components/OrderTracker'
 
 // Track a gift with the order number and the email or phone used at checkout — no login needed
 const Track = () => {
@@ -61,7 +61,7 @@ const Track = () => {
             <span className='font-mono font-bold text-ink'>#{result.orderNo}</span>
             <span className='text-sm text-muted'>Placed {new Date(result.date).toLocaleDateString('en-LK', { day: 'numeric', month: 'short', year: 'numeric' })} · {result.itemCount} gift{result.itemCount === 1 ? '' : 's'}{result.city ? ` · to ${result.city}` : ''}</span>
             <span className='flex-1'></span>
-            <span className={`px-3 py-1 rounded-full text-xs font-bold ${result.status === 'Cancelled' ? 'bg-stone-100 text-stone-600' : result.status === 'Delivered' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-berry'}`}>{result.status}</span>
+            <span className={statusClass(result.status)}>{result.status}</span>
           </header>
           <div className='p-6'><OrderTracker order={result} loadLive={async () => (await axios.post(backendUrl + '/api/orders/track', { orderNo, contact })).data.order?.live} /></div>
           <footer className='px-6 pb-6 flex flex-wrap gap-2 text-sm'>

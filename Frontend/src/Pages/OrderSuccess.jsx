@@ -31,7 +31,7 @@ const OrderSuccess = () => {
     return (
         <div className='border-t pt-14 max-w-3xl mx-auto'>
             <div className='text-center'>
-                <div className='mx-auto w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-3xl'>✓</div>
+                <div className='mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-brand to-berry-dark text-white flex items-center justify-center text-3xl shadow-[0_14px_30px_-10px_rgba(210,58,127,.9)] glow-pulse'>✓</div>
                 <h1 className='prata-regular text-3xl mt-4 text-gray-800'>Thank you for your order!</h1>
                 <p className='text-gray-500 mt-2'>
                     Order <b>#{String(order._id).slice(-8).toUpperCase()}</b> has been {order.payment ? 'paid and ' : ''}confirmed.
@@ -56,7 +56,7 @@ const OrderSuccess = () => {
                 <div className='border p-6 text-sm text-gray-600'>
                     <p className='font-medium text-gray-800 mb-2'>Payment</p>
                     <p>Method: {order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod}</p>
-                    <p>Status: <span className={order.payment ? 'text-green-600' : 'text-amber-600'}>{order.payment ? 'Paid' : 'Pay on delivery'}</span></p>
+                    <p>Status: <span className={order.payment ? 'st st-done' : 'st st-warn'}>{order.payment ? 'Paid' : 'Pay on delivery'}</span></p>
                     <p>Date: {new Date(order.date).toLocaleString()}</p>
                 </div>
             </div>
@@ -74,7 +74,7 @@ const OrderSuccess = () => {
                     </div>
                 ))}
                 <div className='flex justify-between mt-4 text-gray-600'><p>Subtotal</p><p>{currency}{subtotal.toLocaleString('en-LK')}</p></div>
-                {order.discount > 0 && <div className='flex justify-between text-[#2F5A37] font-semibold'><p>Coupon {order.couponCode}</p><p>−{currency}{order.discount.toLocaleString('en-LK')}</p></div>}
+                {order.discount > 0 && <div className='flex justify-between text-berry font-semibold'><p>Coupon {order.couponCode}</p><p>−{currency}{order.discount.toLocaleString('en-LK')}</p></div>}
                 <div className='flex justify-between text-gray-600'><p>Delivery</p><p>{(order.deliveryFee ?? (order.amount - subtotal)) === 0 ? 'Free' : `${currency}${(order.deliveryFee ?? (order.amount - subtotal)).toLocaleString('en-LK')}`}</p></div>
                 <div className='flex justify-between font-semibold mt-1'><p>Total</p><p>{currency}{order.amount.toLocaleString('en-LK')}</p></div>
             </div>

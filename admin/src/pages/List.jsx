@@ -279,8 +279,8 @@ const List = ({token}) => {
                     <td className='px-3 py-3 whitespace-nowrap'><span className='flex items-center gap-2'><StockBadge product={item} />{item.trackStock && <b className='text-ink'>{item.stock}</b>}</span></td>
                     <td className='px-3 py-3 hidden md:table-cell'>
                       <span className='flex flex-wrap gap-1'>
-                        {item.bestseller && <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[11px] font-bold'><Icon name='star' size={11} />Bestseller</span>}
-                        {personalised(item) && <span className='px-2 py-0.5 rounded-full bg-violet-50 text-violet-800 text-[11px] font-bold'>Personalisable</span>}
+                        {item.bestseller && <span className='inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-berry to-berry-dark text-white text-[11px] font-bold'><Icon name='star' size={11} />Bestseller</span>}
+                        {personalised(item) && <span className='st st-alt'>Personalisable</span>}
                       </span>
                     </td>
                     <td className='pl-3 pr-5 py-3'>

@@ -41,7 +41,7 @@ const ReviewRow = ({ review, token, onChanged }) => {
   }
 
   return (
-    <div className={`card p-5 flex flex-col gap-3 ${review.status === 'hidden' ? 'opacity-70' : ''} ${review.rating <= 3 && !review.reply?.text && review.status === 'published' ? 'border-amber-200' : ''}`}>
+    <div className={`card p-5 flex flex-col gap-3 ${review.status === 'hidden' ? 'opacity-70' : ''} ${review.rating <= 3 && !review.reply?.text && review.status === 'published' ? '!border-brand border-dashed' : ''}`}>
       <div className='flex flex-wrap items-start gap-4'>
         <a href={`${storeUrl}/product/${review.productId}#reviews`} target='_blank' rel='noreferrer' className='flex items-center gap-3 min-w-0 flex-1'>
           {review.product.image ? <img src={review.product.image} alt='' className='w-12 h-12 rounded-xl object-cover border border-line' /> : <span className='w-12 h-12 rounded-xl bg-pink-50'></span>}
@@ -54,7 +54,7 @@ const ReviewRow = ({ review, token, onChanged }) => {
           </span>
         </a>
         <span className='flex items-center gap-1'>
-          {review.status === 'hidden' && <span className='px-2.5 py-1 rounded-full bg-stone-100 text-stone-600 text-xs font-semibold mr-1'>Hidden</span>}
+          {review.status === 'hidden' && <span className='st st-off mr-1'>Hidden</span>}
           {review.helpful > 0 && <span className='text-xs text-mauve mr-2'>{review.helpful} found helpful</span>}
           <button onClick={() => setReplying(!replying)} className='btn-ghost px-3 py-1 text-xs'>{review.reply?.text ? 'Edit reply' : 'Reply'}</button>
           <button onClick={() => update({ status: review.status === 'hidden' ? 'published' : 'hidden' })} disabled={saving} className='btn-ghost px-3 py-1 text-xs'>{review.status === 'hidden' ? 'Publish' : 'Hide'}</button>
@@ -116,7 +116,7 @@ const Reviews = ({ token }) => {
         <div className='card p-5'><p className='text-[13px] font-semibold text-mauve'>Average rating</p><p className='text-[1.6rem] font-bold text-ink mt-1 flex items-center gap-2'>{summary.average ? summary.average.toFixed(1) : '—'} {summary.average > 0 && <Stars value={Math.round(summary.average)} size={17} />}</p></div>
         <div className='card p-5'><p className='text-[13px] font-semibold text-mauve'>Reviews</p><p className='text-[1.6rem] font-bold text-ink mt-1'>{summary.total}</p></div>
         <div className='card p-5'><p className='text-[13px] font-semibold text-mauve'>5-star reviews</p><p className='text-[1.6rem] font-bold text-ink mt-1'>{summary.fiveStar}</p></div>
-        <div className='card p-5'><p className='text-[13px] font-semibold text-mauve'>Low ratings to answer</p><p className={`text-[1.6rem] font-bold mt-1 ${summary.needsReply ? 'text-amber-700' : 'text-ink'}`}>{summary.needsReply}</p></div>
+        <div className='card p-5'><p className='text-[13px] font-semibold text-mauve'>Low ratings to answer</p><p className={`text-[1.6rem] font-bold mt-1 ${summary.needsReply ? 'text-berry' : 'text-ink'}`}>{summary.needsReply}</p></div>
       </div>
 
       <div className='flex flex-wrap items-center gap-3 mb-5'>

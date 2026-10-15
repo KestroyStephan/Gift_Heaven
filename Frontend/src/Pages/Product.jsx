@@ -121,8 +121,7 @@ const Product = () => {
                 <span className='font-semibold text-berry'>You save {currency}{deal.saving.toLocaleString('en-LK')}{deal.offer.endsAt ? ` · ends ${new Date(deal.offer.endsAt).toLocaleDateString('en-LK', { day: 'numeric', month: 'short' })}` : ''}</span>
               </p>
             )}
-            <p className={`flex items-center gap-2 text-sm font-semibold ${!stock ? 'text-violet-800' : stock.tone === 'out' ? 'text-rose-700' : stock.tone === 'low' ? 'text-amber-700' : 'text-emerald-700'}`}>
-              <span className='w-2 h-2 rounded-full bg-current'></span>
+            <p className={`self-start st-lg ${!stock ? 'st st-alt' : stock.tone === 'out' ? 'st st-off' : stock.tone === 'low' ? 'st st-warn' : 'st st-done'}`}>
               {!stock ? 'Made to order for you' : stock.tone === 'in' ? 'In stock — ready to gift' : stock.tone === 'low' ? `Hurry, only ${productData.stock} left` : 'Sold out — check back soon'}
             </p>
           </div>
@@ -158,7 +157,7 @@ const Product = () => {
             </div>
             <WishlistButton productId={productData._id} name={productData.name} variant='button' />
             {maxQty <= 0 ? (
-              <button disabled className='btn-primary flex-1 min-w-[220px] !bg-stone-400 !cursor-not-allowed'>Sold out</button>
+              <button disabled className='btn-primary flex-1 min-w-[220px] !bg-[#DCC6D1] !text-mauve !shadow-none !cursor-not-allowed'>Sold out</button>
             ) : (
             <button onClick={addGift} className='btn-primary flex-1 min-w-[220px]'>
               <Icon name='bag' size={18} /> Add to bag · {currency}{((unitPrice + extras) * quantity).toLocaleString('en-LK')}

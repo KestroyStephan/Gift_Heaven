@@ -65,24 +65,26 @@ export const PageHeader = ({ title, subtitle, children }) => (
   </div>
 )
 
+// Order statuses in one pink family: lighter while it's early, bright while it's on the road, deep when done
 export const statusStyles = {
-  'Order Placed': 'bg-sky-50 text-sky-800 ring-sky-200',
-  'Packing': 'bg-amber-50 text-amber-800 ring-amber-200',
-  'Shipped': 'bg-indigo-50 text-indigo-800 ring-indigo-200',
-  'Out for delivery': 'bg-violet-50 text-violet-800 ring-violet-200',
-  'Delivered': 'bg-emerald-50 text-emerald-800 ring-emerald-200',
-  'Cancelled': 'bg-stone-100 text-stone-600 ring-stone-200',
+  'Order Placed': 'st st-new',
+  'Packing': 'st st-progress',
+  'Shipped': 'st st-progress',
+  'Out for delivery': 'st st-active',
+  'Delivered': 'st st-done',
+  'Cancelled': 'st st-off',
 }
+// chart colours, light to deep pink
 export const statusColours = {
-  'Order Placed': '#0284C7', 'Packing': '#D97706', 'Shipped': '#4F46E5',
-  'Out for delivery': '#7C3AED', 'Delivered': '#059669', 'Cancelled': '#A8A29E',
+  'Order Placed': '#F7AACB', 'Packing': '#EF7BAE', 'Shipped': '#E84F93',
+  'Out for delivery': '#C9327A', 'Delivered': '#7E1F4E', 'Cancelled': '#DCC6D1',
 }
 
-export const StatusBadge = ({ status }) => (
-  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ring-inset whitespace-nowrap ${statusStyles[status] || statusStyles.Cancelled}`}>
-    <span className='w-1.5 h-1.5 rounded-full' style={{ background: statusColours[status] }}></span>{status}
-  </span>
-)
+export const StatusBadge = ({ status }) => <span className={statusStyles[status] || 'st st-off'}>{status}</span>
+
+export const PayBadge = ({ paid, label, cancelled }) => cancelled && !paid
+  ? <span className='st st-off'>Not charged</span>
+  : <span className={paid ? 'st st-done' : 'st st-warn'}>{label || (paid ? 'Paid' : 'Payment pending')}</span>
 
 export const Empty = ({ icon = 'gift', title, text }) => (
   <div className='card p-10 flex flex-col items-center text-center gap-2'>
@@ -123,14 +125,14 @@ export const BrandSelect = ({ brands, value, onChange, className = 'field font-n
 export const money = (n, currency = 'Rs. ') => `${n < 0 ? '−' : ''}${currency}${Math.abs(Math.round(n || 0)).toLocaleString('en-LK')}`
 
 // Stock status of a product
-export const stockStatus = (p) => !p.trackStock ? { label: 'Made to order', style: 'bg-violet-50 text-violet-800 ring-violet-200' }
-  : p.stock <= 0 ? { label: 'Out of stock', style: 'bg-rose-50 text-rose-700 ring-rose-200' }
-  : p.stock <= p.lowStock ? { label: 'Low stock', style: 'bg-amber-50 text-amber-800 ring-amber-200' }
-  : { label: 'In stock', style: 'bg-emerald-50 text-emerald-700 ring-emerald-200' }
+export const stockStatus = (p) => !p.trackStock ? { label: 'Made to order', style: 'st st-alt' }
+  : p.stock <= 0 ? { label: 'Out of stock', style: 'st st-off' }
+  : p.stock <= p.lowStock ? { label: 'Low stock', style: 'st st-warn' }
+  : { label: 'In stock', style: 'st st-done' }
 
 export const StockBadge = ({ product }) => {
   const s = stockStatus(product)
-  return <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ring-1 ring-inset whitespace-nowrap ${s.style}`}>{s.label}</span>
+  return <span className={s.style}>{s.label}</span>
 }
 
 // Save rows as a CSV file the owner can open in Excel

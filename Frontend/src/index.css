@@ -220,3 +220,41 @@ textarea.field { height: auto; padding: 0.75rem 1rem; }
 @keyframes riderPulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .rider-pulse { animation: none; } }
 .leaflet-container { font-family: var(--font-sans); }
+
+/* ---------- Status badges: one pink family, told apart by depth, icon and motion ---------- */
+@layer components {
+.st {
+  display: inline-flex; align-items: center; gap: .4rem; white-space: nowrap;
+  padding: .3rem .7rem .3rem .55rem; border-radius: 999px;
+  font-size: .72rem; font-weight: 800; letter-spacing: .02em; line-height: 1.1;
+  border: 1px solid transparent;
+}
+.st::before {
+  content: ""; width: .5rem; height: .5rem; border-radius: 999px; flex-shrink: 0; background: currentColor;
+}
+/* new / scheduled / info — the lightest pink */
+.st-new { background: #FFF0F6; color: #B82D6E; border-color: #FDCDE2; }
+.st-new::before { background: #F7AACB; box-shadow: 0 0 0 3px rgba(247,170,203,.3); }
+/* in progress — a step deeper */
+.st-progress { background: #FFE1EE; color: #9A2459; border-color: #F7AACB; }
+.st-progress::before { background: #EF7BAE; box-shadow: 0 0 0 3px rgba(239,123,174,.3); }
+/* happening now — bright pink with a pulsing light */
+.st-active { background: linear-gradient(135deg, #D23A7F, #B82D6E); color: #fff; box-shadow: 0 6px 16px -8px rgba(210,58,127,.9); }
+.st-active::before { background: #fff; animation: stPulse 1.6s ease-in-out infinite; }
+/* done / paid / in stock — deep berry with a tick */
+.st-done { background: linear-gradient(135deg, #9A2459, #6B1940); color: #fff; box-shadow: 0 6px 16px -8px rgba(107,25,64,.8); }
+.st-done::before { content: "✓"; width: auto; height: auto; background: none; font-size: .8rem; line-height: 1; }
+/* needs attention — white with a dashed pink edge and "!" */
+.st-warn { background: #fff; color: #B82D6E; border: 1.5px dashed #E84F93; }
+.st-warn::before { content: "!"; width: .95rem; height: .95rem; display: inline-flex; align-items: center; justify-content: center; background: #E84F93; color: #fff; font-size: .62rem; }
+/* special (made to order, personalised) — lilac pink with a sparkle */
+.st-alt { background: #F9E4F1; color: #8E1F55; border-color: #F2C6E0; }
+.st-alt::before { content: "✦"; width: auto; height: auto; background: none; font-size: .7rem; color: #E84F93; }
+/* ended / cancelled / paused — quiet greyed pink */
+.st-off { background: #F6EEF2; color: #86486A; border-color: #EBDDE4; }
+.st-off::before { background: #D9C2CD; }
+/* sizes */
+.st-lg { font-size: .8rem; padding: .45rem .9rem .45rem .7rem; }
+}
+@keyframes stPulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,255,255,.7); } 50% { opacity: .75; box-shadow: 0 0 0 5px rgba(255,255,255,0); } }
+@media (prefers-reduced-motion: reduce) { .st-active::before { animation: none; } }

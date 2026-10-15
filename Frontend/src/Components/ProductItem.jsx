@@ -43,8 +43,8 @@ const ProductItem = ({id,image,name,price,category,bestseller,sizePrices,brand})
     <Link className='group flex flex-col gap-3 text-ink bg-white rounded-[26px] border border-line p-2.5 pb-4 card-lift sr sr-up' to={isBox ? '/build-a-box' : `/product/${id}`}>
         <div className='relative overflow-hidden rounded-[20px] bg-blush aspect-square'>
             {image?.[0] && <img className='absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105' src={image[0]} alt={name} loading='lazy' />}
-            {stock?.tone === 'out' && <span className='absolute inset-0 bg-white/55 flex items-center justify-center'><span className='bg-ink text-white text-xs font-bold tracking-[0.12em] px-3.5 py-2 rounded-full'>SOLD OUT</span></span>}
-            {stock?.tone === 'low' && <span className='absolute bottom-3 left-3 bg-amber-100 text-amber-900 text-[11px] font-bold px-2.5 py-1.5 rounded-xl'>{stock.text.toUpperCase()}</span>}
+            {stock?.tone === 'out' && <span className='absolute inset-0 bg-white/55 flex items-center justify-center'><span className='st st-off st-lg shadow-sm'>Sold out</span></span>}
+            {stock?.tone === 'low' && <span className='absolute bottom-3 left-3 st st-warn shadow-sm'>{stock.text}</span>}
             <WishlistButton productId={id} name={name} className='absolute top-3 right-3 z-10' />
             {deal && <span className='absolute top-14 right-3 bg-gradient-to-br from-berry to-berry-dark text-white text-[11px] font-bold px-2.5 py-1.5 rounded-xl shadow-[0_6px_16px_-6px_rgba(210,58,127,.9)]'>{deal.type === 'percent' ? `−${deal.value}%` : `Rs. ${deal.value} off`}</span>}
             {bestseller && <span className='absolute top-3 left-3 bg-white text-berry text-[11px] font-bold tracking-[0.08em] px-2.5 py-1.5 rounded-xl'>BEST SELLER</span>}
