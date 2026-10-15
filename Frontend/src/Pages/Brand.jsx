@@ -38,7 +38,7 @@ const Brand = () => {
         <span className='text-ink font-semibold'>{brand.name}</span>
       </nav>
 
-      <section className='relative overflow-hidden rounded-[32px] text-white p-8 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-end' style={{ background: `linear-gradient(135deg, ${brand.colour} 0%, #2B1B24 100%)` }}>
+      <section className='relative overflow-hidden rounded-[32px] text-white p-8 sm:p-12 grid md:grid-cols-[1fr_auto] gap-8 items-end' style={{ background: 'linear-gradient(135deg, #E84F93 0%, #B82D6E 50%, #6B1940 100%)' }}>
         <div className='relative max-w-2xl'>
           <p className='text-[11px] font-bold tracking-[0.22em] uppercase text-white/70 mb-4'>Official brand store</p>
           <h1><BrandMark brand={brand} light className='block !text-left text-[3rem] sm:text-[4rem] max-h-28' /></h1>
@@ -55,7 +55,7 @@ const Brand = () => {
         <div className='flex flex-wrap gap-2'>
           {['', ...categories].map(c => (
             <button key={c || 'all'} onClick={() => setCategory(c)} aria-pressed={category === c}
-              className={`h-10 px-4 rounded-full text-sm font-semibold border cursor-pointer ${category === c ? 'bg-ink text-white border-ink' : 'bg-white border-line hover:border-berry'}`}>
+              className={`h-10 px-4 rounded-full text-sm font-semibold border cursor-pointer ${category === c ? 'bg-berry text-white border-berry' : 'bg-white border-line hover:border-berry'}`}>
               {c ? prettify(c) : `All (${all.length})`}
             </button>
           ))}

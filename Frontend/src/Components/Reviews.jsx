@@ -64,7 +64,7 @@ const ReviewForm = ({ productId, existing, onSaved, onCancel }) => {
                     {photos.map((url, i) => (
                         <span key={url} className='relative'>
                             <img src={url} alt={`Your photo ${i + 1}`} className='w-20 h-20 rounded-xl object-cover border border-line' />
-                            <button type='button' onClick={() => setPhotos(photos.filter(p => p !== url))} aria-label={`Remove photo ${i + 1}`} className='absolute -top-2 -right-2 w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center cursor-pointer'><Icon name='close' size={12} /></button>
+                            <button type='button' onClick={() => setPhotos(photos.filter(p => p !== url))} aria-label={`Remove photo ${i + 1}`} className='absolute -top-2 -right-2 w-6 h-6 rounded-full bg-berry text-white flex items-center justify-center cursor-pointer'><Icon name='close' size={12} /></button>
                         </span>
                     ))}
                     {photos.length < 4 && (
@@ -187,7 +187,7 @@ const Reviews = ({ product }) => {
                                         <button onClick={() => { setFilter(filter === b.stars ? 0 : b.stars); setShown(PAGE) }} disabled={!b.count} aria-pressed={filter === b.stars}
                                             className={`w-full flex items-center gap-3 text-sm rounded-lg px-1.5 py-1 ${b.count ? 'cursor-pointer hover:bg-rose-50' : 'opacity-50'} ${filter === b.stars ? 'bg-rose-50 font-bold' : ''}`}>
                                             <span className='w-10 text-left'>{b.stars} star</span>
-                                            <span className='flex-1 h-2 rounded-full bg-[#F1E7D6]'><span className='block h-2 rounded-full bg-gold' style={{ width: `${(b.count / data.count) * 100}%` }}></span></span>
+                                            <span className='flex-1 h-2 rounded-full bg-[#FCE1EC]'><span className='block h-2 rounded-full bg-gold' style={{ width: `${(b.count / data.count) * 100}%` }}></span></span>
                                             <span className='w-6 text-right text-muted'>{b.count}</span>
                                         </button>
                                     </li>
@@ -226,8 +226,8 @@ const Reviews = ({ product }) => {
                         <div>
                             <div className='flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line'>
                                 <div className='flex flex-wrap gap-2'>
-                                    {filter > 0 && <button onClick={() => setFilter(0)} className='flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-ink text-white text-sm font-semibold cursor-pointer'>{filter} star <Icon name='close' size={14} /></button>}
-                                    {data.withPhotos > 0 && <button onClick={() => setPhotosOnly(!photosOnly)} aria-pressed={photosOnly} className={`h-9 px-3.5 rounded-full text-sm font-semibold border cursor-pointer ${photosOnly ? 'bg-ink text-white border-ink' : 'bg-white border-line'}`}>With photos ({data.withPhotos})</button>}
+                                    {filter > 0 && <button onClick={() => setFilter(0)} className='flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-berry text-white text-sm font-semibold cursor-pointer'>{filter} star <Icon name='close' size={14} /></button>}
+                                    {data.withPhotos > 0 && <button onClick={() => setPhotosOnly(!photosOnly)} aria-pressed={photosOnly} className={`h-9 px-3.5 rounded-full text-sm font-semibold border cursor-pointer ${photosOnly ? 'bg-berry text-white border-berry' : 'bg-white border-line'}`}>With photos ({data.withPhotos})</button>}
                                 </div>
                                 <label className='flex items-center gap-2 text-sm'>
                                     <span className='text-mauve'>Sort</span>

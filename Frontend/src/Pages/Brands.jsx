@@ -46,8 +46,8 @@ const Brands = () => {
             <h2 className='font-display text-4xl font-semibold text-berry mb-5'>{letter}</h2>
             <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-5'>
               {groups[letter].map(b => (
-                <Link key={b.slug} to={`/brand/${b.slug}`} className='group rounded-[24px] bg-white border border-line overflow-hidden flex hover:shadow-[0_14px_34px_-16px_rgba(43,27,36,.35)] transition'>
-                  <span className='w-28 shrink-0 relative' style={{ background: `${b.colour}14` }}>
+                <Link key={b.slug} to={`/brand/${b.slug}`} className='group rounded-[24px] bg-white border border-line overflow-hidden flex hover:shadow-[0_14px_34px_-16px_rgba(61,11,39,.35)] transition'>
+                  <span className='w-28 shrink-0 relative bg-rose-50'>
                     {coverOf(b.slug) && <img src={coverOf(b.slug)} alt='' className='absolute inset-0 w-full h-full object-cover' />}
                   </span>
                   <span className='p-5 flex flex-col gap-1.5 min-w-0'>

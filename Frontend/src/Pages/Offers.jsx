@@ -21,7 +21,7 @@ export const CouponTicket = ({ coupon, compact = false }) => {
     setTimeout(() => setCopied(false), 2000)
   }
   return (
-    <div className={`relative flex rounded-[22px] overflow-hidden bg-white border border-line ${compact ? '' : 'shadow-[0_10px_30px_-18px_rgba(43,27,36,.4)]'}`}>
+    <div className={`relative flex rounded-[22px] overflow-hidden bg-white border border-line ${compact ? '' : 'shadow-[0_10px_30px_-18px_rgba(61,11,39,.4)]'}`}>
       <div className='bg-berry text-white px-4 sm:px-5 py-4 flex flex-col justify-center min-w-[6.25rem] sm:min-w-[7.5rem] border-r-2 border-dashed border-white/40'>
         <span className='font-display text-[1.6rem] leading-none font-semibold'>{couponText(coupon)}</span>
         {coupon.maxDiscount > 0 && <span className='text-[11px] text-white/75 mt-1'>up to Rs. {coupon.maxDiscount.toLocaleString('en-LK')}</span>}
@@ -58,7 +58,7 @@ const Offers = () => {
       {offers.length > 0 && (
         <section className='grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-14'>
           {offers.map((o, i) => (
-            <Link key={o._id} to={linkFor(o)} className={`group relative overflow-hidden rounded-[28px] p-7 min-h-[200px] flex flex-col justify-between text-white card-lift sr sr-up sr-d${i + 1} ${['bg-gradient-to-br from-berry to-berry-dark', 'bg-gradient-to-br from-ink to-[#5A2340]', 'bg-gradient-to-br from-[#B82D6E] to-[#6B1940]'][i % 3]}`}>
+            <Link key={o._id} to={linkFor(o)} className={`group relative overflow-hidden rounded-[28px] p-7 min-h-[200px] flex flex-col justify-between text-white card-lift sr sr-up sr-d${i + 1} ${['bg-gradient-to-br from-berry to-berry-dark', 'bg-gradient-to-br from-[#9A2459] to-[#5E1238]', 'bg-gradient-to-br from-[#B82D6E] to-[#6B1940]'][i % 3]}`}>
               <span className='absolute -right-8 -top-8 w-36 h-36 rounded-full bg-white/15 animate-pulse-soft'></span>
               <span className='relative text-[11px] font-bold tracking-[0.2em] uppercase text-white/70'>{o.badge || 'Offer'}</span>
               <span className='relative'>

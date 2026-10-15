@@ -50,7 +50,7 @@ const CartTotal = ({ showCoupon = true }) => {
                     <form onSubmit={(e) => { e.preventDefault(); applyCoupon(code); setCode('') }} className='flex gap-2'>
                         <label className='sr-only' htmlFor='coupon-code'>Coupon code</label>
                         <input id='coupon-code' value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder='Coupon code' className='flex-1 min-w-0 h-11 px-4 rounded-full border border-rose-300 bg-white uppercase tracking-wide text-sm' />
-                        <button type='submit' disabled={!code.trim()} className='h-11 px-5 rounded-full bg-ink text-white text-sm font-bold cursor-pointer disabled:opacity-40'>Apply</button>
+                        <button type='submit' disabled={!code.trim()} className='h-11 px-5 rounded-full bg-berry text-white text-sm font-bold cursor-pointer disabled:opacity-40'>Apply</button>
                     </form>
                     {hint && <p className='text-xs text-muted'>Try <button type='button' onClick={() => applyCoupon(hint.code)} className='font-bold text-berry underline underline-offset-2 cursor-pointer'>{hint.code}</button> — {hint.description}</p>}
                 </div>

@@ -168,7 +168,7 @@ const GiftCustomizer = ({ product, value, onChange }) => {
                             </label>
                         </div>
                         {/* Cake top preview */}
-                        <div aria-label='Cake preview' className='aspect-square rounded-full bg-[#F7E7D7] border-[10px] border-[#F2D3D9] flex flex-col items-center justify-center text-center p-5 overflow-hidden relative'>
+                        <div aria-label='Cake preview' className='aspect-square rounded-full bg-rose-100 border-[10px] border-[#F2D3D9] flex flex-col items-center justify-center text-center p-5 overflow-hidden relative'>
                             {value.photo && <img src={value.photo} alt='' className='absolute inset-0 w-full h-full object-cover opacity-80' />}
                             <span className={`relative font-display italic text-xl leading-tight break-words ${value.photo ? 'text-white drop-shadow' : 'text-berry-dark'}`}>{value.cakeMessage || 'Your message'}</span>
                         </div>
@@ -210,7 +210,7 @@ const GiftCustomizer = ({ product, value, onChange }) => {
                                 <div key={url} className='relative'>
                                     <img src={url} alt={`Album photo ${i + 1}`} className='w-20 h-20 rounded-xl object-cover border border-line' />
                                     <button type='button' aria-label={`Remove photo ${i + 1}`} onClick={() => set('photos', value.photos.filter(p => p !== url))}
-                                        className='absolute -top-2 -right-2 w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center cursor-pointer'><Icon name='close' size={12} /></button>
+                                        className='absolute -top-2 -right-2 w-6 h-6 rounded-full bg-berry text-white flex items-center justify-center cursor-pointer'><Icon name='close' size={12} /></button>
                                 </div>
                             ))}
                             <label className={`w-20 h-20 rounded-xl border border-dashed border-rose-300 flex flex-col items-center justify-center text-xs text-muted ${uploading ? 'opacity-60' : 'cursor-pointer hover:bg-rose-50'}`}>

@@ -14,7 +14,7 @@ const StudioPromo = () => {
 
     const tiles = [
         { to: '/build-a-box', eyebrow: 'New', title: 'Build a surprise box', text: 'Fill one box with their favourite gifts, a cake and a handmade photo album.', image: box?.image?.[0], tint: 'bg-blush' },
-        { to: '/cakes', eyebrow: 'Cake studio', title: 'Design your cake', text: 'Pick a design, flavour, message or photo and the delivery day.', image: cake?.image?.[0], tint: 'bg-[#F7E7D7]' },
+        { to: '/cakes', eyebrow: 'Cake studio', title: 'Design your cake', text: 'Pick a design, flavour, message or photo and the delivery day.', image: cake?.image?.[0], tint: 'bg-rose-100' },
         { to: '/custom-studio', eyebrow: 'Custom studio', title: 'Print your memories', text: 'Photos on frames, canvas, mugs, T-shirts and cushions.', image: print?.image?.[0], tint: 'bg-lilac' },
     ]
 

@@ -36,7 +36,7 @@ const NewsletterBox = () => {
         <form onSubmit={onSubmitHandler} className='w-full max-w-lg flex flex-col sm:flex-row gap-3 mt-3'>
             <label htmlFor='newsletter-email' className='sr-only'>Email address</label>
             <input id='newsletter-email' value={email} onChange={(e)=>setEmail(e.target.value)} className='field flex-1 !h-[3.25rem] !rounded-full !px-5' type="email" placeholder='you@example.com' required />
-            <button type='submit' disabled={loading} className='btn-primary !bg-ink hover:!bg-black'>{loading ? 'Subscribing…' : 'Subscribe'}</button>
+            <button type='submit' disabled={loading} className='btn-primary !bg-gradient-to-br from-berry-dark via-[#9A2459] to-[#5E1238] hover:!bg-black'>{loading ? 'Subscribing…' : 'Subscribe'}</button>
         </form>
       </div>
     </section>

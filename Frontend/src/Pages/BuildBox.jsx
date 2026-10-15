@@ -210,7 +210,7 @@ const BuildBox = () => {
                         <div className='flex gap-2 overflow-x-auto pb-1'>
                             {quickFilters.map(key => (
                                 <button key={key} type='button' onClick={() => setFilter(key)}
-                                    className={`shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold cursor-pointer ${filter === key ? 'bg-ink text-white' : 'bg-rose-50 text-berry-dark hover:bg-rose-100'}`}>
+                                    className={`shrink-0 px-3.5 py-2 rounded-full text-sm font-semibold cursor-pointer ${filter === key ? 'bg-berry text-white' : 'bg-rose-50 text-berry-dark hover:bg-rose-100'}`}>
                                     {key === 'All' ? 'All gifts' : prettify(key)}
                                 </button>
                             ))}
@@ -321,7 +321,7 @@ const BuildBox = () => {
                                                 <div key={url} className='relative'>
                                                     <img src={url} alt={`Album photo ${i + 1}`} className='w-20 h-20 rounded-xl object-cover border border-line' />
                                                     <button type='button' aria-label={`Remove photo ${i + 1}`} onClick={() => setAlbumCustom({ photos: draft.album.custom.photos.filter(p => p !== url) })}
-                                                        className='absolute -top-2 -right-2 w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center cursor-pointer'><Icon name='close' size={12} /></button>
+                                                        className='absolute -top-2 -right-2 w-6 h-6 rounded-full bg-berry text-white flex items-center justify-center cursor-pointer'><Icon name='close' size={12} /></button>
                                                 </div>
                                             ))}
                                             {draft.album.custom.photos.length < albumLimit && (

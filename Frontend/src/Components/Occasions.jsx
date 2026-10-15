@@ -128,7 +128,7 @@ export const Festivals = () => {
                 {festivals.map(festival => {
                     const item = products.find(p => p.subCategory === festival.key)
                     return (
-                        <Link key={festival.key} to={`/collection?sub=${festival.key}`} className='group relative overflow-hidden rounded-[22px] aspect-[3/4] bg-ink flex items-end card-lift sr sr-up'>
+                        <Link key={festival.key} to={`/collection?sub=${festival.key}`} className='group relative overflow-hidden rounded-[22px] aspect-[3/4] bg-berry-dark flex items-end card-lift sr sr-up'>
                             {item && <img src={item.image[0]} alt='' className='absolute inset-0 w-full h-full object-cover opacity-80 transition duration-500 group-hover:scale-105' />}
                             <span className='absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent'></span>
                             <span className='relative p-4 text-white'>

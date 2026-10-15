@@ -121,10 +121,10 @@ const GiftGuide = () => {
       </div>
 
       <section className='shell pt-12'>
-        <div className='rounded-[28px] bg-ink text-[#F6E9EE] p-8 sm:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6'>
+        <div className='rounded-[28px] bg-gradient-to-br from-berry-dark via-[#9A2459] to-[#5E1238] text-[#F6E9EE] p-8 sm:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6'>
           <div>
             <p className='font-display text-3xl sm:text-4xl text-white'>Planning a function or party?</p>
-            <p className='mt-2 text-[#D9C6CE] max-w-2xl'>Birthday parties, house openings, poruwa ceremonies, pirith, almsgivings and office events — tell us the date, guest count and budget and we'll put together cakes, return gifts and décor for you.</p>
+            <p className='mt-2 text-[#F8CFE1] max-w-2xl'>Birthday parties, house openings, poruwa ceremonies, pirith, almsgivings and office events — tell us the date, guest count and budget and we'll put together cakes, return gifts and décor for you.</p>
           </div>
           <button onClick={() => openChat('Birthday or party gifts')} className='btn-primary !bg-white !text-ink shrink-0'>Plan it with us</button>
         </div>

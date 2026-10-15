@@ -98,7 +98,7 @@ const Rider = () => {
             ) : ended ? (
                 <p className='rounded-[24px] bg-stone-100 p-5 text-sm text-stone-700'>The shop has stopped live tracking for this delivery.</p>
             ) : (
-                <div className={`rounded-[28px] p-6 flex flex-col gap-4 text-white ${sharing ? 'bg-gradient-to-br from-berry to-berry-dark glow-pulse' : 'bg-ink'}`}>
+                <div className={`rounded-[28px] p-6 flex flex-col gap-4 text-white ${sharing ? 'bg-gradient-to-br from-berry to-berry-dark glow-pulse' : 'bg-gradient-to-br from-berry-dark via-[#9A2459] to-[#5E1238]'}`}>
                     <div className='flex items-center gap-3'>
                         <span className='relative flex w-3 h-3'>
                             {sharing && <span className='absolute inset-0 rounded-full bg-white animate-ping'></span>}

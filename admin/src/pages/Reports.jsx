@@ -40,7 +40,7 @@ const Kpi = ({ label, value, now, before, note, invert }) => {
 const series = [
   { key: 'sales', label: 'Sales', colour: '#E84F93' },
   { key: 'income', label: 'Income received', colour: '#059669' },
-  { key: 'profit', label: 'Gross profit', colour: '#C9973B' },
+  { key: 'profit', label: 'Gross profit', colour: '#E84F93' },
 ]
 
 // Sales, income and profit per day
@@ -81,7 +81,7 @@ const TrendChart = ({ daily }) => {
           {series.filter(s => shown.includes(s.key)).map(s => (
             <path key={s.key} d={daily.map((d, i) => `${i ? 'L' : 'M'}${x(i)},${y(d[s.key])}`).join(' ')} fill='none' stroke={s.colour} strokeWidth='2.4' strokeLinejoin='round' strokeLinecap='round' />
           ))}
-          {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={H - P.b} stroke='#2B1B24' strokeOpacity='.25' strokeDasharray='4 4' />}
+          {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={H - P.b} stroke='#3D0B27' strokeOpacity='.25' strokeDasharray='4 4' />}
           {hover !== null && series.filter(s => shown.includes(s.key)).map(s => <circle key={s.key} cx={x(hover)} cy={y(daily[hover][s.key])} r='4.5' fill='#fff' stroke={s.colour} strokeWidth='2.2' />)}
           {daily.map((d, i) => <rect key={d.day} x={x(i) - (W - P.l - P.r) / daily.length / 2} y={P.t} width={(W - P.l - P.r) / daily.length} height={H - P.t - P.b} fill='transparent' onMouseEnter={() => setHover(i)} />)}
         </svg>

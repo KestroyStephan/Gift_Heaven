@@ -66,7 +66,7 @@ const SalesChart = ({ daily }) => {
         {daily.map((d, i) => i % 5 === 4 || i === 0 ? <text key={d.day} x={x(i)} y={H - 8} textAnchor='middle' fontSize='11' fill='#9A8590'>{day(d.day)}</text> : null)}
         <path d={area} fill='url(#salesFill)' />
         <path d={line} fill='none' stroke='#E84F93' strokeWidth='2.5' strokeLinejoin='round' strokeLinecap='round' />
-        {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={H - P.b} stroke='#C9973B' strokeDasharray='4 4' />}
+        {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={H - P.b} stroke='#E84F93' strokeDasharray='4 4' />}
         {hover !== null && <circle cx={x(hover)} cy={y(daily[hover].sales)} r='5' fill='#fff' stroke='#E84F93' strokeWidth='2.5' />}
         {daily.map((d, i) => (
           <rect key={d.day} x={x(i) - (W - P.l - P.r) / daily.length / 2} y={P.t} width={(W - P.l - P.r) / daily.length} height={H - P.t - P.b}

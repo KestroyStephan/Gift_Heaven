@@ -150,20 +150,20 @@ const ChatWidget = () => {
         <>
             {!chatUi.open && (
                 <button onClick={() => openChat()} aria-label={unread ? `Chat with us, ${unread} new replies` : 'Chat with us'}
-                    className='fixed z-40 bottom-5 right-5 h-14 pl-4 pr-5 rounded-full bg-ink text-white shadow-xl flex items-center gap-2.5 font-bold text-sm hover:bg-black cursor-pointer'>
+                    className='fixed z-40 bottom-5 right-5 h-14 pl-4 pr-5 rounded-full bg-gradient-to-r from-berry to-berry-dark text-white shadow-[0_14px_30px_-10px_rgba(210,58,127,.8)] flex items-center gap-2.5 font-bold text-sm hover:-translate-y-0.5 transition cursor-pointer glow-pulse'>
                     <svg width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round' aria-hidden='true'><path d='M21 12a8 8 0 01-11.6 7.1L4 20l1-4.4A8 8 0 1121 12z' /></svg>
                     Chat with us
-                    {unread > 0 && <span className='min-w-5 h-5 px-1.5 rounded-full bg-gold text-ink text-xs flex items-center justify-center'>{unread}</span>}
+                    {unread > 0 && <span className='min-w-5 h-5 px-1.5 rounded-full bg-white text-berry text-xs flex items-center justify-center'>{unread}</span>}
                 </button>
             )}
 
             {chatUi.open && (
                 <section role='dialog' aria-label='Chat with Surprise Heaven'
                     className='fixed z-50 inset-0 sm:inset-auto sm:bottom-5 sm:right-5 sm:w-[380px] sm:h-[600px] sm:max-h-[calc(100vh-40px)] bg-white sm:rounded-[24px] shadow-2xl border border-line flex flex-col overflow-hidden'>
-                    <header className='bg-ink text-white px-5 py-4 flex items-start justify-between gap-3'>
+                    <header className='bg-gradient-to-br from-berry to-berry-dark text-white px-5 py-4 flex items-start justify-between gap-3'>
                         <div>
                             <p className='font-display text-2xl leading-tight'>Create it <span className='italic text-[#FFB3D4]'>with us</span></p>
-                            <p className='text-xs text-[#D9C6CE] mt-1'>Custom frames, printing, cakes & event gifts. We usually reply within a few hours.</p>
+                            <p className='text-xs text-[#F8CFE1] mt-1'>Custom frames, printing, cakes & event gifts. We usually reply within a few hours.</p>
                         </div>
                         <button onClick={closeChat} aria-label='Close chat' className='w-10 h-10 shrink-0 rounded-full hover:bg-white/10 flex items-center justify-center cursor-pointer'><Icon name='close' /></button>
                     </header>

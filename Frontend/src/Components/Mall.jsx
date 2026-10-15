@@ -91,9 +91,9 @@ export const ShopByDepartment = () => {
             </div>
             <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4'>
                 {tiles.map((d, i) => (
-                    <Link key={d.slug} to={departmentLink(d)} className={`group relative overflow-hidden rounded-[24px] bg-ink card-lift sr sr-up sr-d${(i % 5) + 1} ${i < 2 ? 'md:col-span-2 lg:col-span-1' : ''} aspect-[4/5] md:aspect-auto md:h-64 lg:h-auto lg:aspect-[4/5]`}>
+                    <Link key={d.slug} to={departmentLink(d)} className={`group relative overflow-hidden rounded-[24px] bg-berry-dark card-lift sr sr-up sr-d${(i % 5) + 1} ${i < 2 ? 'md:col-span-2 lg:col-span-1' : ''} aspect-[4/5] md:aspect-auto md:h-64 lg:h-auto lg:aspect-[4/5]`}>
                         {d.cover && <img src={d.cover} alt='' loading='lazy' className='absolute inset-0 w-full h-full object-cover opacity-90 transition duration-500 group-hover:scale-105' />}
-                        <span className='absolute inset-0 bg-gradient-to-t from-[#3A1029]/90 via-[#3A1029]/15 to-transparent'></span>
+                        <span className='absolute inset-0 bg-gradient-to-t from-[#4A0F2E]/90 via-[#4A0F2E]/15 to-transparent'></span>
                         <span className='absolute left-4 right-4 bottom-4 text-white'>
                             <span className='block font-display text-[1.45rem] leading-tight font-semibold'>{d.name}</span>
                             <span className='flex items-center gap-1 text-xs text-white/75 mt-1'>{d.count} gifts <Icon name='arrow' size={13} className='transition group-hover:translate-x-1' /></span>
@@ -121,7 +121,7 @@ export const BrandStrip = () => {
                 <div className='flex gap-4 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 snap-x'>
                     {visible.map(b => (
                         <Link key={b.slug} to={`/brand/${b.slug}`} className='group snap-start shrink-0 w-44 sm:w-48 rounded-[22px] border border-line bg-shell card-lift flex flex-col overflow-hidden'>
-                            <span className='h-24 flex items-center justify-center px-4' style={{ background: `${b.colour}12` }}>
+                            <span className='h-24 flex items-center justify-center px-4 bg-rose-50'>
                                 <BrandMark brand={b} className='text-[1.55rem] max-h-16' />
                             </span>
                             <span className='px-4 py-3 flex items-center justify-between text-xs'>
@@ -174,7 +174,7 @@ export const BrandSpotlight = ({ index = 0 }) => {
     return (
         <section className='shell py-12'>
             <div className='grid lg:grid-cols-[340px_minmax(0,1fr)] gap-6 items-stretch'>
-                <Link to={`/brand/${brand.slug}`} className='group relative overflow-hidden rounded-[28px] p-8 flex flex-col justify-between min-h-[280px] text-white glow-card sr sr-right' style={{ background: `linear-gradient(150deg, ${brand.colour}, #2B1B24)` }}>
+                <Link to={`/brand/${brand.slug}`} className='group relative overflow-hidden rounded-[28px] p-8 flex flex-col justify-between min-h-[280px] text-white glow-card sr sr-right' style={{ background: 'linear-gradient(150deg, #E84F93, #B82D6E 55%, #6B1940)' }}>
                     <span className='text-[11px] font-bold tracking-[0.2em] uppercase text-white/70'>Brand spotlight</span>
                     <span>
                         <BrandMark brand={brand} light className='block text-left text-[2.6rem] max-h-20' />
@@ -205,7 +205,7 @@ export const DealsStrip = () => {
                 <div className='grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-5'>
                     <div className='grid sm:grid-cols-3 gap-3'>
                         {offers.slice(0, 3).map((o, i) => (
-                            <Link key={o._id} to='/offers' className={`relative overflow-hidden rounded-[22px] p-5 text-white flex flex-col justify-between min-h-[150px] card-lift sr sr-scale sr-d${i + 1} ${['bg-gradient-to-br from-berry to-berry-dark', 'bg-gradient-to-br from-ink to-[#5A2340]', 'bg-gradient-to-br from-[#B82D6E] to-[#6B1940]'][i % 3]}`}>
+                            <Link key={o._id} to='/offers' className={`relative overflow-hidden rounded-[22px] p-5 text-white flex flex-col justify-between min-h-[150px] card-lift sr sr-scale sr-d${i + 1} ${['bg-gradient-to-br from-berry to-berry-dark', 'bg-gradient-to-br from-[#9A2459] to-[#5E1238]', 'bg-gradient-to-br from-[#B82D6E] to-[#6B1940]'][i % 3]}`}>
                                 <span aria-hidden='true' className='absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/15 animate-pulse-soft'></span>
                                 <span className='text-[11px] font-bold tracking-[0.16em] uppercase text-white/70'>{o.badge || 'Offer'}</span>
                                 <span className='font-display text-[2rem] leading-none font-semibold'>{offerText(o)}</span>

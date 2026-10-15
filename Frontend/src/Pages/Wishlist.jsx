@@ -27,7 +27,7 @@ const SavedCard = ({ product, owner }) => {
       <Link to={link} className='relative overflow-hidden rounded-[22px] bg-blush aspect-square'>
         <img src={product.image[0]} alt={product.name} loading='lazy' className={`absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105 ${soldOut ? 'opacity-60' : ''}`} />
         {owner && <WishlistButton productId={product._id} name={product.name} className='absolute top-3 right-3' />}
-        {stock && stock.tone !== 'in' && <span className={`absolute bottom-3 left-3 text-[11px] font-bold px-2.5 py-1.5 rounded-xl ${stock.tone === 'out' ? 'bg-ink text-white' : 'bg-amber-100 text-amber-900'}`}>{stock.text.toUpperCase()}</span>}
+        {stock && stock.tone !== 'in' && <span className={`absolute bottom-3 left-3 text-[11px] font-bold px-2.5 py-1.5 rounded-xl ${stock.tone === 'out' ? 'bg-berry text-white' : 'bg-amber-100 text-amber-900'}`}>{stock.text.toUpperCase()}</span>}
       </Link>
       <div className='flex flex-col gap-1'>
         <p className='text-xs font-semibold text-muted'>{brandOf(product.brand)?.name ? <span className='text-berry'>{brandOf(product.brand).name}</span> : null}{brandOf(product.brand) ? ' · ' : ''}{prettify(product.category)}</p>
@@ -79,7 +79,7 @@ const SharePanel = () => {
         <div className='flex flex-col gap-2'>
           <div className='flex gap-2'>
             <input readOnly value={link} aria-label='Wishlist link' onFocus={(e) => e.target.select()} className='flex-1 min-w-0 h-11 px-4 rounded-full border border-rose-300 bg-shell text-sm' />
-            <button onClick={copy} className='h-11 px-5 rounded-full bg-ink text-white text-sm font-bold cursor-pointer'>Copy</button>
+            <button onClick={copy} className='h-11 px-5 rounded-full bg-berry text-white text-sm font-bold cursor-pointer'>Copy</button>
           </div>
           <a href={`https://wa.me/?text=${encodeURIComponent(`My Surprise Heaven wishlist 🎁 ${link}`)}`} target='_blank' rel='noreferrer' className='self-start text-sm font-bold text-[#2F5A37] hover:underline underline-offset-4'>Share on WhatsApp ↗</a>
         </div>
@@ -156,7 +156,7 @@ export const SharedWishlist = () => {
 
   return (
     <div className='pt-10 pb-16'>
-      <div className='rounded-[32px] bg-ink text-white p-8 sm:p-10 mb-10 relative overflow-hidden'>
+      <div className='rounded-[32px] bg-gradient-to-br from-berry-dark via-[#9A2459] to-[#5E1238] text-white p-8 sm:p-10 mb-10 relative overflow-hidden'>
         <span className='absolute -right-10 -top-10 w-48 h-48 rounded-full bg-berry/40'></span>
         <p className='relative text-gold-light text-xs font-bold tracking-[0.2em] uppercase'>A wishlist from</p>
         <h1 className='relative font-display text-[2.8rem] sm:text-[3.6rem] leading-none font-semibold mt-2'>{data.name}'s <i>wishlist</i></h1>

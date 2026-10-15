@@ -17,7 +17,7 @@ const Cakes = () => {
 
   return (
     <div>
-      <section className='bg-[#F7E7D7]'>
+      <section className='bg-rose-100'>
         <div className='shell grid lg:grid-cols-[1.1fr_1fr] gap-10 items-center py-14'>
           <div className='flex flex-col gap-5'>
             <p className='eyebrow'>Cake studio</p>
@@ -67,7 +67,7 @@ const Cakes = () => {
             </div>
             <ul className='flex flex-wrap gap-2'>
               {customOptions.cakeOptions.flavours.map(f => (
-                <li key={f.id} className='px-4 py-2 rounded-full bg-[#F7E7D7] text-sm font-semibold'>{f.name}</li>
+                <li key={f.id} className='px-4 py-2 rounded-full bg-rose-100 text-sm font-semibold'>{f.name}</li>
               ))}
             </ul>
           </div>
@@ -75,10 +75,10 @@ const Cakes = () => {
       )}
 
       <section className='shell pt-12'>
-        <button onClick={() => openChat('Custom cake design')} className='w-full text-left rounded-[28px] bg-ink text-[#F6E9EE] p-8 sm:p-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 cursor-pointer hover:bg-black'>
+        <button onClick={() => openChat('Custom cake design')} className='w-full text-left rounded-[28px] bg-gradient-to-br from-berry-dark via-[#9A2459] to-[#5E1238] text-[#F6E9EE] p-8 sm:p-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 cursor-pointer hover:bg-black'>
           <span>
             <span className='block font-display text-3xl sm:text-4xl text-white'>Have a dream cake in mind?</span>
-            <span className='block mt-2 text-[#D9C6CE]'>Send us a photo or sketch — themes, tiers, colours and toppers. We'll design it with you and send a quote.</span>
+            <span className='block mt-2 text-[#F8CFE1]'>Send us a photo or sketch — themes, tiers, colours and toppers. We'll design it with you and send a quote.</span>
           </span>
           <span className='btn-primary !bg-white !text-ink shrink-0'><Icon name='mail' size={18} /> Chat with a baker</span>
         </button>

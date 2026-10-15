@@ -9,7 +9,7 @@ export const Stars = ({ value = 0, size = 16, className = '' }) => (
             const fill = Math.max(0, Math.min(1, value - i))
             return (
                 <svg key={i} width={size} height={size} viewBox='0 0 24 24' aria-hidden='true'>
-                    <defs><linearGradient id={`star-${i}-${Math.round(fill * 100)}`}><stop offset={`${fill * 100}%`} stopColor='#C9973B' /><stop offset={`${fill * 100}%`} stopColor='#E9DCC3' /></linearGradient></defs>
+                    <defs><linearGradient id={`star-${i}-${Math.round(fill * 100)}`}><stop offset={`${fill * 100}%`} stopColor='#E84F93' /><stop offset={`${fill * 100}%`} stopColor='#F9D3E4' /></linearGradient></defs>
                     <path d={STAR} fill={`url(#star-${i}-${Math.round(fill * 100)})`} />
                 </svg>
             )
@@ -29,7 +29,7 @@ export const StarInput = ({ value, onChange, size = 34 }) => {
                 {[1, 2, 3, 4, 5].map(n => (
                     <button type='button' key={n} role='radio' aria-checked={value === n} aria-label={`${n} star${n === 1 ? '' : 's'}`}
                         onMouseEnter={() => setHover(n)} onClick={() => onChange(n)} className='p-0.5 cursor-pointer transition-transform hover:scale-110'>
-                        <svg width={size} height={size} viewBox='0 0 24 24'><path d={STAR} fill={n <= shown ? '#C9973B' : '#EADFCB'} /></svg>
+                        <svg width={size} height={size} viewBox='0 0 24 24'><path d={STAR} fill={n <= shown ? '#E84F93' : '#F9D3E4'} /></svg>
                     </button>
                 ))}
             </span>

@@ -85,17 +85,17 @@ const Login = () => {
 
   return (
     <div className='py-12 grid lg:grid-cols-2 gap-10 items-stretch'>
-      <div className='hidden lg:flex rounded-[32px] bg-ink text-[#F6E9EE] p-12 flex-col justify-between'>
+      <div className='hidden lg:flex rounded-[32px] bg-gradient-to-br from-berry-dark via-[#9A2459] to-[#5E1238] text-[#FFE9F2] p-12 flex-col justify-between'>
         <Logo size={64} light />
         <div>
           <p className='font-display text-5xl text-white leading-tight'>Every surprise <span className='italic text-[#FFB3D4]'>starts here</span>.</p>
-          <ul className='mt-8 flex flex-col gap-3 text-[#D9C6CE]'>
+          <ul className='mt-8 flex flex-col gap-3 text-[#F8CFE1]'>
             {['Track every order to the door', 'Save your bag across devices', 'Member-only offers'].map(item => (
               <li key={item} className='flex items-center gap-3'><Icon name='check' size={18} className='text-gold-light' strokeWidth={2.2} />{item}</li>
             ))}
           </ul>
         </div>
-        <p className='text-sm text-[#D9C6CE]'>Secure sign-in · your details stay private</p>
+        <p className='text-sm text-[#F8CFE1]'>Secure sign-in · your details stay private</p>
       </div>
 
       <form onSubmit={onSubmitHandler} className='bg-white border border-line rounded-[32px] p-8 sm:p-12 flex flex-col gap-5 justify-center'>
